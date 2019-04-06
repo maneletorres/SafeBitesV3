@@ -1,0 +1,139 @@
+package com.maneletorres.safebites.fragments;
+
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.adapters.NutrientComparisonAdapter;
+import com.maneletorres.safebites.entities.Nutrient;
+import com.maneletorres.safebites.entities.NutrientComparison;
+import com.maneletorres.safebites.entities.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
+import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
+
+public class NutrientsComparisonFragment extends Fragment {
+    private List<NutrientComparison> createSimplifiedNutrientObjects(List<Nutrient> productANutrients, List<Nutrient> productBNutrients) {
+        List<NutrientComparison> simplifiedNutrients = new ArrayList<>();
+        List<Nutrient> unitedNutrients = new ArrayList<>(productANutrients);
+        unitedNutrients.addAll(productBNutrients);
+
+        for (int i = 0; i < unitedNutrients.size(); i++) {
+            Nutrient firstNutrient = unitedNutrients.get(i);
+
+            if (!exists(simplifiedNutrients, firstNutrient.getName())) {
+                NutrientComparison simplifiedNutrient = null;
+
+                for (int j = i + 1; j < unitedNutrients.size(); j++) {
+                    Nutrient secondNutrient = unitedNutrients.get(j);
+                    if (firstNutrient.getName().equals(secondNutrient.getName())) {
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), firstNutrient.getPer_100g(), secondNutrient.getPer_100g(), firstNutrient.getUnit());
+                        simplifiedNutrients.add(simplifiedNutrient);
+                    }
+                }
+
+                if (simplifiedNutrient == null) {
+                    if (i < productANutrients.size()) {
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), firstNutrient.getPer_100g(), "-", firstNutrient.getUnit());
+                    } else {
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), "-", firstNutrient.getPer_100g(), firstNutrient.getUnit());
+                    }
+                    simplifiedNutrients.add(simplifiedNutrient);
+                }
+            }
+        }
+
+        return simplifiedNutrients;
+    }
+
+    private boolean exists(List<NutrientComparison> simplifiedNutrients, String nutrientName) {
+        boolean condition = false;
+        for (int i = 0; i < simplifiedNutrients.size() && !condition; i++) {
+            NutrientComparison currentSimplifiedNutrient = simplifiedNutrients.get(i);
+            if (currentSimplifiedNutrient.getName().equals(nutrientName)) {
+                condition = true;
+            }
+        }
+        return condition;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_nutrients_comparison, container, false);
+
+        Bundle extras = getArguments();
+        if (extras != null) {
+            Product mProductA = extras.getParcelable(PRODUCT_A);
+            Product mProductB = extras.getParcelable(PRODUCT_B);
+
+            // Initialization of the components:
+            ImageView product_A_image = view.findViewById(R.id.product_A_image);
+            ImageView product_B_image = view.findViewById(R.id.product_B_image);
+
+            Glide.with(this)
+                    .load(Objects.requireNonNull(mProductA).getImage_resource())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            product_A_image.setImageResource(R.drawable.no_image_available);
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(product_A_image);
+
+            Glide.with(this)
+                    .load(Objects.requireNonNull(mProductB).getImage_resource())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            product_B_image.setImageResource(R.drawable.no_image_available);
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(product_B_image);
+
+            TextView product_A_name = view.findViewById(R.id.product_A_name);
+            product_A_name.setText(mProductA.getName());
+            TextView product_B_name = view.findViewById(R.id.product_B_name);
+            product_B_name.setText(mProductB.getName());
+
+            List<NutrientComparison> simplifiedNutrients = createSimplifiedNutrientObjects(mProductA.getNutrients(), mProductB.getNutrients());
+            NutrientComparisonAdapter mSimplifiedNutrientAdapter = new NutrientComparisonAdapter(simplifiedNutrients);
+            RecyclerView recyclerView = view.findViewById(R.id.simplified_nutrients_recycler);
+            recyclerView.setAdapter(mSimplifiedNutrientAdapter);
+        }
+
+        return view;
+    }
+}

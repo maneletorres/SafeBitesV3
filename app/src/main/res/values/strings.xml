@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">SafeBites</string>
+    <string name="app_description">SafeBites is an application that allows you to quickly and easily discover the nutritional values of a food, in order to decide if it is suitable for your personal consumption, as well as making a quick comparison between two products to analyse which is healthier.</string>
+
+    <!-- RadioButton: -->
+    <string name="comparison_1">Compare two scanned products</string>
+    <string name="comparison_2">Compare two favorite products</string>
+    <string name="comparison_3">Compare a scanned product and a favorite product </string>
+
+    <string name="product_A">Product A</string>
+    <string name="product_B">Product B</string>
+
+    <string name="compare">Compare</string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">669391013492123</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb669391013492123</string>
+    <!-- Twitter consumer key and secret -->
+    <string name="twitter_consumer_key" translatable="false">u9psOiwSsKkw1mD73bi5JODu9</string>
+    <string name="twitter_consumer_secret" translatable="false">Qgosv9t0Lvw8XCFuFTIogkuYY8I2YVgBFqMBgJjuUAMtdg15fi</string>
+
+    <!-- Navigation Drawer: -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_image">Navigation header image</string>
+    <string name="nav_header_title">Safe Bites</string>
+    <string name="nav_header_subtitle">maneletorres@hotmail.com</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_user">User</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_log_out">Log out</string>
+    <string name="nav_others">Others</string>
+    <string name="nav_share">Share</string>
+    <string name="nav_information">Information</string>
+    <string name="email_content">"Hey buddy! Take a look at this new and incredible app:"</string>
+    <string name="email_url">https://github.com/maneletorres/SafeBites</string>
+    <string name="chooser_message">Choose where you want to share SafeBites App</string>
+
+    <!-- App mentions: -->
+    <string name="app_mentions">This project is based on the Open Food Facts group database and uses the ZXing library ("Zebra Crossing"), to which their enormous work and fantastic initiative are appreciated, making reference to them in the following links:</string>
+    <string name="mention1"><a href="some site">https://world.openfoodfacts.org/</a></string>
+    <string name="mention2"><a href="some site">https://github.com/zxing/zxing</a></string>
+</resources>

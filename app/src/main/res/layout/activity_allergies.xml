@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    style="@style/RelativeLayoutStyle"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/allergies_text_view"
+        android:text="Allergies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/gluten_allergy_text_view"
+        android:layout_below="@id/allergies_text_view"
+        android:layout_width="match_parent"
+        android:text="Gluten"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/crustaceans_allergy_text_view"
+        android:layout_below="@id/gluten_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Crustaceans"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/eggs_allergy_text_view"
+        android:layout_below="@id/crustaceans_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Eggs"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/fish_allergy_text_view"
+        android:layout_below="@id/eggs_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Fish"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/peanuts_allergy_text_view"
+        android:layout_below="@id/fish_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Peanuts"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/soybeans_allergy_text_view"
+        android:layout_below="@id/peanuts_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Soybeans"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/milk_allergy_text_view"
+        android:layout_below="@id/soybeans_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Milk"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/nuts_allergy_text_view"
+        android:layout_below="@id/milk_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Nuts"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/celery_allergy_text_view"
+        android:layout_below="@id/nuts_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Celery"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/mustard_allergy_text_view"
+        android:layout_below="@id/celery_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Mustard"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/sesame_seeds_allergy_text_view"
+        android:layout_below="@id/mustard_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Sesame seeds"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/sulphur_dioxide_and_sulphites_allergy_text_view"
+        android:layout_below="@id/sesame_seeds_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Sulphur dioxide and sulphites"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/lupin_allergy_text_view"
+        android:layout_below="@id/sulphur_dioxide_and_sulphites_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Lupin"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/molluscs_allergy_text_view"
+        android:layout_below="@id/lupin_allergy_text_view"
+        android:layout_width="match_parent"
+        android:text="Molluscs"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/molluscs_allergy_text_view"
+        android:text="Save changes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

@@ -1,0 +1,238 @@
+package com.maneletorres.safebites.adapters;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.maneletorres.safebites.AllergiesActivity;
+import com.maneletorres.safebites.AuthActivity;
+import com.maneletorres.safebites.MainActivity;
+import com.maneletorres.safebites.ProductActivity;
+import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.fragments.FavoritesFragment;
+import com.maneletorres.safebites.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import static com.maneletorres.safebites.utils.Utils.PRODUCT;
+
+public class ProductAdapter extends Adapter<ViewHolder> {
+
+    private static final int ITEM = 0;
+    private static final int LOADING = 1;
+
+    // Firebase Realtime Database components:
+    private DatabaseReference mUsersDatabaseReference;
+
+    // Product adapter components:
+    private Context mContext;
+    private Fragment mCurrentFragment;
+    private ProductViewHolder mProductViewHolder;
+    private List<Product> mProducts;
+
+    public ProductAdapter(Context context, Fragment fragment) {
+        this.mProducts = new ArrayList<>();
+        this.mContext = context;
+        this.mCurrentFragment = fragment;
+
+        // Initialization of the reference to Firebase Realtime Database users:
+        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference("users");
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        switch (viewType) {
+            case ITEM:
+                viewHolder = getViewHolder(parent, inflater);
+                break;
+            case LOADING:
+                View view = inflater.inflate(R.layout.item_progress, parent, false);
+                viewHolder = new LoadingViewHolder(view);
+                break;
+        }
+        return viewHolder;
+    }
+
+    @NonNull
+    private ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
+        View view = inflater.inflate(R.layout.item_product, parent, false);
+        return new ProductViewHolder(view, parent.getContext());
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        Product currentProduct = mProducts.get(position);
+
+        switch (getItemViewType(position)) {
+            case ITEM:
+                mProductViewHolder = (ProductViewHolder) holder;
+
+                String image_resource = currentProduct.getImage_resource();
+                if (image_resource == null || image_resource.equals("") || image_resource.equals("?")) {
+                    currentProduct.setImage_resource("?");
+                    mProductViewHolder.mImageResource.setImageResource(R.drawable.no_image_available);
+                } else {
+                    Glide.with(mContext)
+                            .load(currentProduct.getImage_resource())
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    mProductViewHolder.mImageResource.setImageResource(R.drawable.no_image_available);
+                                    mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            }).into(mProductViewHolder.mImageResource);
+                }
+
+                String ingredients = currentProduct.getIngredients();
+                if (ingredients == null || ingredients.equals("") || ingredients.equals("?")) {
+                    currentProduct.setIngredients("\n" + "Ingredients not registered.");
+                }
+
+                mProductViewHolder.itemView.setTag(currentProduct);
+                mProductViewHolder.mName.setText(currentProduct.getName());
+                mProductViewHolder.mUpc.setText(currentProduct.getUpc());
+
+                // Checking the fragment that is treated for the activation of 'mFavoriteCondition'
+                // button:
+                if(mCurrentFragment instanceof FavoritesFragment){
+                    mProductViewHolder.mFavoriteCondition.setVisibility(View.VISIBLE);
+                }
+
+                break;
+            case LOADING:
+                break;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mProducts == null ? 0 : mProducts.size();
+    }
+
+    public void add(Product p) {
+        mProducts.add(p);
+        notifyItemInserted(mProducts.size() - 1);
+    }
+
+    public void addAll(List<Product> moveProducts) {
+        for (Product product : moveProducts) {
+            add(product);
+        }
+    }
+
+    public void removeItem(String upc) {
+        boolean condition = false;
+        Product product = null;
+        for (int i = 0; i < getItemCount() && !condition; i++) {
+            product = mProducts.get(i);
+            if (product.getUpc().equals(upc)) {
+                condition = true;
+            }
+        }
+
+        if (product != null) {
+            mProducts.remove(product);
+            notifyDataSetChanged();
+        }
+    }
+
+    private class ProductViewHolder extends ViewHolder implements View.OnClickListener {
+        private TextView mUpc;
+        private TextView mName;
+        private ImageView mImageResource;
+        private ImageButton mFavoriteCondition;
+        private ProgressBar mProgressBar;
+        private Context mContext;
+        private DatabaseReference mCurrentUserDatabaseReference;
+
+        ProductViewHolder(View itemView, Context context) {
+            super(itemView);
+
+            mUpc = itemView.findViewById(R.id.product_extra_information);
+            mName = itemView.findViewById(R.id.product_name);
+            mImageResource = itemView.findViewById(R.id.product_image);
+            mFavoriteCondition = itemView.findViewById(R.id.favorite_condition_image_button);
+            mProgressBar = itemView.findViewById(R.id.image_progress_bar);
+            mContext = context;
+
+            // Initialization of the reference to the current product of Firebase Realtime Database:
+            mCurrentUserDatabaseReference = mUsersDatabaseReference.child(Utils.sUser.getUser_id()).child("products");
+
+            // Item OnClickListener:
+            itemView.setOnClickListener(this);
+
+            // 'mFavoriteCondition' OnClickListener:
+            mFavoriteCondition.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == this.itemView.getId()) {
+                Intent intent = new Intent(mContext, ProductActivity.class);
+                intent.putExtra(PRODUCT, (Parcelable) v.getTag());
+                mContext.startActivity(intent);
+            } else if (v.getId() == mFavoriteCondition.getId()) {
+                final Product currentProduct = mProducts.get(getAdapterPosition());
+
+                mCurrentUserDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        String upc = currentProduct.getUpc();
+                        if (snapshot.hasChild(upc)) {
+                            mCurrentUserDatabaseReference.child(upc).removeValue();
+                        } /*else {
+                            mCurrentUserDatabaseReference.child(upc).setValue(currentProduct);
+                        }*/
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+    }
+
+    private class LoadingViewHolder extends ViewHolder {
+        LoadingViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+}

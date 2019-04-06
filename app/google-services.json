@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "892482210204",
+    "firebase_url": "https://safebites-74d3b.firebaseio.com",
+    "project_id": "safebites-74d3b",
+    "storage_bucket": "safebites-74d3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892482210204:android:9ccaff545490152b",
+        "android_client_info": {
+          "package_name": "com.maneletorres.safebites"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892482210204-qi6b40mv89l686sna4adkrvnf5b7f8c5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.maneletorres.safebites",
+            "certificate_hash": "3f6b87d882f814cb0a03450db370e4aa43d82fcb"
+          }
+        },
+        {
+          "client_id": "892482210204-gbsvljhmft7pkrdfoc37dkda11j7d365.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtRIkyiz8WOjUZk1ZH580XhyRAoX2faIU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892482210204-gbsvljhmft7pkrdfoc37dkda11j7d365.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

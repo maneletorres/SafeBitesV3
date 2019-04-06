@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RelativeLayoutStyle">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="50"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/product_A_image"
+            android:layout_width="@dimen/list_item_width"
+            android:layout_height="@dimen/list_item_height"
+            android:contentDescription="Image description A"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="8dp"
+            tools:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/ingredients_A_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingredients A" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_weight="1"
+        android:layout_width="1dp"
+        android:layout_height="fill_parent"
+        android:background="@color/colorAccent" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="50"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/product_B_image"
+            android:layout_marginBottom="8dp"
+            android:layout_width="@dimen/list_item_width"
+            android:layout_height="@dimen/list_item_height"
+            android:contentDescription="Image description B"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/ingredients_B_textView"
+            android:layout_height="wrap_content"
+            android:text="Ingredients B" />
+
+    </LinearLayout>
+
+</LinearLayout>
