@@ -18,14 +18,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.maneletorres.safebites.fragments.ComparatorFragment;
+import com.maneletorres.safebites.fragments.CompareFragment;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
-import com.maneletorres.safebites.fragments.ScannerFragment;
+import com.maneletorres.safebites.fragments.ScanFragment;
+import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.fragments.SectionsPageAdapter;
-import com.maneletorres.safebites.fragments.SeekerFragment;
 import com.maneletorres.safebites.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -64,16 +61,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TabLayout.setupWithViewPager(viewPager);
     }
 
-    // Study whether to delete or move this code:
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        // Delete the EditText content?
+        // Hide keyboard when navigating between fragments:
         mSearchEditText.setVisibility(View.GONE);
         Utils.hideSoftKeyboard(this);
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -117,9 +111,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ScannerFragment(), "Scan");
-        adapter.addFragment(new ComparatorFragment(), "Compare");
-        adapter.addFragment(new SeekerFragment(), "Search");
+        adapter.addFragment(new ScanFragment(), "Scan");
+        adapter.addFragment(new CompareFragment(), "Compare");
+        adapter.addFragment(new SearchFragment(), "Search");
         adapter.addFragment(new FavoritesFragment(), "Favorites");
         viewPager.setAdapter(adapter);
     }
