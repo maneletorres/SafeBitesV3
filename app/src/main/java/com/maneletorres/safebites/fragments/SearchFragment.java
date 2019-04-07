@@ -44,7 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SeekerFragment extends Fragment {
+public class SearchFragment extends Fragment {
     // Components:
     private EditText mSearchEditText;
     private RecyclerView mProductsRecyclerView;
@@ -63,8 +63,9 @@ public class SeekerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_seeker, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
+        // Placement of the back arrow on the Toolbar:
         Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar);
         setHasOptionsMenu(true);
 
@@ -74,17 +75,14 @@ public class SeekerFragment extends Fragment {
         mEmptyTextView = view.findViewById(R.id.empty_textView);
         mProductsRecyclerView = view.findViewById(R.id.product_recycler_view);
         mSearchEditText = toolbar.findViewById(R.id.search_edit_text);
-        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
+        mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
 
-                    loadData();
-                    return true;
-                }
-                return false;
+                loadData();
+                return true;
             }
+            return false;
         });
 
         // Initialization of the empty product adapter:
@@ -100,7 +98,7 @@ public class SeekerFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        super.onCreateOptionsMenu(menu, inflater); // Can it be deleted?
         inflater.inflate(R.menu.main, menu);
 
         mSearchMenuItem = menu.findItem(R.id.action_search);
@@ -119,8 +117,8 @@ public class SeekerFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(mSearchEditText, InputMethodManager.SHOW_IMPLICIT);
         } else if (id == R.id.action_cancel) {
-            mSearchMenuItem.setVisible(true);
             mCancelMenuItem.setVisible(false);
+            mSearchMenuItem.setVisible(true);
             mSearchEditText.setVisibility(View.GONE);
 
             Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
@@ -154,7 +152,7 @@ public class SeekerFragment extends Fragment {
 
                 callProductsApi.enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         assert response.body() != null;
                         List<Product> products = response.body().getProducts();
                         if (products.isEmpty()) {
@@ -172,7 +170,7 @@ public class SeekerFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });
@@ -203,7 +201,7 @@ public class SeekerFragment extends Fragment {
     }
 
     private boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
