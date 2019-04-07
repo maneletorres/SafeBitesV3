@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.maneletorres.safebites.entities.Product;
@@ -36,6 +35,7 @@ public class ProductActivity extends AppCompatActivity {
             mProduct = mBundle.getParcelable(PRODUCT);
         }
 
+        // Initialization of the components:
         ViewPager mViewPager = findViewById(R.id.viewPagerContainer);
         setupViewPager(mViewPager);
 
@@ -47,7 +47,6 @@ public class ProductActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
