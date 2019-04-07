@@ -120,7 +120,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                 }
 
                 String ingredients = currentProduct.getIngredients();
-                if (ingredients == null || ingredients.equals("") || ingredients.equals("?")) {
+                if (ingredients.equals("?")) {
                     currentProduct.setIngredients("\n" + "Ingredients not registered.");
                 }
 
