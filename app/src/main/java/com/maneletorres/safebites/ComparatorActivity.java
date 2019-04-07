@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_A;
 import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_B;
-import static com.maneletorres.safebites.utils.Utils.INGREDIENTS;
 import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_A;
 import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_B;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
@@ -41,15 +40,15 @@ public class ComparatorActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mBundle = getIntent().getExtras();
-        if(mBundle != null){
+        if (mBundle != null) {
             Product productA = mBundle.getParcelable(PRODUCT_A);
-            if(productA != null){
+            if (productA != null) {
                 mProductAIngredients = productA.getIngredients();
                 mProductAImageResource = productA.getImage_resource();
             }
 
             Product productB = mBundle.getParcelable(PRODUCT_B);
-            if(productB != null){
+            if (productB != null) {
                 mProductBIngredients = productB.getIngredients();
                 mProductBImageResource = productB.getImage_resource();
             }
@@ -66,7 +65,6 @@ public class ComparatorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
