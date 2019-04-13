@@ -7,21 +7,16 @@ import java.util.Map;
 public class User {
     private String user_id;
     private String email;
+    private String displayName;
     private ArrayList<Product> products;
     private Map<String, Boolean> allergies;
 
-    public User(String user_id, String email) {
+    public User(String user_id, String email, String displayName) {
         this.user_id = user_id;
         this.email = email;
+        this.displayName = displayName;
         this.products = new ArrayList<>();
         this.allergies = new HashMap<>();
-        allergies.put("egg", false);
-        allergies.put("peanut", false);
-        allergies.put("soy", false);
-        allergies.put("wheat", false);
-        allergies.put("dried_fruit", false);
-        allergies.put("fish", false);
-        allergies.put("seafood", false);
     }
 
     public String getUser_id() {
@@ -38,6 +33,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public ArrayList<Product> getProducts() {
