@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.maneletorres.safebites.fragments.CompareFragment;
@@ -25,6 +26,8 @@ import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.fragments.SectionsPageAdapter;
 import com.maneletorres.safebites.utils.Utils;
 
+import static com.maneletorres.safebites.utils.Utils.sUser;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private EditText mSearchEditText;
@@ -33,6 +36,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            int toastMessage = extras.getInt("TOAST_MESSAGE");
+            if(toastMessage == 0){
+                Toast.makeText(this, "User " + sUser.getDisplayName() + " has been registered in SafeBites!", Toast.LENGTH_SHORT).show();
+            } else if(toastMessage == 1){
+                Toast.makeText(this, "Changes in the user's allergens have been saved.", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         // Initialization of the components:
         Toolbar toolbar = findViewById(R.id.toolbar);
