@@ -5,26 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    private String user_id;
     private String email;
     private String displayName;
     private ArrayList<Product> products;
     private Map<String, Boolean> allergies;
 
-    public User(String user_id, String email, String displayName) {
-        this.user_id = user_id;
+    public User(String email, String displayName) {
         this.email = email;
         this.displayName = displayName;
         this.products = new ArrayList<>();
         this.allergies = new HashMap<>();
-    }
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
     }
 
     public String getEmail() {
