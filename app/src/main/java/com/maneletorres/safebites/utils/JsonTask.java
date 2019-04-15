@@ -1,6 +1,5 @@
 package com.maneletorres.safebites.utils;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,24 +13,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class JsonTask extends AsyncTask<String, Integer, Product> {
-    /**
-     *
-     */
-    private final WeakReference<Context> mContext;
-
-    /**
-     *
-     */
     public AsyncResponse delegate = null;
-
-    public JsonTask(Context context) {
-        this.mContext = new WeakReference<>(context.getApplicationContext());
-    }
 
     @Override
     protected Product doInBackground(String... params) {
@@ -53,7 +39,6 @@ public class JsonTask extends AsyncTask<String, Integer, Product> {
                 Log.d("Response: ", "> " + line);
             }
 
-            Context context = mContext.get();
             if (!TextUtils.isEmpty(buffer.toString())) {
                 Product product = null;
                 try {
@@ -66,16 +51,6 @@ public class JsonTask extends AsyncTask<String, Integer, Product> {
                             JSONObject currentNutriments = currentProduct.getJSONObject("nutriments");
 
                             product = Utils.extractJSONNutrients(currentProduct, currentNutriments);
-                            if (product != null) {
-                                /*Cursor c = ProductProvider.queryProduct(context);
-                                assert c != null;
-                                while (c.moveToNext()) {
-                                    if (c.getString(1).equals(product.getUpc())) {
-                                        product.setFavorite_condition("true");
-                                    }
-                                }
-                                c.close();*/
-                            }
                         }
                     }
                 } catch (JSONException e) {
