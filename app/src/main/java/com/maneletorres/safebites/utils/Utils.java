@@ -25,8 +25,10 @@ import org.json.JSONObject;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 public class Utils {
     public static final String CLASS_NAME = "CLASS_NAME";
@@ -51,7 +53,6 @@ public class Utils {
     static Product extractJSONNutrients(JSONObject currentProduct, JSONObject JSONNutrients) {
         Product product = null;
         try {
-            //String[] product_elements = {"code", "product_name", "image_small_url", "ingredients_text", "serving_quantity"};
             String[] product_elements = {"code", "product_name", "image_small_url", "ingredients_text", "serving_quantity", "allergens_hierarchy", "traces_hierarchy"};
             ArrayList<String> product_elements_result = new ArrayList<>();
             ArrayList<String> product_allergens = new ArrayList<>();
@@ -92,10 +93,6 @@ public class Utils {
 
     public static void createNutrients(ArrayList<Nutrient> nutrients, JSONObject JSONNutrients) {
         try {
-            /*String[] nutrients_name = {"Energy", "Total fat", "Saturated fat",
-                    "Dietary fiber", "Total carbohydrate", "Sugars",
-                    "Protein", "Salt", "Calcium", "Sodium"};*/
-
             String[] nutrients_name = {
                     // Ordered nutrients:
                     "Energy", "Fat", "Saturated fat", "Monounsaturated fat", "Polyunsaturated fat",
@@ -128,12 +125,12 @@ public class Utils {
                     "vitamin-k_value", "vitamin-c_value", "vitamin-b1_value", "vitamin-b2_value", "vitamin-pp_value",
                     "vitamin-b6_value", "vitamin-b9_value", "vitamin-b12_value", "biotin_value", "pantothenic-acid_value",
                     "potassium_value", "chloride_value", "calcium_value", "phosphorus_value", "magnesium_value",
-                    "iron_value","zinc_value", "copper_value", "manganese_value", "fluoride_value",
+                    "iron_value", "zinc_value", "copper_value", "manganese_value", "fluoride_value",
                     "selenium_value", "chromium_value", "molybdenum_value", "iodine_value",
 
                     // Disordered nutrients:
                     "sodium_value", "casein_value", "serum-proteins_value", "nucleotides_value", "sucrose_value",
-                    "glucose_value", "fructose_value", "lactose_value" , "maltose_value","maltodextrins_value",
+                    "glucose_value", "fructose_value", "lactose_value", "maltose_value", "maltodextrins_value",
                     "butyric-acid_value", "caproic-acid_value", "caprylic-acid_value", "capric-acid_value",
                     "lauric-acid_value", "myristic-acid_value", "palmitic-acid_value", "stearic-acid_value",
                     "arachidic-acid_value", "behenic-acid_value", "lignoceric-acid_value", "cerotic-acid_value",
@@ -153,13 +150,13 @@ public class Utils {
                     "proteins_serving", "salt_serving", "vitamin-a_serving", "vitamin-d_serving", "vitamin-e_serving",
                     "vitamin-k_serving", "vitamin-c_serving", "vitamin-b1_serving", "vitamin-b2_serving", "vitamin-pp_serving",
                     "vitamin-b6_serving", "vitamin-b9_serving", "vitamin-b12_serving", "biotin_serving", "pantothenic-acid_serving",
-                    "potassium_serving",  "chloride_serving", "calcium_serving", "phosphorus_serving", "magnesium_serving",
-                    "iron_serving","zinc_serving", "copper_serving", "manganese_serving", "fluoride_serving",
+                    "potassium_serving", "chloride_serving", "calcium_serving", "phosphorus_serving", "magnesium_serving",
+                    "iron_serving", "zinc_serving", "copper_serving", "manganese_serving", "fluoride_serving",
                     "selenium_serving", "chromium_serving", "molybdenum_serving", "iodine_serving",
 
                     // Disordered nutrients:
                     "sodium_serving", "casein_serving", "serum-proteins_serving", "nucleotides_serving", "sucrose_serving",
-                    "glucose_serving" , "fructose_serving" , "lactose_serving" , "maltose_serving", "maltodextrins_serving",
+                    "glucose_serving", "fructose_serving", "lactose_serving", "maltose_serving", "maltodextrins_serving",
                     "butyric-acid_serving", "caproic-acid_serving", "caprylic-acid_serving", "capric-acid_serving",
                     "lauric-acid_serving", "myristic-acid_serving", "palmitic-acid_serving", "stearic-acid_serving",
                     "arachidic-acid_serving", "behenic-acid_serving", "lignoceric-acid_serving", "cerotic-acid_serving",
@@ -183,7 +180,7 @@ public class Utils {
 
                     // Disordered nutrients:
                     "sodium_unit", "casein_unit", "serum-proteins_unit", "nucleotides_unit", "sucrose_unit",
-                    "glucose_unit" , "fructose_unit", "lactose_unit" , "maltose_unit", "maltodextrins_unit",
+                    "glucose_unit", "fructose_unit", "lactose_unit", "maltose_unit", "maltodextrins_unit",
                     "butyric-acid_unit", "caproic-acid_unit", "caprylic-acid_unit", "capric-acid_unit",
                     "lauric-acid_unit", "myristic-acid_unit", "palmitic-acid_unit", "stearic-acid_unit",
                     "arachidic-acid_unit", "behenic-acid_unit", "lignoceric-acid_unit", "cerotic-acid_unit",
@@ -194,83 +191,75 @@ public class Utils {
                     "gondoic-acid_unit", "mead-acid_unit", "erucic-acid_unit", "nervonic-acid_unit", "trans-fat_unit",
                     "cholesterol_unit", "alcohol_unit ", "silica_unit", "bicarbonate_unit", "caffeine_unit", "taurine_unit", "ph_unit"};
 
+            // 3 decimals formatter:
+            DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+            otherSymbols.setDecimalSeparator('.');
+            DecimalFormat threeDecimalsFormat = new DecimalFormat("#.###", otherSymbols);
+            threeDecimalsFormat.setRoundingMode(RoundingMode.CEILING);
 
-            int loop_length = nutrients_name.length;
-            for (int i = 0; i < loop_length; i++) {
-                String current_nutrient_per100g;
-                if (JSONNutrients.has(JSONElements_100g[i])) {
-                    current_nutrient_per100g = JSONNutrients.getString(JSONElements_100g[i]);
-                    if (current_nutrient_per100g.length() == 0) {
-                        continue;
-                    } else {
-                        DecimalFormat df = new DecimalFormat("#.###");
-                        df.setRoundingMode(RoundingMode.CEILING);
-                        current_nutrient_per100g = df.format(Double.parseDouble(current_nutrient_per100g));
+            // 0 decimals formatter:
+            DecimalFormat df = new DecimalFormat("#");
+            df.setRoundingMode(RoundingMode.CEILING);
 
-                        /*if (current_nutrient_per100g.contains(".")) {
-                            String decimals = current_nutrient_per100g.substring(current_nutrient_per100g.indexOf("."));
-                            if (decimals.length() > 3) {
-                                double current_nutrient_value = Double.parseDouble(current_nutrient_per100g);
-                                current_nutrient_per100g = String.valueOf((double) Math.round(current_nutrient_value * 100) / 100);
-                            }
-                        }*/
-                    }
-                } else {
-                    continue;
-                }
-
-                String current_nutrient_unit;
-                if (JSONNutrients.has(JSONElements_unit[i])) {
-                    current_nutrient_unit = JSONNutrients.getString(JSONElements_unit[i]);
-                    if (current_nutrient_unit.length() == 0) {
-                        if (i == 0) {
-                            current_nutrient_unit = "kcal";
+            for (int i = 0; i < nutrients_name.length; i++) {
+                try {
+                    // Nutrient per 100g:
+                    String current_nutrient_per100g;
+                    if (JSONNutrients.has(JSONElements_100g[i])) {
+                        current_nutrient_per100g = JSONNutrients.getString(JSONElements_100g[i]);
+                        if (current_nutrient_per100g.length() == 0) {
+                            continue;
                         } else {
-                            current_nutrient_unit = "g";
+                            current_nutrient_per100g = threeDecimalsFormat.format(Double.parseDouble(current_nutrient_per100g));
+                        }
+                    } else {
+                        continue;
+                    }
+
+                    // Nutrient unit:
+                    String current_nutrient_unit = "";
+                    if (JSONNutrients.has(JSONElements_unit[i])) {
+                        current_nutrient_unit = JSONNutrients.getString(JSONElements_unit[i]);
+                        if (current_nutrient_unit.length() > 0 && i == 0) {
+                            if (current_nutrient_unit.toUpperCase().equals("KCAL")) {
+                                current_nutrient_per100g = df.format(Double.parseDouble(current_nutrient_per100g) * 4.184) + " kj / " + current_nutrient_per100g;
+                                current_nutrient_unit = current_nutrient_unit.toLowerCase();
+                            } else if (current_nutrient_unit.toUpperCase().equals("KJ")) {
+                                current_nutrient_per100g = current_nutrient_per100g + " kJ / " + df.format(Double.parseDouble(current_nutrient_per100g) / 4.184);
+                                current_nutrient_unit = " kcal";
+                            }
                         }
                     }
-                } else {
-                    if (i == 0) {
-                        current_nutrient_unit = "kcal";
-                    } else {
-                        current_nutrient_unit = "g";
+
+                    // Nutrient per serving:
+                    int multiplier = 1;
+                    switch (current_nutrient_unit) {
+                        case "mg":
+                            multiplier = 1000;
+                            break;
+                        case "µg":
+                            multiplier = 1000000;
+                            break;
+                        default:
+                            break;
                     }
-                }
 
-                int multiplier = 1;
-                switch(current_nutrient_unit){
-                    case "mg":
-                        multiplier = 1000;
-                        break;
-                    case "µg":
-                        multiplier = 1000000;
-                        break;
-                    default:
-                        break;
-                }
-
-                String current_nutrient_per_portion;
-                if (JSONNutrients.has(JSONElements_portion[i])) {
-                    current_nutrient_per_portion = JSONNutrients.getString(JSONElements_portion[i]);
-                    if (current_nutrient_per_portion.length() == 0) {
-                        current_nutrient_per_portion = "?";
+                    String current_nutrient_per_portion;
+                    if (JSONNutrients.has(JSONElements_portion[i])) {
+                        current_nutrient_per_portion = JSONNutrients.getString(JSONElements_portion[i]);
+                        if (current_nutrient_per_portion.length() == 0) {
+                            current_nutrient_per_portion = "-";
+                        } else {
+                            current_nutrient_per_portion = threeDecimalsFormat.format(Double.parseDouble(current_nutrient_per_portion) * multiplier);
+                        }
                     } else {
-                        DecimalFormat df = new DecimalFormat("#.###");
-                        df.setRoundingMode(RoundingMode.CEILING);
-                        current_nutrient_per_portion = df.format(Double.parseDouble(current_nutrient_per_portion) * multiplier);
-                        /*if (current_nutrient_per_portion.contains(".")) {
-                            String decimals = current_nutrient_per_portion.substring(current_nutrient_per_portion.indexOf("."));
-                            if (decimals.length() > 2) {
-                                double current_nutrient_value = Double.parseDouble(current_nutrient_per_portion);
-                                current_nutrient_per_portion = String.valueOf((double) Math.round(current_nutrient_value * 100) / 100);
-                            }
-                        }*/
+                        current_nutrient_per_portion = "-";
                     }
-                } else {
-                    current_nutrient_per_portion = "?";
-                }
 
-                nutrients.add(new Nutrient(nutrients_name[i], current_nutrient_per100g, current_nutrient_per_portion, current_nutrient_unit));
+                    nutrients.add(new Nutrient(nutrients_name[i], current_nutrient_per100g, current_nutrient_per_portion, current_nutrient_unit));
+                } catch (NumberFormatException ex) {
+                    ex.getMessage();
+                }
             }
         } catch (JSONException ex) {
             ex.printStackTrace();
