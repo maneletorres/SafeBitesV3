@@ -64,7 +64,9 @@ public class Product implements Parcelable {
     /**
      * Serving quantity of the product.
      */
-    private String serving_quantity;
+    @SerializedName("serving_size")
+    @Expose
+    private String serving_size;
 
     /**
      *
@@ -76,13 +78,13 @@ public class Product implements Parcelable {
     public Product() {
     }
 
-    public Product(String upc, String name, String image_resource, ArrayList<Nutrient> nutrients, String ingredients, String serving_quantity, ArrayList<String> allergens) {
+    public Product(String upc, String name, String image_resource, ArrayList<Nutrient> nutrients, String ingredients, String serving_size, ArrayList<String> allergens) {
         this.upc = upc;
         this.name = name;
         this.image_resource = image_resource;
         this.nutrients = nutrients;
         this.ingredients = ingredients;
-        this.serving_quantity = serving_quantity;
+        this.serving_size = serving_size;
         this.allergens = allergens;
     }
 
@@ -92,7 +94,7 @@ public class Product implements Parcelable {
         image_resource = in.readString();
         nutrients = in.createTypedArrayList(Nutrient.CREATOR);
         ingredients = in.readString();
-        serving_quantity = in.readString();
+        serving_size = in.readString();
         //allergens = in.readArrayList(ClassLoader.getSystemClassLoader());
         allergens = in.readArrayList(null);
     }
@@ -104,7 +106,7 @@ public class Product implements Parcelable {
         dest.writeString(image_resource);
         dest.writeTypedList(nutrients);
         dest.writeString(ingredients);
-        dest.writeString(serving_quantity);
+        dest.writeString(serving_size);
         dest.writeList(allergens);
     }
 
@@ -157,8 +159,8 @@ public class Product implements Parcelable {
         this.ingredients = ingredients;
     }
 
-    public String getServing_quantity() {
-        return serving_quantity;
+    public String getServingSize() {
+        return serving_size;
     }
 
     @Override
