@@ -60,13 +60,13 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:text="Suitable"
-                    android:background="@android:color/holo_green_light"
                     android:id="@+id/apt_product_text_view"
-                    android:gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_green_light"
+                    android:gravity="center_horizontal"
+                    android:text="Suitable" />
 
                 <TextView
                     android:id="@+id/header_per_100g"
