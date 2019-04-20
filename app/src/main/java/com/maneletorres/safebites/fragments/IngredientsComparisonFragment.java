@@ -1,10 +1,10 @@
 package com.maneletorres.safebites.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.maneletorres.safebites.R;
 
 import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_A;
+import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_B;
 import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_A;
 import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_B;
 
@@ -28,28 +33,45 @@ public class IngredientsComparisonFragment extends Fragment {
 
         Bundle extras = getArguments();
         if (extras != null) {
-            String productAIngredients = extras.getString(INGREDIENTS_A);
-            String productBIngredients = extras.getString(INGREDIENTS_B);
-            String productAImageResource = extras.getString(IMAGE_RESOURCE_A);
-            String productBImageResource = extras.getString(IMAGE_RESOURCE_A);
+            formatProductImage(view.findViewById(R.id.product_A_image), Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_A)));
+            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_A)), view.findViewById(R.id.ingredients_A_textView));
 
-            ImageView productAImageView = view.findViewById(R.id.product_A_image);
-            Glide.with(Objects.requireNonNull(getActivity()))
-                    .load(productAImageResource)
-                    .into(productAImageView);
-
-            ImageView productBImageView = view.findViewById(R.id.product_B_image);
-            Glide.with(Objects.requireNonNull(getActivity()))
-                    .load(productBImageResource)
-                    .into(productBImageView);
-
-            TextView ingredientsATextView = view.findViewById(R.id.ingredients_A_textView);
-            ingredientsATextView.setText(productAIngredients);
-
-            TextView ingredientsBTextView = view.findViewById(R.id.ingredients_B_textView);
-            ingredientsBTextView.setText(productBIngredients);
+            formatProductImage(view.findViewById(R.id.product_B_image), Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_B)));
+            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_B)), view.findViewById(R.id.ingredients_B_textView));
         }
 
         return view;
+    }
+
+    private void formatProductImage(ImageView productImageView, String productImageResource) {
+        if (productImageResource.equals("-")) {
+            productImageView.setImageResource(R.drawable.no_image_available);
+        } else {
+            Glide.with(Objects.requireNonNull(getActivity()))
+                    .load(productImageResource)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            productImageView.setImageResource(R.drawable.no_image_available);
+                            //mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(productImageView);
+        }
+    }
+
+    private void formatProductIngredients(String ingredientsText, TextView ingredientsTextView) {
+        if (ingredientsText.equals("-")) {
+            ingredientsTextView.setText("There are no registered ingredients for this product.");
+        } else {
+            ingredientsTextView.setText(ingredientsText);
+        }
     }
 }
