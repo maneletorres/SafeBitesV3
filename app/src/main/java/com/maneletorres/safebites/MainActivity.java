@@ -9,13 +9,16 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -26,6 +29,8 @@ import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.fragments.SectionsPageAdapter;
 import com.maneletorres.safebites.utils.Utils;
 
+import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
+import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,16 +39,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // Load of static Listener on the FRDB:
+        //Utils.staticListenerLoad(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            int toastMessage = extras.getInt("TOAST_MESSAGE");
-            if(toastMessage == 0){
-                Toast.makeText(this, "User " + sUser.getDisplayName() + " has been registered in SafeBites!", Toast.LENGTH_SHORT).show();
-            } else if(toastMessage == 1){
-                Toast.makeText(this, "Changes in the user's allergens have been saved.", Toast.LENGTH_SHORT).show();
+        if (extras != null) {
+            switch(extras.getInt(TOAST_MESSAGE)){
+                case 0:
+                    Toast.makeText(this, "User " + sUser.getDisplayName() + " has been registered in SafeBites!", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1:
+                    Toast.makeText(this, "Welcome back to SafeBites " + sUser.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(this, "Changes in the user's allergens have been saved.", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
 
@@ -66,6 +79,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView displayNameTextView = headerView.findViewById(R.id.displayNameTextView);
+        displayNameTextView.setText(sUser.getDisplayName());
+
+        TextView emailTextView = headerView.findViewById(R.id.emailTextView);
+        emailTextView.setText(sUser.getEmail());
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         setupViewPager(viewPager);
@@ -100,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         });
                 break;
             case R.id.nav_settings:
-                Intent intent = new Intent(this, AllergiesActivity.class);
-                intent.putExtra("CLASS_NAME", "MainActivity");
+                Intent intent = new Intent(this, PreferenceActivity.class);
+                intent.putExtra(CLASS_NAME, "MainActivity");
                 startActivity(intent);
                 break;
             case R.id.nav_share:
