@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout style="@style/RelativeLayoutStyle">
+
+        <TextView
+            android:id="@+id/allergies_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/allergies_text_view" />
+
+        <CheckBox
+            android:id="@+id/gluten_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/allergies_text_view"
+            android:text="@string/gluten_allergy" />
+
+        <CheckBox
+            android:id="@+id/crustaceans_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/gluten_allergy_text_view"
+            android:text="@string/crustaceans_allergy" />
+
+        <CheckBox
+            android:id="@+id/eggs_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/crustaceans_allergy_text_view"
+            android:text="@string/eggs_allergy" />
+
+        <CheckBox
+            android:id="@+id/fish_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/eggs_allergy_text_view"
+            android:text="@string/fish_allergy" />
+
+        <CheckBox
+            android:id="@+id/peanuts_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/fish_allergy_text_view"
+            android:text="@string/peanuts_allergy" />
+
+        <CheckBox
+            android:id="@+id/soybeans_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/peanuts_allergy_text_view"
+            android:text="@string/soybeans_allergy" />
+
+        <CheckBox
+            android:id="@+id/milk_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/soybeans_allergy_text_view"
+            android:text="@string/milk_allergy" />
+
+        <CheckBox
+            android:id="@+id/nuts_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/milk_allergy_text_view"
+            android:text="@string/nuts_allergy" />
+
+        <CheckBox
+            android:id="@+id/celery_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/nuts_allergy_text_view"
+            android:text="@string/celery_allergy" />
+
+        <CheckBox
+            android:id="@+id/mustard_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/celery_allergy_text_view"
+            android:text="@string/mustard_allergy" />
+
+        <CheckBox
+            android:id="@+id/sesame_seeds_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/mustard_allergy_text_view"
+            android:text="@string/sesame_seeds__allergy" />
+
+        <CheckBox
+            android:id="@+id/sulphur_dioxide_and_sulphites_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/sesame_seeds_allergy_text_view"
+            android:text="@string/sulphur_dioxide_and_sulphites_allergy" />
+
+        <CheckBox
+            android:id="@+id/lupin_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/sulphur_dioxide_and_sulphites_allergy_text_view"
+            android:text="@string/lupin_allergy" />
+
+        <CheckBox
+            android:id="@+id/molluscs_allergy_text_view"
+            style="@style/CheckBoxStyle"
+            android:layout_below="@id/lupin_allergy_text_view"
+            android:text="@string/molluscs_allergy" />
+
+        <LinearLayout
+            android:id="@+id/buttons_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/molluscs_allergy_text_view"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/back_button"
+                style="@style/ButtonStyle"
+                android:text="@string/back_button" />
+
+            <Button
+                android:id="@+id/save_data_button"
+                style="@style/ButtonStyle"
+                android:text="@string/save_data_button" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/separator_view"
+            style="@style/ViewStyle"
+            android:layout_height="2dp"
+            android:layout_below="@id/buttons_linear_layout"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <LinearLayout
+            android:id="@+id/danger_zone_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/separator_view"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/danger_zone_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/danger_zone_text_view" />
+
+            <Button
+                android:id="@+id/delete_user_button"
+                style="@style/ButtonStyle"
+                android:text="@string/delete_user_button" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>
