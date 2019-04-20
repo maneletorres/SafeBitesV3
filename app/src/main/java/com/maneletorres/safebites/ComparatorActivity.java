@@ -42,16 +42,12 @@ public class ComparatorActivity extends AppCompatActivity {
         mBundle = getIntent().getExtras();
         if (mBundle != null) {
             Product productA = mBundle.getParcelable(PRODUCT_A);
-            if (productA != null) {
-                mProductAIngredients = productA.getIngredients();
-                mProductAImageResource = productA.getImage_resource();
-            }
+            mProductAIngredients = Objects.requireNonNull(productA).getIngredients();
+            mProductAImageResource = productA.getImage_resource();
 
             Product productB = mBundle.getParcelable(PRODUCT_B);
-            if (productB != null) {
-                mProductBIngredients = productB.getIngredients();
-                mProductBImageResource = productB.getImage_resource();
-            }
+            mProductBIngredients = Objects.requireNonNull(productB).getIngredients();
+            mProductBImageResource = productB.getImage_resource();
         }
 
         ViewPager mViewPager = findViewById(R.id.viewPagerContainer);
