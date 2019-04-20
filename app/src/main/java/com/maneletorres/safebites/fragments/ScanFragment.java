@@ -89,9 +89,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Asyn
                         } else {
                             Toast.makeText(getContext(), "You must enter a valid bar code.", Toast.LENGTH_SHORT).show();
                         }
-                    }).setNegativeButton("Cancel", (dialog, which) -> {
-                Toast.makeText(getContext(), "Scan canceled by the user", Toast.LENGTH_SHORT).show();
-            })
+                    }).setNegativeButton("Cancel", (dialog, which) -> Toast.makeText(getContext(), "Scan canceled by the user", Toast.LENGTH_SHORT).show())
                     .setTitle("Enter a barcode:")
                     .create()
                     .show();
