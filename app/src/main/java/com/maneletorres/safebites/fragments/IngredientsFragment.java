@@ -19,12 +19,14 @@ public class IngredientsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ingredients, container, false);
 
+        TextView ingredientsTextView = view.findViewById(R.id.ingredients_textView);
+
         Bundle extras = getArguments();
         if (extras != null) {
             String ingredients = extras.getString(INGREDIENTS);
-
-            TextView ingredientsTextView = view.findViewById(R.id.ingredients_textView);
-            ingredientsTextView.setText(ingredients);
+            if (ingredients != null && !ingredients.equals("-")) {
+                ingredientsTextView.setText(ingredients);
+            }
         }
 
         return view;
