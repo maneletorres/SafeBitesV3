@@ -86,47 +86,11 @@ public class NutrientsComparisonFragment extends Fragment {
             Product mProductB = extras.getParcelable(PRODUCT_B);
 
             // Initialization of the components:
-            ImageView product_A_image = view.findViewById(R.id.product_A_image);
-            ImageView product_B_image = view.findViewById(R.id.product_B_image);
+            formatProductImage(view.findViewById(R.id.product_A_image), Objects.requireNonNull(mProductA).getImage_resource());
+            formatProductName(view.findViewById(R.id.product_A_name), mProductA.getName());
 
-            Glide.with(this)
-                    .load(Objects.requireNonNull(mProductA).getImage_resource())
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            product_A_image.setImageResource(R.drawable.no_image_available);
-                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
-                            return false;
-                        }
-                    }).into(product_A_image);
-
-            Glide.with(this)
-                    .load(Objects.requireNonNull(mProductB).getImage_resource())
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            product_B_image.setImageResource(R.drawable.no_image_available);
-                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
-                            return false;
-                        }
-                    }).into(product_B_image);
-
-            TextView product_A_name = view.findViewById(R.id.product_A_name);
-            product_A_name.setText(mProductA.getName());
-            TextView product_B_name = view.findViewById(R.id.product_B_name);
-            product_B_name.setText(mProductB.getName());
+            formatProductImage(view.findViewById(R.id.product_B_image), Objects.requireNonNull(mProductB).getImage_resource());
+            formatProductName(view.findViewById(R.id.product_B_name), mProductB.getName());
 
             List<NutrientComparison> simplifiedNutrients = createSimplifiedNutrientObjects(mProductA.getNutrients(), mProductB.getNutrients());
             NutrientComparisonAdapter mSimplifiedNutrientAdapter = new NutrientComparisonAdapter(simplifiedNutrients);
@@ -135,5 +99,37 @@ public class NutrientsComparisonFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private void formatProductImage(ImageView productImageView, String productImageResource) {
+        if (productImageResource.equals("-")) {
+            productImageView.setImageResource(R.drawable.no_image_available);
+        } else {
+            Glide.with(this)
+                    .load(productImageResource)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            productImageView.setImageResource(R.drawable.no_image_available);
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(productImageView);
+        }
+    }
+
+    private void formatProductName(TextView productTextView, String productName) {
+        if (productName.length() > 15) {
+            productTextView.setText(productName.substring(0, 15));
+        } else {
+            productTextView.setText(productName);
+        }
     }
 }
