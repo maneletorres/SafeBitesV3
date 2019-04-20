@@ -9,11 +9,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            switch(extras.getInt(TOAST_MESSAGE)){
+            switch (extras.getInt(TOAST_MESSAGE)) {
                 case 0:
                     Toast.makeText(this, "User " + sUser.getDisplayName() + " has been registered in SafeBites!", Toast.LENGTH_SHORT).show();
                     break;
@@ -108,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.nav_home:
                 startActivity(new Intent(this, MainActivity.class));
+                finish();
                 break;
             case R.id.nav_log_out:
                 AuthUI.getInstance()
@@ -115,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .addOnCompleteListener(task -> {
                             // User is now signed out:
                             Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
                         });
@@ -125,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
                 break;
             case R.id.nav_share:
-                String message = getResources().getString(R.string.email_content) + "\n" +
-                        getResources().getString(R.string.email_url); // App name in Play Store.
+                String message = getResources().getString(R.string.accompanying_message) + "\n" +
+                        getResources().getString(R.string.github_url); // App name in Play Store.
                 intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, message);
