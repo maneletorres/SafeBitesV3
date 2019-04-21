@@ -21,21 +21,27 @@ import com.google.zxing.integration.android.IntentResult;
 import com.maneletorres.safebites.CaptureActivityPortrait;
 import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.api.ProductApi;
+import com.maneletorres.safebites.api.ProductResponse;
+import com.maneletorres.safebites.api.ProductService;
 import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.utils.AsyncResponse;
-import com.maneletorres.safebites.utils.JsonTask;
+import com.maneletorres.safebites.entities.ProductNotFormatted;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
-import static com.maneletorres.safebites.utils.Utils.HEADER_SPECIFIC_PRODUCT_URL;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN;
-import static com.maneletorres.safebites.utils.Utils.TAIL_SPECIFIC_PRODUCT_URL;
+import static com.maneletorres.safebites.utils.Utils.formatProduct;
 
-public class ScanFragment extends Fragment implements View.OnClickListener, AsyncResponse {
+public class ScanFragment extends Fragment implements View.OnClickListener {
     private LinearLayout mButtonsLinearLayout;
     private ProgressBar mScanProgressBar;
     private TextView mScanTextView;
+    private ProductService mProductService;
 
     @Nullable
     @Override
@@ -52,6 +58,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Asyn
 
         // OnClickListener configuration on the button to barcode manual introduction:
         view.findViewById(R.id.barcode_manual_introduction_button).setOnClickListener(this);
+
+        // Initialization of the product service:
+        mProductService = ProductApi.getClient().create(ProductService.class);
 
         return view;
     }
@@ -117,30 +126,39 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Asyn
         }
     }
 
-    @Override
-    public void processFinish(Product output) {
-        if (output != null) {
-            Intent intent = new Intent(getContext(), ProductActivity.class);
-            intent.putExtra(PRODUCT, output);
-            startActivity(intent);
-        } else {
-            Toast.makeText(getContext(), "Product not found", Toast.LENGTH_SHORT).show();
-        }
-
-        mScanProgressBar.setVisibility(View.GONE);
-        mScanTextView.setVisibility(View.GONE);
-        mButtonsLinearLayout.setVisibility(View.VISIBLE);
-    }
-
     private void startScan(String scanResult) {
-        String queryUrl = HEADER_SPECIFIC_PRODUCT_URL + scanResult + TAIL_SPECIFIC_PRODUCT_URL;
-
         mButtonsLinearLayout.setVisibility(View.GONE);
         mScanProgressBar.setVisibility(View.VISIBLE);
         mScanTextView.setVisibility(View.VISIBLE);
 
-        JsonTask jsonTask = new JsonTask();
-        jsonTask.delegate = this;
-        jsonTask.execute(queryUrl);
+        callProductApi(scanResult);
+    }
+
+    private void callProductApi(String scanResult) {
+        mProductService.getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
+                assert response.body() != null;
+                ProductNotFormatted product = response.body().getProduct();
+                Product p = formatProduct(product);
+
+                if (p != null) {
+                    Intent intent = new Intent(getContext(), ProductActivity.class);
+                    intent.putExtra(PRODUCT, p);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(), "Product not found", Toast.LENGTH_SHORT).show();
+                }
+
+                mScanProgressBar.setVisibility(View.GONE);
+                mScanTextView.setVisibility(View.GONE);
+                mButtonsLinearLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ProductResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
