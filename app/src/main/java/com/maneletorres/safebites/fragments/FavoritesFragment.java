@@ -30,7 +30,7 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
         mEmptyTextView = view.findViewById(R.id.empty_textView);
         mFavoriteProductsRecyclerView = view.findViewById(R.id.favorite_products_recycler_view);
 
-        // Product loading:
+        // Loading of the products:
         prepareProductsLoading();
 
         return view;
