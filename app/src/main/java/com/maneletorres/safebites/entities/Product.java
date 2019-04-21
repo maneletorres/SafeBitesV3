@@ -2,9 +2,7 @@ package com.maneletorres.safebites.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -24,30 +22,17 @@ public class Product implements Parcelable {
     /**
      * UPC of the product.
      */
-    @SerializedName("code")
-    @Expose
     private String upc;
 
     /**
      * Name of the product.
      */
-    @SerializedName("product_name")
-    @Expose
     private String name;
 
     /**
      * Image resource of the product.
      */
-    @SerializedName("image_small_url")
-    @Expose
     private String image_resource;
-
-    /**
-     * Nutrients of the product (Object format).
-     */
-    @SerializedName("nutriments")
-    @Expose
-    private Object nutrientsObject;
 
     /**
      * Nutrients of the product.
@@ -57,22 +42,16 @@ public class Product implements Parcelable {
     /**
      * Ingredients of the product.
      */
-    @SerializedName("ingredients_text")
-    @Expose
     private String ingredients;
 
     /**
      * Serving quantity of the product.
      */
-    @SerializedName("serving_size")
-    @Expose
     private String serving_size;
 
     /**
-     *
+     * Allergens of the product.
      */
-    @SerializedName("allergens_hierarchy")
-    @Expose
     private ArrayList<String> allergens;
 
     public Product() {
@@ -119,6 +98,10 @@ public class Product implements Parcelable {
         return upc;
     }
 
+    public void setUpc(String upc) {
+        this.upc = upc;
+    }
+
     public String getName() {
         return name;
     }
@@ -135,16 +118,8 @@ public class Product implements Parcelable {
         this.image_resource = image_resource;
     }
 
-    public Object getNutrientsObject() {
-        return nutrientsObject;
-    }
-
     public ArrayList<Nutrient> getNutrients() {
         return nutrients;
-    }
-
-    public ArrayList<String> getAllergens() {
-        return allergens;
     }
 
     public void setNutrients(ArrayList<Nutrient> nutrients) {
@@ -159,10 +134,23 @@ public class Product implements Parcelable {
         this.ingredients = ingredients;
     }
 
-    public String getServingSize() {
+    public String getServing_size() {
         return serving_size;
     }
 
+    public void setServing_size(String serving_size) {
+        this.serving_size = serving_size;
+    }
+
+    public ArrayList<String> getAllergens() {
+        return allergens;
+    }
+
+    public void setAllergens(ArrayList<String> allergens) {
+        this.allergens = allergens;
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return name;
