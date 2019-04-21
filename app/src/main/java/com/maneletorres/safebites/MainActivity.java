@@ -29,7 +29,11 @@ import com.maneletorres.safebites.utils.Utils;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
+import static com.maneletorres.safebites.utils.Utils.sCompareFragment;
+import static com.maneletorres.safebites.utils.Utils.sFavoriteFragment;
+import static com.maneletorres.safebites.utils.Utils.sProducts;
 import static com.maneletorres.safebites.utils.Utils.sUser;
+import static com.maneletorres.safebites.utils.Utils.staticListenerLoad;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -38,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Load of static Listener on the FRDB:
-        //Utils.staticListenerLoad(this);
+        if (sProducts == null) {
+            staticListenerLoad();
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -147,9 +153,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ScanFragment(), "Scan");
-        adapter.addFragment(new CompareFragment(), "Compare");
         adapter.addFragment(new SearchFragment(), "Search");
-        adapter.addFragment(new FavoritesFragment(), "Favorites");
+        sCompareFragment = new CompareFragment();
+        adapter.addFragment(sCompareFragment, "Compare");
+        sFavoriteFragment = new FavoritesFragment();
+        adapter.addFragment(sFavoriteFragment, "Favorites");
         viewPager.setAdapter(adapter);
+    }
+
+    public interface MyInterface {
+        void updateProducts();
     }
 }
