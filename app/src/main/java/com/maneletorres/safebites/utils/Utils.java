@@ -2,26 +2,24 @@ package com.maneletorres.safebites.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
-import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.maneletorres.safebites.AuthActivity;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.maneletorres.safebites.entities.Nutrient;
 import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.entities.ProductNotFormatted;
 import com.maneletorres.safebites.entities.User;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.maneletorres.safebites.fragments.CompareFragment;
+import com.maneletorres.safebites.fragments.FavoritesFragment;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -31,8 +29,8 @@ import java.util.Collections;
 import java.util.Locale;
 
 public class Utils {
-    public static final String CLASS_NAME = "CLASS_NAME";
-    public static final String TOAST_MESSAGE = "TOAST_MESSAGE";
+    public static final String CLASS_NAME = "com.maneletorres.safebites.extras.CLASS_NAME";
+    public static final String TOAST_MESSAGE = "com.maneletorres.safebites.extras.TOAST_MESSAGE";
     public static final String PRODUCT = "com.maneletorres.safebites.extras.PRODUCT";
     public static final String PRODUCT_A = "com.maneletorres.safebites.extras.PRODUCT_A";
     public static final String PRODUCT_B = "com.maneletorres.safebites.extras.PRODUCT_B";
@@ -41,63 +39,25 @@ public class Utils {
     public static final String INGREDIENTS_B = "com.maneletorres.safebites.extras.INGREDIENTS_B";
     public static final String IMAGE_RESOURCE_A = "com.maneletorres.safebites.extras.IMAGE_RESOURCE_A";
     public static final String IMAGE_RESOURCE_B = "com.maneletorres.safebites.extras.IMAGE_RESOURCE_B";
-    public static final String HEADER_SPECIFIC_PRODUCT_URL = "https://world.openfoodfacts.org/api/v0/product/";
-    public static final String TAIL_SPECIFIC_PRODUCT_URL = ".json";
     public static final int RC_SCAN = 0x0000b90f;
     public static final int RC_SCAN_OPTION_1_FIRST_EXECUTION = 11;
     public static final int RC_SCAN_OPTION_1_SECOND_EXECUTION = 12;
     public static final int RC_SCAN_OPTION_2 = 2;
+
+    // Static user variables:
     public static User sUser;
     public static String sUID;
+    public static ArrayList<Product> sProducts;
+    public static CompareFragment sCompareFragment;
+    public static FavoritesFragment sFavoriteFragment;
 
-    static Product extractJSONNutrients(JSONObject currentProduct, JSONObject JSONNutrients) {
-        Product product = null;
-        try {
-            String[] product_elements = {"code", "product_name", "image_small_url", "ingredients_text", "serving_quantity", "allergens_hierarchy", "traces_hierarchy"};
-            ArrayList<String> product_elements_result = new ArrayList<>();
-            ArrayList<String> product_allergens = new ArrayList<>();
-
-            for (String product_element : product_elements) {
-                String element_name = "";
-                if (currentProduct.has(product_element)) {
-                    if (product_element.equals("allergens_hierarchy") || product_element.equals("traces_hierarchy")) {
-                        product_allergens = createAllergens(product_element);
-                    } else {
-                        element_name = currentProduct.getString(product_element);
-                        if (element_name == null || element_name.equals("") || element_name.equals("?")) {
-                            element_name = "?";
-                        }
-                    }
-                }
-                product_elements_result.add(element_name);
-            }
-
-            ArrayList<Nutrient> product_nutrients = new ArrayList<>();
-
-            createNutrients(product_nutrients, JSONNutrients);
-            product = new Product(
-                    product_elements_result.get(0),
-                    product_elements_result.get(1),
-                    product_elements_result.get(2),
-                    product_nutrients,
-                    product_elements_result.get(3),
-                    product_elements_result.get(4),
-                    product_allergens
-            );
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
-
-        return product;
-    }
-
-    public static void createNutrients(ArrayList<Nutrient> nutrients, JSONObject JSONNutrients) {
+    public static Product formatProduct(ProductNotFormatted product) {
         try {
             String[] nutrients_name = {
                     // Ordered nutrients:
                     "Energy", "Fat", "Saturated fat", "Monounsaturated fat", "Polyunsaturated fat",
                     "Carbohydrate", "Sugars", "Polyols", "Starch", "Fiber",
-                    "Protein", "Salt", "Vitamin A", "Vitamin D", "Vitamin E",
+                    "Proteins", "Salt", "Vitamin A", "Vitamin D", "Vitamin E",
                     "Vitamin K", "Vitamin C", "Vitamin B1", "Vitamin B2", "Vitamin B3",
                     "Vitamin B6", "Vitamin B9", "Vitamin B12", "Biotin", "Pantothenic acid",
                     "Potassium", "Chloride", "Calcium", "Phosphorus", "Magnesium",
@@ -139,7 +99,7 @@ public class Utils {
                     "linoleic-acid_value", "arachidonic-acid_value", "gamma-linolenic-acid_value",
                     "dihomo-gamma-linolenic-acid_value", "omega-9-fat_value", "oleic-acid_value", "elaidic-acid_value",
                     "gondoic-acid_value", "mead-acid_value", "erucic-acid_value", "nervonic-acid_value", "trans-fat_value",
-                    "cholesterol_value", "alcohol_value ", "silica_value", "bicarbonate_value",
+                    "cholesterol_value", "alcohol_value", "silica_value", "bicarbonate_value",
                     "caffeine_value", "taurine_value", "ph_value"
             };
 
@@ -165,7 +125,7 @@ public class Utils {
                     "linoleic-acid_serving", "arachidonic-acid_serving", "gamma-linolenic-acid_serving",
                     "dihomo-gamma-linolenic-acid_serving", "omega-9-fat_serving", "oleic-acid_serving", "elaidic-acid_serving",
                     "gondoic-acid_serving", "mead-acid_serving", "erucic-acid_serving", "nervonic-acid_serving", "trans-fat_serving",
-                    "cholesterol_serving", "alcohol_serving ", "silica_serving", "bicarbonate_serving", "caffeine_serving", "taurine_serving", "ph_serving"};
+                    "cholesterol_serving", "alcohol_serving", "silica_serving", "bicarbonate_serving", "caffeine_serving", "taurine_serving", "ph_serving"};
 
             String[] JSONElements_unit = {
                     // Ordered nutrients:
@@ -189,87 +149,167 @@ public class Utils {
                     "linoleic-acid_unit", "arachidonic-acid_unit", "gamma-linolenic-acid_unit",
                     "dihomo-gamma-linolenic-acid_unit", "omega-9-fat_unit", "oleic-acid_unit", "elaidic-acid_unit",
                     "gondoic-acid_unit", "mead-acid_unit", "erucic-acid_unit", "nervonic-acid_unit", "trans-fat_unit",
-                    "cholesterol_unit", "alcohol_unit ", "silica_unit", "bicarbonate_unit", "caffeine_unit", "taurine_unit", "ph_unit"};
+                    "cholesterol_unit", "alcohol_unit", "silica_unit", "bicarbonate_unit", "caffeine_unit", "taurine_unit", "ph_unit"};
 
-            // 3 decimals formatter:
+            // Default decimal separator modifier:
             DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
             otherSymbols.setDecimalSeparator('.');
+
+            // 3 decimals formatter:
             DecimalFormat threeDecimalsFormat = new DecimalFormat("#.###", otherSymbols);
             threeDecimalsFormat.setRoundingMode(RoundingMode.CEILING);
 
-            // 0 decimals formatter:
-            DecimalFormat df = new DecimalFormat("#");
+            // 1 decimal formatter:
+            DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
             df.setRoundingMode(RoundingMode.CEILING);
 
+            // Section I - Creation of nutrients:
+            ArrayList<Nutrient> nutrients = new ArrayList<>();
+
+            JsonObject nutrimentsJson = product.getNutriments();
             for (int i = 0; i < nutrients_name.length; i++) {
-                try {
-                    // Nutrient per 100g:
-                    String current_nutrient_per100g;
-                    if (JSONNutrients.has(JSONElements_100g[i])) {
-                        current_nutrient_per100g = JSONNutrients.getString(JSONElements_100g[i]);
-                        if (current_nutrient_per100g.length() == 0) {
-                            continue;
-                        } else {
-                            current_nutrient_per100g = threeDecimalsFormat.format(Double.parseDouble(current_nutrient_per100g));
-                        }
-                    } else {
+                // Nutrient per 100g:
+                String current_nutrient_per100g;
+                JsonElement jsonElement1 = nutrimentsJson.get(JSONElements_100g[i]);
+                if (jsonElement1 != null) {
+                    current_nutrient_per100g = formatChain(jsonElement1.toString());
+                    if (current_nutrient_per100g.length() == 0) {
                         continue;
+                    } else {
+                        current_nutrient_per100g = threeDecimalsFormat.format(Double.parseDouble(current_nutrient_per100g));
                     }
+                } else {
+                    continue;
+                }
 
-                    // Nutrient unit:
-                    String current_nutrient_unit = "";
-                    if (JSONNutrients.has(JSONElements_unit[i])) {
-                        current_nutrient_unit = JSONNutrients.getString(JSONElements_unit[i]);
-                        if (current_nutrient_unit.length() > 0 && i == 0) {
-                            if (current_nutrient_unit.toUpperCase().equals("KCAL")) {
-                                current_nutrient_per100g = df.format(Double.parseDouble(current_nutrient_per100g) * 4.184) + " kj / " + current_nutrient_per100g;
-                                current_nutrient_unit = current_nutrient_unit.toLowerCase();
-                            } else if (current_nutrient_unit.toUpperCase().equals("KJ")) {
-                                current_nutrient_per100g = current_nutrient_per100g + " kJ / " + df.format(Double.parseDouble(current_nutrient_per100g) / 4.184);
-                                current_nutrient_unit = " kcal";
-                            }
+                // Nutrient unit:
+                String current_nutrient_unit = "";
+                String aux = "";
+                JsonElement jsonElement2 = nutrimentsJson.get(JSONElements_unit[i]);
+                if (jsonElement2 != null) {
+                    current_nutrient_unit = formatChain(jsonElement2.toString());
+                    if (current_nutrient_unit.length() > 0 && i == 0) {
+                        aux = current_nutrient_unit;
+                        if (current_nutrient_unit.toUpperCase().equals("KCAL")) {
+                            current_nutrient_per100g = df.format(Double.parseDouble(current_nutrient_per100g) * 4.184) + " kj / " + df.format(Double.parseDouble(current_nutrient_per100g));
+                            current_nutrient_unit = current_nutrient_unit.toLowerCase();
+                        } else if (current_nutrient_unit.toUpperCase().equals("KJ")) {
+                            current_nutrient_per100g = df.format(Double.parseDouble(current_nutrient_per100g)) + " kJ / " + df.format(Double.parseDouble(current_nutrient_per100g) / 4.184);
+                            current_nutrient_unit = " kcal";
                         }
                     }
+                }
 
-                    // Nutrient per serving:
-                    int multiplier = 1;
-                    switch (current_nutrient_unit) {
-                        case "mg":
-                            multiplier = 1000;
-                            break;
-                        case "µg":
-                            multiplier = 1000000;
-                            break;
-                        default:
-                            break;
-                    }
+                // Nutrient per serving:
+                int multiplier = 1;
+                switch (current_nutrient_unit) {
+                    case "mg":
+                        multiplier = 1000;
+                        break;
+                    case "µg":
+                        multiplier = 1000000;
+                        break;
+                    default:
+                        break;
+                }
 
-                    String current_nutrient_per_portion;
-                    if (JSONNutrients.has(JSONElements_portion[i])) {
-                        current_nutrient_per_portion = JSONNutrients.getString(JSONElements_portion[i]);
-                        if (current_nutrient_per_portion.length() == 0) {
-                            current_nutrient_per_portion = "-";
+                String current_nutrient_per_portion;
+                JsonElement jsonElement3 = nutrimentsJson.get(JSONElements_portion[i]);
+                if (jsonElement3 != null) {
+                    current_nutrient_per_portion = formatChain(jsonElement3.toString());
+                    if (current_nutrient_per_portion.length() == 0) {
+                        current_nutrient_per_portion = "-";
+                    } else {
+                        if (i == 0) {
+                            if (aux.toUpperCase().equals("KCAL")) {
+                                current_nutrient_per_portion = df.format(Double.parseDouble(current_nutrient_per_portion) * 4.184 * multiplier) + " kj / " + df.format(Double.parseDouble(current_nutrient_per_portion));
+                            } else if (aux.toUpperCase().equals("KJ")) {
+                                current_nutrient_per_portion = df.format(Double.parseDouble(current_nutrient_per_portion)) + " kJ / " + df.format((Double.parseDouble(current_nutrient_per_portion) / 4.184) * multiplier);
+                            }
                         } else {
                             current_nutrient_per_portion = threeDecimalsFormat.format(Double.parseDouble(current_nutrient_per_portion) * multiplier);
                         }
-                    } else {
-                        current_nutrient_per_portion = "-";
                     }
-
-                    nutrients.add(new Nutrient(nutrients_name[i], current_nutrient_per100g, current_nutrient_per_portion, current_nutrient_unit));
-                } catch (NumberFormatException ex) {
-                    ex.getMessage();
+                } else {
+                    current_nutrient_per_portion = "-";
                 }
+
+                nutrients.add(new Nutrient(nutrients_name[i], current_nutrient_per100g, current_nutrient_per_portion, current_nutrient_unit));
             }
-        } catch (JSONException ex) {
-            ex.printStackTrace();
+
+            // Section II - Checking product attributes:
+            String name = product.getProduct_name();
+            if (name == null || name.length() == 0 || name.equals("?")) {
+                name = "-";
+            }
+
+            String upc = product.getCode();
+            if (upc == null || upc.length() == 0 || upc.equals("?")) {
+                upc = "-";
+            }
+
+            String image_resource = product.getImage_small_url();
+            if (image_resource == null || image_resource.length() == 0 || image_resource.equals("?")) {
+                image_resource = "-";
+            }
+
+            String ingredients = product.getIngredients_text();
+            if (ingredients == null || ingredients.length() == 0 || ingredients.equals("?")) {
+                ingredients = "-";
+            }
+
+            String serving_size = product.getServing_size();
+            if (serving_size == null || serving_size.length() == 0 || serving_size.equals("?")) {
+                serving_size = "-";
+            }
+
+            // Section III - Joint creation of allergens and traces:
+            ArrayList<String> allergensAndTraces = new ArrayList<>();
+
+            JsonArray allergens = product.getAllergens_hierarchy();
+            JsonArray traces = product.getTraces_hierarchy();
+            if (allergens.size() > 0 && traces.size() > 0) {
+                allergens.addAll(traces);
+            }
+
+            if (allergens.size() > 0) {
+                allergensAndTraces = allergensJointCreation(allergens.toString().substring(1, allergens.toString().length() - 1));
+            } else if (traces.size() > 0) {
+                allergensAndTraces = allergensJointCreation(traces.toString().substring(1, traces.toString().length() - 1));
+            }
+
+            return new Product(upc, name, image_resource, nutrients, ingredients, serving_size, allergensAndTraces);
+        } catch (Exception ex) {
+            return null;
         }
     }
 
-    private static ArrayList<String> createAllergens(String allergens) {
+    private static String formatChain(String chain) {
+        String result = chain;
+        if (chain.charAt(0) == '"') {
+            String aux = chain.substring(1);
+            char fin = aux.charAt(aux.length() - 1);
+            if (fin == '"') {
+                result = aux.substring(0, aux.length() - 1);
+            } else {
+                result = aux;
+            }
+        }
+
+        return result;
+    }
+
+    private static ArrayList<String> allergensJointCreation(String allergens) {
         ArrayList<String> arrayList = new ArrayList<>();
         String[] allergensSplitted = allergens.split(",");
-        Collections.addAll(arrayList, allergensSplitted);
+        String[] auxSplitted = new String[allergensSplitted.length];
+
+        for (int i = 0; i < allergensSplitted.length; i++) {
+            String auxAllergen = formatChain(allergensSplitted[i]);
+            auxSplitted[i] = auxAllergen;
+        }
+
+        Collections.addAll(arrayList, auxSplitted);
 
         return arrayList;
     }
@@ -283,13 +323,19 @@ public class Utils {
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
-    // Testing:
-    public static void staticListenerLoad(Activity activity) {
-        DatabaseReference sUserDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID);
-        sUserDatabaseReference.addChildEventListener(new ChildEventListener() {
+    public static void staticListenerLoad() {
+        sProducts = new ArrayList<>();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("products");
+        ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Product product = dataSnapshot.getValue(Product.class);
 
+                sProducts.add(product);
+
+                sCompareFragment.updateProducts();
+                sFavoriteFragment.updateProducts();
             }
 
             @Override
@@ -299,18 +345,19 @@ public class Utils {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.v("dataSnapshot", dataSnapshot.toString());
-                Log.v("onChildRemoved2", "onChildRemoved2");
+                Product product = dataSnapshot.getValue(Product.class);
 
-                FirebaseAuth.getInstance().getCurrentUser().delete();
-                AuthUI.getInstance()
-                        .signOut(activity)
-                        .addOnCompleteListener(task -> {
-                            // User is now signed out:
-                            Intent intent = new Intent(activity, AuthActivity.class);
-                            activity.startActivity(intent);
-                            activity.finish();
-                        });
+                boolean condition = false;
+                for (int i = 0; i < sProducts.size() && !condition; i++) {
+                    Product currentProduct = sProducts.get(i);
+                    if (currentProduct.getUpc().equals(product.getUpc())) {
+                        condition = true;
+                        sProducts.remove(currentProduct);
+                    }
+                }
+
+                sCompareFragment.updateProducts();
+                sFavoriteFragment.updateProducts();
             }
 
             @Override
@@ -322,6 +369,13 @@ public class Utils {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+        databaseReference.addChildEventListener(childEventListener);
+    }
+
+    // Testing:
+    public static void deleteUserInformation() {
+        sUser = null;
+        sUID = null;
     }
 }
