@@ -57,7 +57,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, A
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comparator, container, false);
+        View view = inflater.inflate(R.layout.fragment_compare, container, false);
 
         // Initialization of the components:
         mProductAContainer = view.findViewById(R.id.product_A_container);
