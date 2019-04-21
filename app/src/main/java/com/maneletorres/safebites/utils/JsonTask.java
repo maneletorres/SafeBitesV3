@@ -50,7 +50,9 @@ public class JsonTask extends AsyncTask<String, Integer, Product> {
                         if (currentProduct != null && currentProduct.length() > 0) {
                             JSONObject currentNutriments = currentProduct.getJSONObject("nutriments");
 
-                            product = Utils.extractJSONNutrients(currentProduct, currentNutriments);
+                            // Uncomment line if the JsonTask class is used.
+                            // To import: import static com.maneletorres.safebites.utils.Utils.createNutrients;
+                            //product = createProduct(currentProduct, currentNutriments);
                         }
                     }
                 } catch (JSONException e) {
