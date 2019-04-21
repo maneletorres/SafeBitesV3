@@ -240,14 +240,6 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
         }
     }
 
-    // IMPORTANT: this method can be executed before the onCreateView method is executed.
-    @Override
-    public void updateProducts() {
-        if (mFavoriteProducts != null) {
-            prepareProductsNamesLoading();
-        }
-    }
-
     private void prepareProductsNamesLoading() {
         mFavoriteProducts = sProducts;
         ArrayAdapter<Product> adapterFavoriteProducts = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_dropdown_item, mFavoriteProducts);
