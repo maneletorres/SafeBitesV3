@@ -10,18 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
-import com.maneletorres.safebites.entities.Product;
 
-import static com.maneletorres.safebites.utils.Utils.sUser;
+import static com.maneletorres.safebites.utils.Utils.sProducts;
 
-public class FavoritesFragment extends Fragment {
+public class FavoritesFragment extends Fragment implements MainActivity.MyInterface {
+    private RecyclerView mFavoriteProductsRecyclerView;
     private ProductAdapter mProductAdapter;
     private TextView mEmptyTextView;
 
@@ -30,53 +26,12 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        // Firebase Realtime Database components initialization:
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUser.getUser_id()).child("products");
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Product product = dataSnapshot.getValue(Product.class);
-                mProductAdapter.add(product);
-
-                checkProductsNumber();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Product product = dataSnapshot.getValue(Product.class);
-                if (product != null) {
-                    mProductAdapter.removeItem(product.getUpc());
-                }
-
-                checkProductsNumber();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // Linking the ChildEventListener to the DatabaseReference:
-        databaseReference.addChildEventListener(childEventListener);
-
         // Initialization of the components:
         mEmptyTextView = view.findViewById(R.id.empty_textView);
-        RecyclerView favoriteProductsRecyclerView = view.findViewById(R.id.favorite_products_recycler_view);
-        mProductAdapter = new ProductAdapter(getContext(), this);
-        favoriteProductsRecyclerView.setAdapter(mProductAdapter);
+        mFavoriteProductsRecyclerView = view.findViewById(R.id.favorite_products_recycler_view);
 
-        checkProductsNumber();
+        // Product loading:
+        prepareProductsLoading();
 
         return view;
     }
@@ -88,5 +43,20 @@ public class FavoritesFragment extends Fragment {
         } else {
             mEmptyTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    // IMPORTANT: this method can be executed before the onCreateView method is executed.
+    @Override
+    public void updateProducts() {
+        if (mProductAdapter != null) {
+            prepareProductsLoading();
+        }
+    }
+
+    private void prepareProductsLoading() {
+        mProductAdapter = new ProductAdapter(getContext(), this);
+        mProductAdapter.addAll(sProducts);
+        mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
+        checkProductsNumber();
     }
 }
