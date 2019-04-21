@@ -58,6 +58,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     private int mOption;
     private int request_code;
     private Product mProductA;
+    private ProductService mProductService;
 
     @Nullable
     @Override
@@ -103,6 +104,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
 
         // OnClickListener configuration on the button to scan products:
         mScanButton.setOnClickListener(this);
+
+        // Initialization of the product service:
+        mProductService = ProductApi.getClient().create(ProductService.class);
 
         return view;
     }
@@ -163,7 +167,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     }
 
     private void callProductApi(String scanResult) {
-        ProductApi.getProduct().create(ProductService.class).getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
+        mProductService.getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
                 ProductNotFormatted productNotFormatted = Objects.requireNonNull(response.body()).getProduct();
