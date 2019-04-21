@@ -23,25 +23,30 @@ import com.maneletorres.safebites.CaptureActivityPortrait;
 import com.maneletorres.safebites.ComparatorActivity;
 import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.api.ProductApi;
+import com.maneletorres.safebites.api.ProductResponse;
+import com.maneletorres.safebites.api.ProductService;
 import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.utils.AsyncResponse;
-import com.maneletorres.safebites.utils.JsonTask;
+import com.maneletorres.safebites.entities.ProductNotFormatted;
 
 import java.util.List;
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.app.Activity.RESULT_CANCELED;
 import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
-import static com.maneletorres.safebites.utils.Utils.HEADER_SPECIFIC_PRODUCT_URL;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_FIRST_EXECUTION;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_SECOND_EXECUTION;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_2;
-import static com.maneletorres.safebites.utils.Utils.TAIL_SPECIFIC_PRODUCT_URL;
+import static com.maneletorres.safebites.utils.Utils.formatProduct;
 import static com.maneletorres.safebites.utils.Utils.sProducts;
 
-public class CompareFragment extends Fragment implements View.OnClickListener, AsyncResponse, MainActivity.MyInterface {
+public class CompareFragment extends Fragment implements View.OnClickListener, MainActivity.MyInterface {
     private LinearLayout mProductAContainer;
     private LinearLayout mProductBContainer;
     private Button mScanButton;
@@ -149,52 +154,68 @@ public class CompareFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
+    // IMPORTANT: this method can be executed before the onCreateView method is executed.
     @Override
-    public void processFinish(Product output) {
-        mScanProgressBar.setVisibility(View.GONE);
-        mScanTextView.setVisibility(View.GONE);
-        mScanButton.setVisibility(View.VISIBLE);
-
-        if (output != null) {
-            switch (request_code) {
-                case RC_SCAN_OPTION_1_FIRST_EXECUTION:
-                    mProductA = output;
-
-                    startComparisonOption1(RC_SCAN_OPTION_1_SECOND_EXECUTION);
-                    break;
-                case RC_SCAN_OPTION_1_SECOND_EXECUTION:
-                    Product productB = output;
-
-                    Intent intent = new Intent(getContext(), ComparatorActivity.class);
-                    intent.putExtra(PRODUCT_A, mProductA);
-                    intent.putExtra(PRODUCT_B, productB);
-                    startActivity(intent);
-                    break;
-                case RC_SCAN_OPTION_2:
-                    mProductA = output;
-                    productB = (Product) mProductASpinner.getSelectedItem();
-
-                    intent = new Intent(getContext(), ComparatorActivity.class);
-                    intent.putExtra(PRODUCT_A, mProductA);
-                    intent.putExtra(PRODUCT_B, productB);
-                    startActivity(intent);
-                    break;
-            }
-        } else {
-            Toast.makeText(getContext(), "Product not found", Toast.LENGTH_SHORT).show();
+    public void updateProducts() {
+        if (mFavoriteProducts != null) {
+            prepareProductsNamesLoading();
         }
     }
 
-    private void startScan(String scanResult) {
-        String queryUrl = HEADER_SPECIFIC_PRODUCT_URL + scanResult + TAIL_SPECIFIC_PRODUCT_URL;
+    private void callProductApi(String scanResult) {
+        ProductApi.getProduct().create(ProductService.class).getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
+                ProductNotFormatted productNotFormatted = Objects.requireNonNull(response.body()).getProduct();
+                Product product = formatProduct(productNotFormatted);
 
+                mScanProgressBar.setVisibility(View.GONE);
+                mScanTextView.setVisibility(View.GONE);
+                mScanButton.setVisibility(View.VISIBLE);
+
+                if (product != null) {
+                    switch (request_code) {
+                        case RC_SCAN_OPTION_1_FIRST_EXECUTION:
+                            mProductA = product;
+
+                            startComparisonOption1(RC_SCAN_OPTION_1_SECOND_EXECUTION);
+                            break;
+                        case RC_SCAN_OPTION_1_SECOND_EXECUTION:
+                            Product productB = product;
+
+                            Intent intent = new Intent(getContext(), ComparatorActivity.class);
+                            intent.putExtra(PRODUCT_A, mProductA);
+                            intent.putExtra(PRODUCT_B, productB);
+                            startActivity(intent);
+                            break;
+                        case RC_SCAN_OPTION_2:
+                            mProductA = product;
+                            productB = (Product) mProductASpinner.getSelectedItem();
+
+                            intent = new Intent(getContext(), ComparatorActivity.class);
+                            intent.putExtra(PRODUCT_A, mProductA);
+                            intent.putExtra(PRODUCT_B, productB);
+                            startActivity(intent);
+                            break;
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Product not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ProductResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void startScan(String scanResult) {
         mScanButton.setVisibility(View.GONE);
         mScanProgressBar.setVisibility(View.VISIBLE);
         mScanTextView.setVisibility(View.VISIBLE);
 
-        JsonTask jsonTask = new JsonTask();
-        jsonTask.delegate = this;
-        jsonTask.execute(queryUrl);
+        callProductApi(scanResult);
     }
 
     private void startComparisonOption1(int requestCode) {
