@@ -22,6 +22,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:parentActivityName=".AuthActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -39,8 +40,7 @@
 
         <activity android:name=".CaptureActivityPortrait" />
 
-        <activity android:name=".AllergiesActivity"
-            />
+        <activity android:name=".PreferenceActivity" />
     </application>
 
 </manifest>
