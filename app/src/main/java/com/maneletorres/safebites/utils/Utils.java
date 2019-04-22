@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class Utils {
@@ -47,7 +49,7 @@ public class Utils {
     // Static user variables:
     public static User sUser;
     public static String sUID;
-    public static ArrayList<Product> sProducts;
+    //public static ArrayList<Product> sProducts;
     public static CompareFragment sCompareFragment;
     public static FavoritesFragment sFavoriteFragment;
 
@@ -324,15 +326,18 @@ public class Utils {
     }
 
     public static void staticListenerLoad() {
-        sProducts = new ArrayList<>();
+        //sProducts = new ArrayList<>();
+        sUser.setProducts(new ArrayList<>());
 
+        // Reference to the user's favorite products:
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("products");
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Product product = dataSnapshot.getValue(Product.class);
 
-                sProducts.add(product);
+                //sProducts.add(product);
+                sUser.addProduct(product);
 
                 sCompareFragment.updateProducts();
                 sFavoriteFragment.updateProducts();
@@ -348,11 +353,13 @@ public class Utils {
                 Product product = dataSnapshot.getValue(Product.class);
 
                 boolean condition = false;
-                for (int i = 0; i < sProducts.size() && !condition; i++) {
-                    Product currentProduct = sProducts.get(i);
+                ArrayList<Product> products = sUser.getProducts();
+                for (int i = 0; i < products.size() && !condition; i++) {
+                    Product currentProduct = products.get(i);
                     if (currentProduct.getUpc().equals(product.getUpc())) {
                         condition = true;
-                        sProducts.remove(currentProduct);
+                        //sProducts.remove(currentProduct);
+                        sUser.removeProduct(product);
                     }
                 }
 
@@ -371,6 +378,21 @@ public class Utils {
             }
         };
         databaseReference.addChildEventListener(childEventListener);
+
+        // Reference to the user's allergies:
+        DatabaseReference allergiesDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("allergies");
+        allergiesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HashMap<String, Boolean> userAllergens = (HashMap<String, Boolean>) dataSnapshot.getValue();
+                sUser.setAllergies(userAllergens);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     // Testing:

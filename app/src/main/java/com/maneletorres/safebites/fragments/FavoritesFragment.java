@@ -14,7 +14,7 @@ import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
 
-import static com.maneletorres.safebites.utils.Utils.sProducts;
+import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class FavoritesFragment extends Fragment implements MainActivity.MyInterface {
     private RecyclerView mFavoriteProductsRecyclerView;
@@ -55,7 +55,8 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
 
     private void prepareProductsLoading() {
         mProductAdapter = new ProductAdapter(getContext(), this);
-        mProductAdapter.addAll(sProducts);
+        //mProductAdapter.addAll(sProducts);
+        mProductAdapter.addAll(sUser.getProducts());
         mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
         checkProductsNumber();
     }

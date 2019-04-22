@@ -195,7 +195,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             sUser.setAllergies(allergies);
 
                             // Modification of the allergens of the current user in the FRDB:
-                            mUserDatabaseReference.setValue(sUser);
+                            //mUserDatabaseReference.setValue(sUser);
+                            mAllergiesDatabaseReference.setValue(allergies);
 
                             Intent intent = new Intent(PreferenceActivity.this, MainActivity.class);
                             if (callingActivityName.equals("AuthActivity")) {

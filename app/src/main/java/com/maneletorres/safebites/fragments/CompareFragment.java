@@ -44,7 +44,7 @@ import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_FIRST_EXEC
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_SECOND_EXECUTION;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_2;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
-import static com.maneletorres.safebites.utils.Utils.sProducts;
+import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class CompareFragment extends Fragment implements View.OnClickListener, MainActivity.MyInterface {
     private LinearLayout mProductAContainer;
@@ -245,7 +245,8 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     }
 
     private void prepareProductsNamesLoading() {
-        mFavoriteProducts = sProducts;
+        //mFavoriteProducts = sProducts;
+        mFavoriteProducts = sUser.getProducts();
         ArrayAdapter<Product> adapterFavoriteProducts = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_dropdown_item, mFavoriteProducts);
         adapterFavoriteProducts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProductASpinner.setAdapter(adapterFavoriteProducts);

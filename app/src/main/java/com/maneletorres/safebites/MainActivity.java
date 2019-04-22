@@ -31,7 +31,6 @@ import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 import static com.maneletorres.safebites.utils.Utils.sCompareFragment;
 import static com.maneletorres.safebites.utils.Utils.sFavoriteFragment;
-import static com.maneletorres.safebites.utils.Utils.sProducts;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 import static com.maneletorres.safebites.utils.Utils.staticListenerLoad;
 
@@ -42,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Load of static Listener on the FRDB:
-        if (sProducts == null) {
+        //if (sProduct == null){
+        if (sUser.getProducts() == null) {
             staticListenerLoad();
         }
 
