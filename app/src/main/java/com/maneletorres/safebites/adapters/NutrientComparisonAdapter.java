@@ -31,25 +31,26 @@ public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final SimpleNutrientViewHolder simpleNutrientViewHolder = (SimpleNutrientViewHolder) holder;
-        final NutrientComparison currentSimplifiedNutrient = mSimplifiedNutrients.get(position);
+        SimpleNutrientViewHolder simpleNutrientViewHolder = (SimpleNutrientViewHolder) holder;
+        NutrientComparison currentSimplifiedNutrient = mSimplifiedNutrients.get(position);
+
+        simpleNutrientViewHolder.itemView.setTag(currentSimplifiedNutrient);
+        simpleNutrientViewHolder.mName.setText(currentSimplifiedNutrient.getName());
 
         String productAQuantity = currentSimplifiedNutrient.getQuantityA();
         if (productAQuantity.equals("-")) {
-            simpleNutrientViewHolder.mProductANutrient.setText("- ".concat(currentSimplifiedNutrient.getUnit()));
+            simpleNutrientViewHolder.mProductANutrient.setText("-");
+
         } else {
             simpleNutrientViewHolder.mProductANutrient.setText(productAQuantity.concat(" " + currentSimplifiedNutrient.getUnit()));
         }
 
         String productBQuantity = currentSimplifiedNutrient.getQuantityB();
         if (productBQuantity.equals("-")) {
-            simpleNutrientViewHolder.mProductBNutrient.setText("- ".concat(" " + currentSimplifiedNutrient.getUnit()));
+            simpleNutrientViewHolder.mProductBNutrient.setText("-");
         } else {
             simpleNutrientViewHolder.mProductBNutrient.setText(productBQuantity.concat(" " + currentSimplifiedNutrient.getUnit()));
         }
-
-        simpleNutrientViewHolder.itemView.setTag(currentSimplifiedNutrient);
-        simpleNutrientViewHolder.mName.setText(currentSimplifiedNutrient.getName());
     }
 
     @Override
