@@ -2,17 +2,17 @@ package com.maneletorres.safebites.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.entities.ProductNotFormatted;
 
 import java.util.List;
 
-public class ResponseBody {
+public class ProductsResponse {
     /**
      * Product list in JSON format.
      */
     @SerializedName("products")
     @Expose
-    private List<Product> products;
+    private List<ProductNotFormatted> products;
 
     /**
      * Number of products per page.
@@ -35,7 +35,7 @@ public class ResponseBody {
     @Expose
     private int page;
 
-    public List<Product> getProducts() {
+    public List<ProductNotFormatted> getProducts() {
         return products;
     }
 
