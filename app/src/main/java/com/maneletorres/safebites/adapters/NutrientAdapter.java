@@ -33,12 +33,15 @@ public class NutrientAdapter extends Adapter<ViewHolder> {
 
         nutrientViewHolder.itemView.setTag(currentNutrient);
         nutrientViewHolder.mName.setText(currentNutrient.getName());
-        nutrientViewHolder.mPer100g.setText(currentNutrient.getPer_100g().concat(" " + currentNutrient.getUnit()));
 
-        if (currentNutrient.getPer_serving().equals("-")) {
-            nutrientViewHolder.mPerServing.setText(currentNutrient.getPer_serving());
+        String unit = currentNutrient.getUnit();
+        nutrientViewHolder.mPer100g.setText(currentNutrient.getPer_100g().concat(" " + unit));
+
+        String per_serving = currentNutrient.getPer_serving();
+        if (per_serving.equals("-")) {
+            nutrientViewHolder.mPerServing.setText(per_serving);
         } else {
-            nutrientViewHolder.mPerServing.setText(currentNutrient.getPer_serving().concat(" " + currentNutrient.getUnit()));
+            nutrientViewHolder.mPerServing.setText(per_serving.concat(" " + unit));
         }
     }
 
