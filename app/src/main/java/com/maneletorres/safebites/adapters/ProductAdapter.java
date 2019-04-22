@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.maneletorres.safebites.AllergiesActivity;
-import com.maneletorres.safebites.AuthActivity;
-import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Product;
@@ -39,15 +35,14 @@ import com.maneletorres.safebites.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 
 public class ProductAdapter extends Adapter<ViewHolder> {
-
     private static final int ITEM = 0;
     private static final int LOADING = 1;
 
-    // Firebase Realtime Database components:
-    private DatabaseReference mUsersDatabaseReference;
+    private boolean isLoadingAdded = false;
 
     // Product adapter components:
     private Context mContext;
@@ -59,9 +54,6 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         this.mProducts = new ArrayList<>();
         this.mContext = context;
         this.mCurrentFragment = fragment;
-
-        // Initialization of the reference to Firebase Realtime Database users:
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference("users");
     }
 
     @NonNull
@@ -85,7 +77,12 @@ public class ProductAdapter extends Adapter<ViewHolder> {
     @NonNull
     private ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         View view = inflater.inflate(R.layout.item_product, parent, false);
-        return new ProductViewHolder(view, parent.getContext());
+        return new ProductViewHolder(view);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == mProducts.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
     @Override
@@ -97,8 +94,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                 mProductViewHolder = (ProductViewHolder) holder;
 
                 String image_resource = currentProduct.getImage_resource();
-                if (image_resource == null || image_resource.equals("") || image_resource.equals("?")) {
-                    currentProduct.setImage_resource("?");
+                if (image_resource.equals("-")) {
                     mProductViewHolder.mImageResource.setImageResource(R.drawable.no_image_available);
                 } else {
                     Glide.with(mContext)
@@ -119,21 +115,15 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                             }).into(mProductViewHolder.mImageResource);
                 }
 
-                String ingredients = currentProduct.getIngredients();
-                if (ingredients.equals("?")) {
-                    currentProduct.setIngredients("\n" + "Ingredients not registered.");
-                }
-
                 mProductViewHolder.itemView.setTag(currentProduct);
                 mProductViewHolder.mName.setText(currentProduct.getName());
                 mProductViewHolder.mUpc.setText(currentProduct.getUpc());
 
                 // Checking the fragment that is treated for the activation of 'mFavoriteCondition'
                 // button:
-                if(mCurrentFragment instanceof FavoritesFragment){
+                if (mCurrentFragment instanceof FavoritesFragment) {
                     mProductViewHolder.mFavoriteCondition.setVisibility(View.VISIBLE);
                 }
-
                 break;
             case LOADING:
                 break;
@@ -145,30 +135,37 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         return mProducts == null ? 0 : mProducts.size();
     }
 
-    public void add(Product p) {
+    private void add(Product p) {
         mProducts.add(p);
         notifyItemInserted(mProducts.size() - 1);
     }
 
     public void addAll(List<Product> moveProducts) {
-        for (Product product : moveProducts) {
-            add(product);
+        if (moveProducts != null) {
+            for (Product product : moveProducts) {
+                add(product);
+            }
         }
     }
 
-    public void removeItem(String upc) {
-        boolean condition = false;
-        Product product = null;
-        for (int i = 0; i < getItemCount() && !condition; i++) {
-            product = mProducts.get(i);
-            if (product.getUpc().equals(upc)) {
-                condition = true;
-            }
-        }
+    private Product getItem(int position) {
+        return mProducts.get(position);
+    }
+
+    public void addLoadingFooter() {
+        isLoadingAdded = true;
+        add(new Product());
+    }
+
+    public void removeLoadingFooter() {
+        isLoadingAdded = false;
+
+        int position = mProducts.size() - 1;
+        Product product = getItem(position);
 
         if (product != null) {
-            mProducts.remove(product);
-            notifyDataSetChanged();
+            mProducts.remove(position);
+            notifyItemRemoved(position);
         }
     }
 
@@ -178,10 +175,8 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         private ImageView mImageResource;
         private ImageButton mFavoriteCondition;
         private ProgressBar mProgressBar;
-        private Context mContext;
-        private DatabaseReference mCurrentUserDatabaseReference;
 
-        ProductViewHolder(View itemView, Context context) {
+        ProductViewHolder(View itemView) {
             super(itemView);
 
             mUpc = itemView.findViewById(R.id.product_extra_information);
@@ -189,15 +184,12 @@ public class ProductAdapter extends Adapter<ViewHolder> {
             mImageResource = itemView.findViewById(R.id.product_image);
             mFavoriteCondition = itemView.findViewById(R.id.favorite_condition_image_button);
             mProgressBar = itemView.findViewById(R.id.image_progress_bar);
-            mContext = context;
 
-            // Initialization of the reference to the current product of Firebase Realtime Database:
-            mCurrentUserDatabaseReference = mUsersDatabaseReference.child(Utils.sUser.getUser_id()).child("products");
-
-            // Item OnClickListener:
+            // OnClickListener configuration on the current product to access it:
             itemView.setOnClickListener(this);
 
-            // 'mFavoriteCondition' OnClickListener:
+            // OnClickListener configuration on the 'mFavoriteCondition' ImageButton to save/remove
+            // the current product:
             mFavoriteCondition.setOnClickListener(this);
         }
 
@@ -210,15 +202,15 @@ public class ProductAdapter extends Adapter<ViewHolder> {
             } else if (v.getId() == mFavoriteCondition.getId()) {
                 final Product currentProduct = mProducts.get(getAdapterPosition());
 
-                mCurrentUserDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                // Initialization of the reference to the products of FRDB:
+                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(Utils.sUID).child("products");
+                productsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         String upc = currentProduct.getUpc();
                         if (snapshot.hasChild(upc)) {
-                            mCurrentUserDatabaseReference.child(upc).removeValue();
-                        } /*else {
-                            mCurrentUserDatabaseReference.child(upc).setValue(currentProduct);
-                        }*/
+                            productsDatabaseReference.child(upc).removeValue();
+                        }
                     }
 
                     @Override
