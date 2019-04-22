@@ -45,7 +45,7 @@ public class Product implements Parcelable {
     private String ingredients;
 
     /**
-     * Serving quantity of the product.
+     * Serving size of the product.
      */
     private String serving_size;
 
