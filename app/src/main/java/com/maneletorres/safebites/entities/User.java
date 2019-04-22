@@ -13,7 +13,7 @@ public class User {
     public User(String email, String displayName) {
         this.email = email;
         this.displayName = displayName;
-        this.products = new ArrayList<>();
+        this.products = null;
         this.allergies = new HashMap<>();
     }
 
@@ -47,5 +47,34 @@ public class User {
 
     public void setAllergies(Map<String, Boolean> allergies) {
         this.allergies = allergies;
+    }
+
+    public void addProduct(Product product) {
+        int position = checkProduct(product);
+        if (position == -1) {
+            products.add(product);
+        }
+    }
+
+    public void removeProduct(Product product) {
+        int positionToDelete = checkProduct(product);
+        if (positionToDelete >= 0 && positionToDelete < products.size()) {
+            products.remove(positionToDelete);
+        }
+    }
+
+    private int checkProduct(Product product) {
+        boolean condition = false;
+        int position = -1;
+
+        for (int i = 0; i < products.size() && !condition; i++) {
+            Product currentProduct = products.get(i);
+            if (currentProduct.getUpc().equals(product.getUpc())) {
+                condition = true;
+                position = i;
+            }
+        }
+
+        return position;
     }
 }
