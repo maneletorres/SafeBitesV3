@@ -60,7 +60,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.barcode_manual_introduction_button).setOnClickListener(this);
 
         // Initialization of the product service:
-        mProductService = ProductApi.getClient().create(ProductService.class);
+        mProductService = ProductApi.getProduct().create(ProductService.class);
 
         return view;
     }
