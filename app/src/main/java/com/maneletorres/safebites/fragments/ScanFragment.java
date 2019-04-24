@@ -27,6 +27,8 @@ import com.maneletorres.safebites.api.ProductService;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.entities.ProductNotFormatted;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -138,8 +140,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         mProductService.getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
-                assert response.body() != null;
-                ProductNotFormatted product = response.body().getProduct();
+                ProductNotFormatted product = Objects.requireNonNull(response.body()).getProduct();
                 Product p = formatProduct(product);
 
                 if (p != null) {
