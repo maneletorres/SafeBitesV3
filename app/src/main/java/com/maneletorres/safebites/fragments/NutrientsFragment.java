@@ -1,13 +1,13 @@
 package com.maneletorres.safebites.fragments;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +15,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.maneletorres.safebites.AllergiesActivity;
-import com.maneletorres.safebites.AuthActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.NutrientAdapter;
 import com.maneletorres.safebites.entities.Product;
@@ -142,18 +144,15 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                             .into(image_nutrients);
                 }
 
-                name.setText(mProduct.getName());
-                upc.setText(mProduct.getUpc());
+            name.setText(mProduct.getName());
+            upc.setText(mProduct.getUpc());
 
-                String serving_quantity = mProduct.getServing_quantity();
-                if (serving_quantity != null) {
-                    if (serving_quantity.equals("") || serving_quantity.equals("0") || serving_quantity.equals("?")) {
-                        //header_per_serving.setVisibility(View.GONE);
-                    } else {
-                        header_per_serving.setText(serving_quantity.concat(" g"));
-                    }
-                }
+            String serving_size = mProduct.getServing_size();
+            if (serving_size.contains("ml")) {
+                header_per_100g.setText("100 ml");
             }
+
+            header_per_serving.setText(portionHeaderFormat(serving_size));
         }
 
         return view;
@@ -176,6 +175,29 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
                 mSaveOrDeleteFAB.setContentDescription("Delete ImageButton");
                 mProductExists = true;
+            }
+        }
+    }
+
+    private String portionHeaderFormat(String serving_size) {
+        if (serving_size.equals("-")) {
+            return "No portion";
+        } else {
+            String aux = serving_size.trim();
+            int delimiterPosition;
+
+            if (serving_size.contains(" ")) {
+                return aux;
+            } else {
+                if (aux.contains("g")) {
+                    delimiterPosition = aux.indexOf("g");
+                } else if (aux.contains("ml")) {
+                    delimiterPosition = aux.indexOf("m");
+                } else {
+                    return aux;
+                }
+
+                return aux.substring(0, delimiterPosition) + " " + aux.substring(delimiterPosition);
             }
         }
     }
