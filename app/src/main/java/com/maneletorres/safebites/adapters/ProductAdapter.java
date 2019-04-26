@@ -169,6 +169,10 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
+    public void removeAll() {
+        mProducts.clear();
+    }
+
     private class ProductViewHolder extends ViewHolder implements View.OnClickListener {
         private TextView mUpc;
         private TextView mName;
