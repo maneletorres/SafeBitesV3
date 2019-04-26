@@ -135,14 +135,28 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                     }
                 });
 
-                String image_resource = mProduct.getImage_resource();
-                if (image_resource == null || image_resource.equals("") || image_resource.equals("?")) {
-                    image_nutrients.setImageResource(R.drawable.no_image_available);
-                } else {
-                    Glide.with(Objects.requireNonNull(getActivity()))
-                            .load(mProduct.getImage_resource())
-                            .into(image_nutrients);
-                }
+            // Loading the information in the elements of the layout:
+            String image_resource = mProduct.getImage_resource();
+            if (image_resource.equals("-")) {
+                image_nutrients.setImageResource(R.drawable.no_image_available);
+            } else {
+                Glide.with(Objects.requireNonNull(getActivity()))
+                        .load(image_resource)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                image_nutrients.setImageResource(R.drawable.no_image_available);
+                                //mProgressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                //mProgressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+                        }).into(image_nutrients);
+            }
 
             name.setText(mProduct.getName());
             upc.setText(mProduct.getUpc());
