@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,18 +23,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
 import com.maneletorres.safebites.api.ProductApi;
 import com.maneletorres.safebites.api.ProductService;
-import com.maneletorres.safebites.api.ResponseBody;
-import com.maneletorres.safebites.entities.Nutrient;
+import com.maneletorres.safebites.api.ProductsResponse;
 import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.entities.ProductNotFormatted;
+import com.maneletorres.safebites.utils.PaginationScrollListener;
 import com.maneletorres.safebites.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,21 +41,49 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.maneletorres.safebites.utils.Utils.formatProduct;
+
+
 public class SearchFragment extends Fragment {
+    /**
+     * Number of the initial page.
+     */
+    private static final int PAGE_START = 1;
+
     // Components:
     private EditText mSearchEditText;
-    private RecyclerView mProductsRecyclerView;
     private TextView mEmptyTextView;
     private ProgressBar mProgressBar;
-    private TextView mProgressBarTextView;
+    //private TextView mProgressBarTextView;
     private MenuItem mSearchMenuItem;
     private MenuItem mCancelMenuItem;
+    private RecyclerView mProductsRecyclerView;
 
     // Product adapter:
     private ProductAdapter mProductAdapter;
 
     // REST API:
     private ProductService mProductService;
+
+    /**
+     * Number of the current page.
+     */
+    private int mCurrentPage = PAGE_START;
+
+    /**
+     * Total number of pages.
+     */
+    private int mTotalPages;
+
+    /**
+     * Last page condition.
+     */
+    private boolean mIsLastPage = false;
+
+    /**
+     * Load condition.
+     */
+    private boolean mIsLoading = false;
 
     @Nullable
     @Override
@@ -71,28 +96,52 @@ public class SearchFragment extends Fragment {
 
         // Initialization of the components:
         mProgressBar = view.findViewById(R.id.main_progress_bar);
-        mProgressBarTextView = view.findViewById(R.id.text_progress_bar);
+        //mProgressBarTextView = view.findViewById(R.id.text_progress_bar);
         mEmptyTextView = view.findViewById(R.id.empty_textView);
+
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
         mProductsRecyclerView = view.findViewById(R.id.product_recycler_view);
+        mProductsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mProductsRecyclerView.addOnScrollListener(new PaginationScrollListener(mLinearLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                mIsLoading = true;
+                mCurrentPage += 1;
+                loadNextPage();
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return mIsLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return mIsLoading;
+            }
+        });
+
         mSearchEditText = toolbar.findViewById(R.id.search_edit_text);
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
 
-                loadData();
+                reloadData();
+                loadFirstPage();
                 return true;
             }
             return false;
         });
 
         // Initialization of the empty product adapter:
-        mProductAdapter = new ProductAdapter(getContext(), this);
+        //mProductAdapter = new ProductAdapter(getContext(), this);
 
         // Linking the product adapter to the RecyclerView:
-        //mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
+        //mProductsRecyclerView.setAdapter(mProductAdapter);
 
         // Initialization of the product service:
         mProductService = ProductApi.getClient().create(ProductService.class);
+
         return view;
     }
 
@@ -127,79 +176,6 @@ public class SearchFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadData() {
-        // The EditText contains text:
-        if (mSearchEditText.getText().length() > 0) {
-            // The device has an Internet connection:
-            if (isConnected()) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBarTextView.setVisibility(View.VISIBLE);
-
-                // The product adapter is overwritten to reload the information:
-                mProductAdapter = new ProductAdapter(getContext(), this);
-
-                // Linking the product adapter to the RecyclerView:
-                mProductsRecyclerView.setAdapter(mProductAdapter);
-
-                // REST API is called:
-                Call<ResponseBody> callProductsApi = mProductService.getProducts(
-                        mSearchEditText.getText().toString(),
-                        1,
-                        "process",
-                        1,
-                        10,
-                        1);
-
-                callProductsApi.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        assert response.body() != null;
-                        List<Product> products = response.body().getProducts();
-                        if (products.isEmpty()) {
-                            mEmptyTextView.setText("Product not found");
-                            mEmptyTextView.setVisibility(View.VISIBLE);
-                        } else {
-                            mEmptyTextView.setVisibility(View.GONE);
-                            createJSONNutrients(products);
-
-                            mProductAdapter.addAll(products);
-                        }
-
-                        mProgressBar.setVisibility(View.GONE);
-                        mProgressBarTextView.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-            }
-        } else {
-            Toast.makeText(getActivity(), "You must enter a search.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void createJSONNutrients(List<Product> products) {
-        for (int i = 0; i < products.size(); i++) {
-            Object nutrientsObject = products.get(i).getNutrientsObject();
-
-            Gson gson = new Gson();
-            String nutrientsString = gson.toJson(nutrientsObject);
-
-            ArrayList<Nutrient> product_nutrients = new ArrayList<>();
-            try {
-                JSONObject JSONNutrients = new JSONObject(nutrientsString);
-
-                Utils.createNutrients(product_nutrients, JSONNutrients);
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-
-            products.get(i).setNutrients(product_nutrients);
-        }
-    }
-
     private boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -213,4 +189,132 @@ public class SearchFragment extends Fragment {
 
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
+
+    private void loadFirstPage() {
+        // Reload adapter:
+        mProductAdapter = new ProductAdapter(getContext(), this);
+        mProductsRecyclerView.setAdapter(mProductAdapter);
+
+        /*mProductAdapter.remove();
+        mProductAdapter.notifyDataSetChanged();*/
+
+        if (isConnected()) {
+            if (mSearchEditText != null && mSearchEditText.getText().length() > 0) {
+                //The ProgressBar becomes visible:
+                mProgressBar.setVisibility(View.VISIBLE);
+                //mProgressBarTextView.setVisibility(View.VISIBLE);
+
+                // This line of code is used so that the 'mSearchEditText' loses focus and the
+                // keyboard can be hidden properly.
+                //mProductsRecyclerView.requestFocus();
+
+                callProductsApi().enqueue(new Callback<ProductsResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
+                        List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
+                        if (productsNotFormatted.isEmpty()) {
+                            mProgressBar.setVisibility(View.GONE);
+                            //mProgressBarTextView.setVisibility(View.GONE);
+
+                            mEmptyTextView.setText("No products found");
+                            mEmptyTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            //createJSONNutrients(products);
+                            List<Product> products = new ArrayList<>();
+                            for (int i = 0; i < productsNotFormatted.size(); i++) {
+                                Product product = formatProduct(productsNotFormatted.get(i));
+                                products.add(product);
+                            }
+                            mProductAdapter.addAll(products);
+
+                            mProgressBar.setVisibility(View.GONE);
+                            // The RecyclerView 'mProductsRecyclerView' starts as GONE due to the
+                            // shock it causes with the ProgressBar if it is visible.
+                            //mProductsRecyclerView.setVisibility(View.VISIBLE);
+                            //mProductsRecyclerView.requestFocus();
+
+                            //mProgressBarTextView.setVisibility(View.GONE);
+                            mEmptyTextView.setVisibility(View.GONE);
+
+                            if (mCurrentPage < mTotalPages) mProductAdapter.addLoadingFooter();
+                            else mIsLastPage = true;
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ProductsResponse> call, @NonNull Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            } else {
+                Toast.makeText(getActivity(), "You must enter a search.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void loadNextPage() {
+        if (isConnected()) {
+            callProductsApi().enqueue(new Callback<ProductsResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
+                    mProductAdapter.removeLoadingFooter();
+                    mIsLoading = false;
+
+                    List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
+                    List<Product> products = new ArrayList<>();
+                    for (int i = 0; i < productsNotFormatted.size(); i++) {
+                        Product product = formatProduct(productsNotFormatted.get(i));
+                        products.add(product);
+                    }
+
+                    mProductAdapter.addAll(products);
+
+                    if (mCurrentPage != mTotalPages) mProductAdapter.addLoadingFooter();
+                    else mIsLastPage = true;
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ProductsResponse> call, @NonNull Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private void reloadData() {
+        mCurrentPage = PAGE_START;
+        mIsLoading = false;
+        mIsLastPage = false;
+    }
+
+    private List<ProductNotFormatted> fetchResults(Response<ProductsResponse> response) {
+        List<ProductNotFormatted> products = Objects.requireNonNull(response.body()).getProducts();
+        mTotalPages = response.body().getCount() / response.body().getPageSize() + 1;
+        return products;
+    }
+
+    private Call<ProductsResponse> callProductsApi() {
+        return mProductService.getProducts(
+                mSearchEditText.getText().toString(),
+                1,
+                "process",
+                1,
+                10,
+                mCurrentPage
+        );
+    }
+
+    // CODE FOR DEVICE'S ROTATION:
+    /*@Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Toast.makeText(getContext(), "onViewStateRestored", Toast.LENGTH_SHORT).show();
+        super.onViewStateRestored(savedInstanceState);
+
+        if (mProductAdapter != null && mProductAdapter.getItemCount() > 0) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBarTextView.setVisibility(View.VISIBLE);
+            reloadData();
+            loadFirstPage();
+        }
+    }*/
 }
