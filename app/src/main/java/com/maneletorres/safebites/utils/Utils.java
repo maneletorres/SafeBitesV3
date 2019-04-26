@@ -261,7 +261,7 @@ public class Utils {
             }
 
             String serving_size = product.getServing_size();
-            if (serving_size == null || serving_size.length() == 0 || serving_size.equals("?")) {
+            if (serving_size == null || serving_size.length() == 0 || serving_size.equals("?") || serving_size.equals("0")) {
                 serving_size = "-";
             }
 
