@@ -215,9 +215,9 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                             .beginTransaction();
 
                     if(mCurrentFragment instanceof SearchFragment){
-                        fragmentTransaction.add(R.id.search_frame_layout, completeProductFragment);
+                        fragmentTransaction.replace(R.id.search_frame_layout, completeProductFragment);
                     } else if(mCurrentFragment instanceof FavoritesFragment){
-                        fragmentTransaction.add(R.id.favorites_frame_layout, completeProductFragment);
+                        fragmentTransaction.replace(R.id.favorites_frame_layout, completeProductFragment);
                     }
 
                     fragmentTransaction.commit();
