@@ -33,7 +33,7 @@ public class CompleteProductFragment extends Fragment {
         if (extras != null) {
             // Initialization of the components:
             mProduct = extras.getParcelable(PRODUCT);
-            mFragmentManager = this.getFragmentManager();
+            mFragmentManager = this.getChildFragmentManager();
 
             // Configuration of the fragment that will load initially:
             NutrientsFragment nutrientsFragment = new NutrientsFragment();
@@ -81,7 +81,7 @@ public class CompleteProductFragment extends Fragment {
     public void fragmentLoad(){
         Objects.requireNonNull(mFragmentManager)
                 .beginTransaction()
-                .replace(R.id.frameLayout, mFragment)
+                .replace(R.id.complete_product_frame_layout, mFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
