@@ -43,7 +43,6 @@ import retrofit2.Response;
 
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
 
-
 public class SearchFragment extends Fragment {
     /**
      * Number of the initial page.
@@ -134,11 +133,15 @@ public class SearchFragment extends Fragment {
         mSearchEditText = toolbar.findViewById(R.id.search_edit_text);
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
+                if (mSearchEditText != null && mSearchEditText.getText().length() > 0) {
+                    Utils.hideSoftKeyboard(Objects.requireNonNull(getActivity()));
 
-                reloadData();
-                loadFirstPage();
-                return true;
+                    reloadData();
+                    loadFirstPage();
+                    return true;
+                } else {
+                    Toast.makeText(getActivity(), "You must enter a search.", Toast.LENGTH_SHORT).show();
+                }
             }
             return false;
         });
@@ -209,56 +212,52 @@ public class SearchFragment extends Fragment {
         mProductAdapter.notifyDataSetChanged();*/
 
         if (isConnected()) {
-            if (mSearchEditText != null && mSearchEditText.getText().length() > 0) {
-                //The ProgressBar becomes visible:
-                mProgressBar.setVisibility(View.VISIBLE);
-                //mProgressBarTextView.setVisibility(View.VISIBLE);
+            //The ProgressBar becomes visible:
+            mProgressBar.setVisibility(View.VISIBLE);
+            //mProgressBarTextView.setVisibility(View.VISIBLE);
 
-                // This line of code is used so that the 'mSearchEditText' loses focus and the
-                // keyboard can be hidden properly.
-                //mProductsRecyclerView.requestFocus();
+            // This line of code is used so that the 'mSearchEditText' loses focus and the
+            // keyboard can be hidden properly.
+            //mProductsRecyclerView.requestFocus();
 
-                callProductsApi().enqueue(new Callback<ProductsResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
-                        List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
-                        if (productsNotFormatted.isEmpty()) {
-                            mProgressBar.setVisibility(View.GONE);
-                            //mProgressBarTextView.setVisibility(View.GONE);
+            callProductsApi().enqueue(new Callback<ProductsResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
+                    List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
+                    if (productsNotFormatted.isEmpty()) {
+                        mProgressBar.setVisibility(View.GONE);
+                        //mProgressBarTextView.setVisibility(View.GONE);
 
-                            mEmptyTextView.setText("No products found");
-                            mEmptyTextView.setVisibility(View.VISIBLE);
-                        } else {
-                            //createJSONNutrients(products);
-                            List<Product> products = new ArrayList<>();
-                            for (int i = 0; i < productsNotFormatted.size(); i++) {
-                                Product product = formatProduct(productsNotFormatted.get(i));
-                                products.add(product);
-                            }
-                            mProductAdapter.addAll(products);
-
-                            mProgressBar.setVisibility(View.GONE);
-                            // The RecyclerView 'mProductsRecyclerView' starts as GONE due to the
-                            // shock it causes with the ProgressBar if it is visible.
-                            //mProductsRecyclerView.setVisibility(View.VISIBLE);
-                            //mProductsRecyclerView.requestFocus();
-
-                            //mProgressBarTextView.setVisibility(View.GONE);
-                            mEmptyTextView.setVisibility(View.GONE);
-
-                            if (mCurrentPage < mTotalPages) mProductAdapter.addLoadingFooter();
-                            else mIsLastPage = true;
+                        mEmptyTextView.setText("No products found");
+                        mEmptyTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        //createJSONNutrients(products);
+                        List<Product> products = new ArrayList<>();
+                        for (int i = 0; i < productsNotFormatted.size(); i++) {
+                            Product product = formatProduct(productsNotFormatted.get(i));
+                            products.add(product);
                         }
-                    }
+                        mProductAdapter.addAll(products);
 
-                    @Override
-                    public void onFailure(@NonNull Call<ProductsResponse> call, @NonNull Throwable t) {
-                        t.printStackTrace();
+                        mProgressBar.setVisibility(View.GONE);
+                        // The RecyclerView 'mProductsRecyclerView' starts as GONE due to the
+                        // shock it causes with the ProgressBar if it is visible.
+                        //mProductsRecyclerView.setVisibility(View.VISIBLE);
+                        //mProductsRecyclerView.requestFocus();
+
+                        //mProgressBarTextView.setVisibility(View.GONE);
+                        mEmptyTextView.setVisibility(View.GONE);
+
+                        if (mCurrentPage < mTotalPages) mProductAdapter.addLoadingFooter();
+                        else mIsLastPage = true;
                     }
-                });
-            } else {
-                Toast.makeText(getActivity(), "You must enter a search.", Toast.LENGTH_SHORT).show();
-            }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ProductsResponse> call, @NonNull Throwable t) {
+                    t.printStackTrace();
+                }
+            });
         }
     }
 
