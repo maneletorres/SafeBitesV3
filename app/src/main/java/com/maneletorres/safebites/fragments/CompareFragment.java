@@ -38,15 +38,25 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
+import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_A;
+import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_B;
+import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_A;
+import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_B;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_FIRST_EXECUTION;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_SECOND_EXECUTION;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_2;
+import static com.maneletorres.safebites.utils.Utils.TWO_PANE;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class CompareFragment extends Fragment implements View.OnClickListener, MainActivity.MyInterface {
+    /**
+     * Whether or not the fragment is in two-pane mode, i.e. running on a tablet device.
+     */
+    private boolean mTwoPane;
+
     private LinearLayout mProductAContainer;
     private LinearLayout mProductBContainer;
     private Button mScanButton;
@@ -64,6 +74,11 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_compare, container, false);
+
+        // Master-detail configuration:
+        if (view.findViewById(R.id.compare_frame_layout_1) != null) {
+            mTwoPane = true;
+        }
 
         // Initialization of the components:
         mProductAContainer = view.findViewById(R.id.product_A_container);
@@ -187,19 +202,21 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                         case RC_SCAN_OPTION_1_SECOND_EXECUTION:
                             Product productB = product;
 
-                            Intent intent = new Intent(getContext(), ComparatorActivity.class);
-                            intent.putExtra(PRODUCT_A, mProductA);
-                            intent.putExtra(PRODUCT_B, productB);
-                            startActivity(intent);
+                            if (mTwoPane) {
+                                fragmentPreparation(mProductA, productB);
+                            } else {
+                                startActivity(productB);
+                            }
                             break;
                         case RC_SCAN_OPTION_2:
                             mProductA = product;
                             productB = (Product) mProductASpinner.getSelectedItem();
 
-                            intent = new Intent(getContext(), ComparatorActivity.class);
-                            intent.putExtra(PRODUCT_A, mProductA);
-                            intent.putExtra(PRODUCT_B, productB);
-                            startActivity(intent);
+                            if (mTwoPane) {
+                                fragmentPreparation(mProductA, productB);
+                            } else {
+                                startActivity(productB);
+                            }
                             break;
                     }
                 } else {
@@ -235,10 +252,15 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
 
     private void startComparisonOption2() {
         if (mProductASpinner.getCount() > 0 && mProductBSpinner.getCount() > 0) {
-            Intent intent = new Intent(getContext(), ComparatorActivity.class);
-            intent.putExtra(PRODUCT_A, (Product) mProductASpinner.getSelectedItem());
-            intent.putExtra(PRODUCT_B, (Product) mProductBSpinner.getSelectedItem());
-            startActivity(intent);
+            if (mTwoPane) {
+                fragmentPreparation((Product) mProductASpinner.getSelectedItem(), (Product) mProductBSpinner.getSelectedItem());
+            } else {
+                Intent intent = new Intent(getContext(), ComparatorActivity.class);
+                intent.putExtra(TWO_PANE, mTwoPane);
+                intent.putExtra(PRODUCT_A, (Product) mProductASpinner.getSelectedItem());
+                intent.putExtra(PRODUCT_B, (Product) mProductBSpinner.getSelectedItem());
+                startActivity(intent);
+            }
         } else {
             Toast.makeText(getContext(), "There are not enough products saved as a favorite to make the comparison", Toast.LENGTH_SHORT).show();
         }
@@ -251,5 +273,36 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
         adapterFavoriteProducts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProductASpinner.setAdapter(adapterFavoriteProducts);
         mProductBSpinner.setAdapter(adapterFavoriteProducts);
+    }
+
+    private void fragmentPreparation(Product productA, Product productB) {
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable(PRODUCT_A, productA);
+        bundle1.putParcelable(PRODUCT_B, productB);
+
+        NutrientsComparisonFragment nutrientsComparison = new NutrientsComparisonFragment();
+        nutrientsComparison.setArguments(bundle1);
+
+        Bundle bundle2 = new Bundle();
+        bundle2.putString(INGREDIENTS_A, productA.getIngredients());
+        bundle2.putString(IMAGE_RESOURCE_A, productA.getImage_resource());
+        bundle2.putString(INGREDIENTS_B, productB.getIngredients());
+        bundle2.putString(IMAGE_RESOURCE_B, productB.getImage_resource());
+
+        IngredientsComparisonFragment ingredientsComparison = new IngredientsComparisonFragment();
+        ingredientsComparison.setArguments(bundle2);
+
+        Objects.requireNonNull(this.getFragmentManager())
+                .beginTransaction()
+                .replace(R.id.compare_frame_layout_1, nutrientsComparison)
+                .replace(R.id.compare_frame_layout_2, ingredientsComparison)
+                .commit();
+    }
+
+    private void startActivity(Product productB) {
+        Intent intent = new Intent(getContext(), ComparatorActivity.class);
+        intent.putExtra(PRODUCT_A, mProductA);
+        intent.putExtra(PRODUCT_B, productB);
+        startActivity(intent);
     }
 }
