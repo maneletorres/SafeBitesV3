@@ -3,10 +3,12 @@ package com.maneletorres.safebites.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -31,6 +33,7 @@ import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
+import com.maneletorres.safebites.fragments.CompleteProductFragment;
 import com.maneletorres.safebites.utils.Utils;
 
 import java.util.ArrayList;
@@ -49,11 +52,13 @@ public class ProductAdapter extends Adapter<ViewHolder> {
     private Fragment mCurrentFragment;
     private ProductViewHolder mProductViewHolder;
     private List<Product> mProducts;
+    private boolean mTwoPane;
 
-    public ProductAdapter(Context context, Fragment fragment) {
+    public ProductAdapter(Context context, Fragment fragment, boolean twoPane) {
         this.mProducts = new ArrayList<>();
         this.mContext = context;
         this.mCurrentFragment = fragment;
+        this.mTwoPane = twoPane;
     }
 
     @NonNull
@@ -196,9 +201,23 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         @Override
         public void onClick(View v) {
             if (v.getId() == this.itemView.getId()) {
-                Intent intent = new Intent(mContext, ProductActivity.class);
-                intent.putExtra(PRODUCT, (Parcelable) v.getTag());
-                mContext.startActivity(intent);
+                if (mTwoPane) {
+                    Bundle arguments = new Bundle();
+                    arguments.putParcelable(PRODUCT, (Parcelable) v.getTag());
+
+                    CompleteProductFragment completeProductFragment = new CompleteProductFragment();
+                    completeProductFragment.setArguments(arguments);
+
+                    (((FragmentActivity) mContext))
+                            .getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.item_detail_container, completeProductFragment)
+                            .commit();
+                } else {
+                    Intent intent = new Intent(mContext, ProductActivity.class);
+                    intent.putExtra(PRODUCT, (Parcelable) v.getTag());
+                    mContext.startActivity(intent);
+                }
             } else if (v.getId() == mFavoriteCondition.getId()) {
                 final Product currentProduct = mProducts.get(getAdapterPosition());
 
