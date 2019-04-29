@@ -33,8 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.CompleteProductFragment;
+import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.utils.Utils;
 
@@ -214,9 +214,9 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                             .getSupportFragmentManager()
                             .beginTransaction();
 
-                    if(mCurrentFragment instanceof SearchFragment){
+                    if (mCurrentFragment instanceof SearchFragment) {
                         fragmentTransaction.replace(R.id.search_frame_layout, completeProductFragment);
-                    } else if(mCurrentFragment instanceof FavoritesFragment){
+                    } else if (mCurrentFragment instanceof FavoritesFragment) {
                         fragmentTransaction.replace(R.id.favorites_frame_layout, completeProductFragment);
                     }
 
