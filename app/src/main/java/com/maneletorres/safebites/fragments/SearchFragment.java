@@ -50,6 +50,11 @@ public class SearchFragment extends Fragment {
      */
     private static final int PAGE_START = 1;
 
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+     */
+    private boolean mTwoPane;
+
     // Components:
     private EditText mSearchEditText;
     private TextView mEmptyTextView;
@@ -89,6 +94,11 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        // Master-detail configuration:
+        if (view.findViewById(R.id.search_frame_layout) != null) {
+            mTwoPane = true;
+        }
 
         // Placement of the back arrow on the Toolbar:
         Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar);
@@ -134,7 +144,7 @@ public class SearchFragment extends Fragment {
         });
 
         // Initialization of the empty product adapter:
-        //mProductAdapter = new ProductAdapter(getContext(), this);
+        //mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
 
         // Linking the product adapter to the RecyclerView:
         //mProductsRecyclerView.setAdapter(mProductAdapter);
@@ -192,7 +202,7 @@ public class SearchFragment extends Fragment {
 
     private void loadFirstPage() {
         // Reload adapter:
-        mProductAdapter = new ProductAdapter(getContext(), this);
+        mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
         mProductsRecyclerView.setAdapter(mProductAdapter);
 
         /*mProductAdapter.remove();
