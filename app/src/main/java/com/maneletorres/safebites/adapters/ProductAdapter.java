@@ -155,7 +155,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    private Product getItem(int position) {
+    public Product getItem(int position) {
         return mProducts.get(position);
     }
 
