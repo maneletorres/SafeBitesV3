@@ -23,7 +23,6 @@ import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
 
 public class ComparatorActivity extends AppCompatActivity {
-
     private Bundle mBundle;
     private String mProductAIngredients;
     private String mProductBIngredients;
