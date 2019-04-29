@@ -17,6 +17,12 @@ import com.maneletorres.safebites.adapters.ProductAdapter;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class FavoritesFragment extends Fragment implements MainActivity.MyInterface {
+    /**
+     * Whether or not the fragment is in two-pane mode, i.e. running on a tablet device.
+     */
+    private boolean mTwoPane;
+
+    // Other variables:
     private RecyclerView mFavoriteProductsRecyclerView;
     private ProductAdapter mProductAdapter;
     private TextView mEmptyTextView;
@@ -25,6 +31,11 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
+
+        // Master-detail configuration:
+        if (view.findViewById(R.id.item_detail_container) != null) {
+            mTwoPane = true;
+        }
 
         // Initialization of the components:
         mEmptyTextView = view.findViewById(R.id.empty_textView);
@@ -54,7 +65,7 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
     }
 
     private void prepareProductsLoading() {
-        mProductAdapter = new ProductAdapter(getContext(), this);
+        mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
         //mProductAdapter.addAll(sProducts);
         mProductAdapter.addAll(sUser.getProducts());
         mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
