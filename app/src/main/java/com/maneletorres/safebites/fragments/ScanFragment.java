@@ -37,9 +37,15 @@ import static android.app.Activity.RESULT_CANCELED;
 import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN;
+import static com.maneletorres.safebites.utils.Utils.TWO_PANE;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
 
 public class ScanFragment extends Fragment implements View.OnClickListener {
+    /**
+     * Whether or not the fragment is in two-pane mode, i.e. running on a tablet device.
+     */
+    private boolean mTwoPane;
+
     private LinearLayout mButtonsLinearLayout;
     private ProgressBar mScanProgressBar;
     private TextView mScanTextView;
@@ -49,6 +55,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
+
+        // Master-detail configuration:
+        if (getResources().getBoolean(R.bool.has_two_panes)) {
+            mTwoPane = true;
+        }
 
         // Initialization of the components:
         mScanProgressBar = view.findViewById(R.id.scan_progress_bar);
@@ -145,6 +156,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
 
                 if (p != null) {
                     Intent intent = new Intent(getContext(), ProductActivity.class);
+                    intent.putExtra(TWO_PANE, mTwoPane);
                     intent.putExtra(PRODUCT, p);
                     startActivity(intent);
                 } else {
