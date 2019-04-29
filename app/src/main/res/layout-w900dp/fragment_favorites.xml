@@ -28,9 +28,8 @@
     </RelativeLayout>
 
     <View
-        android:id="@+id/view"
         android:layout_width="1dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/browser_actions_divider_color" />
 
     <FrameLayout
