@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Utils {
+    public static final String TWO_PANE = "com.maneletorres.safebites.extras.TWO_PANE";
     public static final String CLASS_NAME = "com.maneletorres.safebites.extras.CLASS_NAME";
     public static final String TOAST_MESSAGE = "com.maneletorres.safebites.extras.TOAST_MESSAGE";
     public static final String PRODUCT = "com.maneletorres.safebites.extras.PRODUCT";
