@@ -72,6 +72,6 @@
 
     </LinearLayout>
 
-    <View style="@style/ViewStyle" />
+    <View style="@style/HorizontalViewStyle" />
 
 </LinearLayout>

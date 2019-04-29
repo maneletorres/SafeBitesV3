@@ -120,8 +120,7 @@
 
         <View
             android:id="@+id/separator_view"
-            style="@style/ViewStyle"
-            android:layout_height="2dp"
+            style="@style/HorizontalViewStyle"
             android:layout_below="@id/buttons_linear_layout"
             android:layout_marginBottom="8dp"
             android:background="@android:color/holo_red_dark" />
