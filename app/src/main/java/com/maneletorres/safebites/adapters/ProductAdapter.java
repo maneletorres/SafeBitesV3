@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.CompleteProductFragment;
+import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.utils.Utils;
 
 import java.util.ArrayList;
@@ -208,11 +210,17 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                     CompleteProductFragment completeProductFragment = new CompleteProductFragment();
                     completeProductFragment.setArguments(arguments);
 
-                    (((FragmentActivity) mContext))
+                    FragmentTransaction fragmentTransaction = (((FragmentActivity) mContext))
                             .getSupportFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.item_detail_container, completeProductFragment)
-                            .commit();
+                            .beginTransaction();
+
+                    if(mCurrentFragment instanceof SearchFragment){
+                        fragmentTransaction.add(R.id.search_frame_layout, completeProductFragment);
+                    } else if(mCurrentFragment instanceof FavoritesFragment){
+                        fragmentTransaction.add(R.id.favorites_frame_layout, completeProductFragment);
+                    }
+
+                    fragmentTransaction.commit();
                 } else {
                     Intent intent = new Intent(mContext, ProductActivity.class);
                     intent.putExtra(PRODUCT, (Parcelable) v.getTag());

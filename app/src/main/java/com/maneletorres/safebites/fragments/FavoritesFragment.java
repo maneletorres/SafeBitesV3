@@ -33,7 +33,7 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         // Master-detail configuration:
-        if (view.findViewById(R.id.item_detail_container) != null) {
+        if (view.findViewById(R.id.favorites_frame_layout) != null) {
             mTwoPane = true;
         }
 
