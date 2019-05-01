@@ -78,7 +78,7 @@ public class CompleteProductFragment extends Fragment {
         return view;
     }
 
-    public void fragmentLoad(){
+    public void fragmentLoad() {
         Objects.requireNonNull(mFragmentManager)
                 .beginTransaction()
                 .replace(R.id.complete_product_frame_layout, mFragment)
