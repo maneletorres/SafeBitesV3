@@ -155,4 +155,13 @@ public class Product implements Parcelable {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Product) {
+            return ((Product) obj).getUpc().equals(this.getUpc());
+        }
+
+        return false;
+    }
 }
