@@ -14,6 +14,9 @@ import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
 
+import java.util.Objects;
+
+import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class FavoritesFragment extends Fragment implements MainActivity.MyInterface {
@@ -26,6 +29,7 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
     private RecyclerView mFavoriteProductsRecyclerView;
     private ProductAdapter mProductAdapter;
     private TextView mEmptyTextView;
+    private View mView;
 
     @Nullable
     @Override
@@ -33,7 +37,8 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         // Master-detail configuration:
-        if (view.findViewById(R.id.favorites_frame_layout) != null) {
+        mView = view.findViewById(R.id.favorites_frame_layout);
+        if (mView != null) {
             mTwoPane = true;
         }
 
@@ -70,5 +75,23 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
         mProductAdapter.addAll(sUser.getProducts());
         mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
         checkProductsNumber();
+
+        if (mTwoPane) {
+            int productsNumber = mProductAdapter.getItemCount();
+            if (productsNumber > 0) {
+                Bundle arguments = new Bundle();
+                arguments.putParcelable(PRODUCT, sUser.getProducts().get(0));
+
+                CompleteProductFragment completeProductFragment = new CompleteProductFragment();
+                completeProductFragment.setArguments(arguments);
+
+                Objects.requireNonNull(this.getChildFragmentManager())
+                        .beginTransaction()
+                        .replace(R.id.favorites_frame_layout, completeProductFragment)
+                        .commitAllowingStateLoss();
+            } else {
+                mView.setVisibility(View.GONE);
+            }
+        }
     }
 }
