@@ -41,6 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
 
 public class SearchFragment extends Fragment {
@@ -89,13 +90,16 @@ public class SearchFragment extends Fragment {
      */
     private boolean mIsLoading = false;
 
+    private View mView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         // Master-detail configuration:
-        if (view.findViewById(R.id.search_frame_layout) != null) {
+        mView = view.findViewById(R.id.search_frame_layout);
+        if (mView != null) {
             mTwoPane = true;
         }
 
@@ -238,6 +242,7 @@ public class SearchFragment extends Fragment {
                             products.add(product);
                         }
                         mProductAdapter.addAll(products);
+                        prepareProductsLoading(products);
 
                         mProgressBar.setVisibility(View.GONE);
                         // The RecyclerView 'mProductsRecyclerView' starts as GONE due to the
@@ -313,12 +318,35 @@ public class SearchFragment extends Fragment {
         );
     }
 
+    private void prepareProductsLoading(List<Product> products) {
+        mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
+        mProductAdapter.addAll(products);
+        mProductsRecyclerView.setAdapter(mProductAdapter);
+
+        if (mTwoPane) {
+            int productsNumber = mProductAdapter.getItemCount();
+            if (productsNumber > 0) {
+                Bundle arguments = new Bundle();
+                arguments.putParcelable(PRODUCT, products.get(0));
+
+                CompleteProductFragment completeProductFragment = new CompleteProductFragment();
+                completeProductFragment.setArguments(arguments);
+
+                Objects.requireNonNull(this.getChildFragmentManager())
+                        .beginTransaction()
+                        .replace(R.id.search_frame_layout, completeProductFragment)
+                        .commitAllowingStateLoss();
+            } else {
+                mView.setVisibility(View.GONE);
+            }
+        }
+    }
+
     // CODE FOR DEVICE'S ROTATION:
     /*@Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         Toast.makeText(getContext(), "onViewStateRestored", Toast.LENGTH_SHORT).show();
         super.onViewStateRestored(savedInstanceState);
-
         if (mProductAdapter != null && mProductAdapter.getItemCount() > 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mProgressBarTextView.setVisibility(View.VISIBLE);
