@@ -23,7 +23,6 @@
 
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustNothing"
             android:parentActivityName=".AuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
