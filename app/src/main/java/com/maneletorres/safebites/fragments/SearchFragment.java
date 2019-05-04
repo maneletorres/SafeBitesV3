@@ -342,16 +342,14 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    // CODE FOR DEVICE'S ROTATION:
-    /*@Override
+    @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        Toast.makeText(getContext(), "onViewStateRestored", Toast.LENGTH_SHORT).show();
         super.onViewStateRestored(savedInstanceState);
         if (mProductAdapter != null && mProductAdapter.getItemCount() > 0) {
             mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBarTextView.setVisibility(View.VISIBLE);
+            //mProgressBarTextView.setVisibility(View.VISIBLE);
             reloadData();
             loadFirstPage();
         }
-    }*/
+    }
 }
