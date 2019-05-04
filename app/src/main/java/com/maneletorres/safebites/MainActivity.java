@@ -161,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     public interface MyInterface {
         void updateProducts();
     }
