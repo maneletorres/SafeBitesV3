@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        View headerView = navigationView.getHeaderView(0);
+        View headerView = navigationView.getHeaderView(1);
         TextView displayNameTextView = headerView.findViewById(R.id.displayNameTextView);
         displayNameTextView.setText(sUser.getDisplayName());
 
