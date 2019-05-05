@@ -44,10 +44,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".CaptureActivityPortrait"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".PreferenceActivity"
             android:screenOrientation="portrait" />
 
