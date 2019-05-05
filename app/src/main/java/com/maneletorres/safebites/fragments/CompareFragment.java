@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.maneletorres.safebites.CaptureActivityPortrait;
 import com.maneletorres.safebites.ComparatorActivity;
+import com.maneletorres.safebites.CustomScannerActivity;
 import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.api.ProductApi;
@@ -37,6 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
 import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_A;
 import static com.maneletorres.safebites.utils.Utils.IMAGE_RESOURCE_B;
@@ -121,7 +122,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
         mScanButton.setOnClickListener(this);
 
         // Initialization of the product service:
-        mProductService = ProductApi.getClient().create(ProductService.class);
+        mProductService = ProductApi.getProduct().create(ProductService.class);
 
         return view;
     }
@@ -160,7 +161,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                     if (scanResult.getContents() == null) {
                         if (resultCode == RESULT_CANCELED) {
                             Toast.makeText(getContext(), "Scan canceled by the user", Toast.LENGTH_SHORT).show();
-                        } else {
+                        } else if (resultCode != RESULT_OK) {
                             Toast.makeText(getContext(), "Error during scanning.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -170,6 +171,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                     Toast.makeText(getContext(), "Error during scanning.", Toast.LENGTH_SHORT).show();
                     super.onActivityResult(requestCode, resultCode, data);
                 }
+                break;
         }
     }
 
@@ -242,9 +244,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     private void startComparisonOption1(int requestCode) {
         IntentIntegrator.forSupportFragment(this)
                 .setRequestCode(requestCode)
-                .setPrompt("Scan a product's barcode")
                 .setCameraId(0)
-                .setCaptureActivity(CaptureActivityPortrait.class)
+                .setOrientationLocked(false)
+                .setCaptureActivity(CustomScannerActivity.class)
                 .setOrientationLocked(false)
                 .setBeepEnabled(true)
                 .initiateScan();
