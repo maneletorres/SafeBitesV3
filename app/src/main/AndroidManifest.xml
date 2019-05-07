@@ -59,7 +59,10 @@
             </intent-filter>
         </receiver>-->
 
-        <activity android:name=".CustomScannerActivity" />
+        <activity
+            android:name=".CustomScannerActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
