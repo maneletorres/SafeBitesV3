@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.maneletorres.safebites.entities.User;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
@@ -36,18 +40,23 @@ public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.v("STATUS", "onCreate");
         super.onCreate(savedInstanceState);
 
         // Initialize Firebase components:
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = firebaseAuth -> {
             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
+                Log.v("STATUS", "ZONE 1");
                 // User is signed in:
                 sUID = firebaseUser.getUid();
                 sUser = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName());
+
+                mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+                attachDatabaseReadListener();
             } else {
+                Log.v("STATUS", "ZONE 2");
                 // User is signed out:
                 startActivityForResult(AuthUI.getInstance()
                                 .createSignInIntentBuilder()
@@ -66,18 +75,35 @@ public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.v("STATUS", "onActivityResult");
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
             if (resultCode == RESULT_OK) {
-                //attachDatabaseReadListener();
+                Log.v("STATUS", "RESULT_OK");
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Signed in canceled!", Toast.LENGTH_SHORT).show();
-                finish();
+                if (response == null) {
+                    Log.v("STATUS", "Sign in canceled by the user.");
+                    Toast.makeText(this, "Sign in canceled by the user", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Log.v("STATUS", "NO INTERNET");
+                    //Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+                    //startActivity(new Intent(this, TestActivity.class));
+                    Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                }
+            } else {
+                Log.v("STATUS", "Unknown error.");
             }
         }
     }
 
     @Override
     protected void onPause() {
+        Log.v("STATUS", "onPause");
         super.onPause();
 
         if (mAuthStateListener != null) {
@@ -91,7 +117,10 @@ public class AuthActivity extends AppCompatActivity {
         super.onResume();
 
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-        attachDatabaseReadListener();
+
+        if (mUsersDatabaseReference != null) {
+            attachDatabaseReadListener();
+        }
     }
 
     private void attachDatabaseReadListener() {
@@ -124,5 +153,10 @@ public class AuthActivity extends AppCompatActivity {
             mUsersDatabaseReference.removeEventListener(mValueEventListener);
             mValueEventListener = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }
