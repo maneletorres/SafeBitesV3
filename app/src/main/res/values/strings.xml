@@ -21,6 +21,9 @@
     <string name="allergies_text_view">Allergies</string>
     <string name="danger_zone_text_view">Danger zone</string>
 
+    <!-- -->
+    <string name="zxing_informer">Enter manually or place a bar code inside the rectangle of the viewfinder to scan.</string>
+
     <!-- Navigation Drawer: -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
