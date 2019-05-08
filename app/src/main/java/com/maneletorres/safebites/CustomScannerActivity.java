@@ -1,13 +1,11 @@
 package com.maneletorres.safebites;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,9 +14,7 @@ import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.maneletorres.safebites.utils.Utils;
 
-import java.util.Objects;
-
-public class CustomScannerActivity extends Activity  {
+public class CustomScannerActivity extends AppCompatActivity {
     private CaptureManager capture;
     private DecoratedBarcodeView barcodeScannerView;
     private EditText mEditText;
@@ -81,4 +77,10 @@ public class CustomScannerActivity extends Activity  {
         return barcodeScannerView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.v("STATUS", "onBackPressed - Custom");
+        // Internamente no actúa igual que el botón de retroceso superior. Falta hacer onDestroy cuándo se tira hacia atrás dentro de este método (onBackPressed).
+        startActivity(new Intent(this, MainActivity.class));
+    }
 }
