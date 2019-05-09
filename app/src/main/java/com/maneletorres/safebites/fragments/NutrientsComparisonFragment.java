@@ -33,8 +33,17 @@ import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
 public class NutrientsComparisonFragment extends Fragment {
     private List<NutrientComparison> createSimplifiedNutrientObjects(List<Nutrient> productANutrients, List<Nutrient> productBNutrients) {
         List<NutrientComparison> simplifiedNutrients = new ArrayList<>();
-        List<Nutrient> unitedNutrients = new ArrayList<>(productANutrients);
-        unitedNutrients.addAll(productBNutrients);
+
+        List<Nutrient> unitedNutrients;
+        if (productANutrients != null) {
+            unitedNutrients = new ArrayList<>(productANutrients);
+        } else {
+            unitedNutrients = new ArrayList<>();
+        }
+
+        if (productBNutrients != null) {
+            unitedNutrients.addAll(productBNutrients);
+        }
 
         for (int i = 0; i < unitedNutrients.size(); i++) {
             Nutrient firstNutrient = unitedNutrients.get(i);
@@ -51,7 +60,7 @@ public class NutrientsComparisonFragment extends Fragment {
                 }
 
                 if (simplifiedNutrient == null) {
-                    if (i < productANutrients.size()) {
+                    if (productANutrients != null && i < productANutrients.size()) {
                         simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), firstNutrient.getPer_100g(), "-", firstNutrient.getUnit());
                     } else {
                         simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), "-", firstNutrient.getPer_100g(), firstNutrient.getUnit());
