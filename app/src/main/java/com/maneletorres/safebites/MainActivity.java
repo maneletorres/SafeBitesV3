@@ -22,8 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.maneletorres.safebites.api.ProductApi;
 import com.maneletorres.safebites.api.ProductResponse;
 import com.maneletorres.safebites.api.ProductService;
@@ -31,7 +29,7 @@ import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.entities.ProductNotFormatted;
 import com.maneletorres.safebites.fragments.CompareFragment;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
-import com.maneletorres.safebites.fragments.NewFragment;
+import com.maneletorres.safebites.fragments.ScanFragment;
 import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.fragments.SectionsPageAdapter;
 import com.maneletorres.safebites.utils.Utils;
@@ -42,10 +40,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
-import static com.maneletorres.safebites.utils.Utils.RC_SCAN;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 import static com.maneletorres.safebites.utils.Utils.TWO_PANE;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
@@ -125,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(viewPager);
-        setupCameraTabItem();
+        //setupCameraTabItem();
 
         // Initialization of the product service:
         mProductService = ProductApi.getProduct().create(ProductService.class);
@@ -185,14 +181,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new NewFragment(), "");
+        adapter.addFragment(new ScanFragment(), "Scan");
         adapter.addFragment(new SearchFragment(), "Search");
         sCompareFragment = new CompareFragment();
         adapter.addFragment(sCompareFragment, "Compare");
         sFavoriteFragment = new FavoritesFragment();
         adapter.addFragment(sFavoriteFragment, "Favorites");
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1);
+        //viewPager.setCurrentItem(1);
     }
 
     @Override
@@ -217,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         layout.setLayoutParams(layoutParams);
     }
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v("STATUS", "onActivityResult");
         Log.v("STATUS", "requestCode: " + requestCode);
@@ -238,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
-    }
+    }*/
 
     private void startScan(String scanResult) {
         /*mButtonsLinearLayout.setVisibility(View.GONE);
