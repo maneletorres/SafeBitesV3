@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/product_B_container"
         android:layout_centerInParent="true"
+        android:background="@color/colorAccent"
         android:text="@string/compare" />
 
     <ProgressBar
