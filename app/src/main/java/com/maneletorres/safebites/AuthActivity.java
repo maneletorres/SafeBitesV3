@@ -33,14 +33,13 @@ public class AuthActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
 
     // Firebase variables:
-    private DatabaseReference mUsersDatabaseReference;
     private FirebaseAuth mFirebaseAuth;
     private AuthStateListener mAuthStateListener;
+    private DatabaseReference mUsersDatabaseReference;
     private ValueEventListener mValueEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.v("STATUS", "onCreate");
         super.onCreate(savedInstanceState);
 
         // Initialize Firebase components:
@@ -48,7 +47,6 @@ public class AuthActivity extends AppCompatActivity {
         mAuthStateListener = firebaseAuth -> {
             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
-                Log.v("STATUS", "ZONE 1");
                 // User is signed in:
                 sUID = firebaseUser.getUid();
                 sUser = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName());
@@ -56,7 +54,6 @@ public class AuthActivity extends AppCompatActivity {
                 mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
                 attachDatabaseReadListener();
             } else {
-                Log.v("STATUS", "ZONE 2");
                 // User is signed out:
                 startActivityForResult(AuthUI.getInstance()
                                 .createSignInIntentBuilder()
@@ -75,35 +72,29 @@ public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.v("STATUS", "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                Log.v("STATUS", "RESULT_OK");
+                Log.v("AuthActivity", "onActivityResult - RESULT_OK");
             } else if (resultCode == RESULT_CANCELED) {
                 if (response == null) {
-                    Log.v("STATUS", "Sign in canceled by the user.");
                     Toast.makeText(this, "Sign in canceled by the user", Toast.LENGTH_SHORT).show();
                     finishAffinity();
                 } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Log.v("STATUS", "NO INTERNET");
-                    //Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
-                    //startActivity(new Intent(this, TestActivity.class));
                     Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
                     finishAffinity();
                 }
             } else {
-                Log.v("STATUS", "Unknown error.");
+                Toast.makeText(this, "Unknown error", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
     protected void onPause() {
-        Log.v("STATUS", "onPause");
         super.onPause();
 
         if (mAuthStateListener != null) {
@@ -153,10 +144,5 @@ public class AuthActivity extends AppCompatActivity {
             mUsersDatabaseReference.removeEventListener(mValueEventListener);
             mValueEventListener = null;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-
     }
 }
