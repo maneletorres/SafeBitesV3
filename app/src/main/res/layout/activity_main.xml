@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Enter your search query"
+                    android:hint="@string/enter_search"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:visibility="gone" />
