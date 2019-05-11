@@ -205,11 +205,4 @@
     <string name="app_mentions" translatable="false">This project is based on the Open Food Facts group database and uses the ZXing library ("Zebra Crossing"), to which their enormous work and fantastic initiative are appreciated, making reference to them in the following links:</string>
     <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
     <string name="mention2" translatable="false"><a href="some site">https://github.com/zxing/zxing</a></string>
-
-    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
-    <string name="facebook_application_id" translatable="false">2592646150777618</string>
-    <string name="facebook_login_protocol_scheme" translatable="false">fb2592646150777618</string>
-    <!-- Twitter consumer key and secret -->
-    <string name="twitter_consumer_key" translatable="false">CmZ4WAMS8sKoKxFPuNBxWSNbghome</string>
-    <string name="twitter_consumer_secret" translatable="false">DaPbBEfd91A6EhbggzWuTFMnoYshl8MZwTm6kFaVBKBA3sv98w</string>
 </resources>
