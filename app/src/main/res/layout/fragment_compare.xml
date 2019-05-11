@@ -92,7 +92,7 @@
         android:layout_below="@id/scan_progress_bar"
         android:layout_centerInParent="true"
         android:background="#00000000"
-        android:text="Comparing..."
+        android:text="@string/comparing_text"
         android:visibility="gone" />
 
 </RelativeLayout>

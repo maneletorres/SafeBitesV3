@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="0dp"
-                android:text="Nutrients:"
+                android:text="@string/nutrients"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="0dp"
-                android:text="Ingredients:"
+                android:text="@string/ingredients"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
