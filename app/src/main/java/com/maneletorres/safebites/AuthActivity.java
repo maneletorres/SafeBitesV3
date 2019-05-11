@@ -81,14 +81,14 @@ public class AuthActivity extends AppCompatActivity {
                 Log.v("AuthActivity", "onActivityResult - RESULT_OK");
             } else if (resultCode == RESULT_CANCELED) {
                 if (response == null) {
-                    Toast.makeText(this, "Sign in canceled by the user", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.user_cancellation), Toast.LENGTH_SHORT).show();
                     finishAffinity();
                 } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                     finishAffinity();
                 }
             } else {
-                Toast.makeText(this, "Unknown error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
             }
         }
     }

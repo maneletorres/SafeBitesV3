@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (extras != null) {
             switch (extras.getInt(TOAST_MESSAGE)) {
                 case 0:
-                    Toast.makeText(this, "User " + sUser.getDisplayName() + " has been registered in SafeBites!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.successful_registration, sUser.getDisplayName()), Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(this, "Welcome back to SafeBites " + sUser.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.welcome_message, sUser.getDisplayName()), Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    Toast.makeText(this, "Changes in the user's allergens have been saved.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.modified_allergens), Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -151,12 +151,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ScanFragment(), "Scan");
-        adapter.addFragment(new SearchFragment(), "Search");
+        adapter.addFragment(new ScanFragment(), getString(R.string.scan_fragment));
+        adapter.addFragment(new SearchFragment(), getString(R.string.search_fragment));
         sCompareFragment = new CompareFragment();
-        adapter.addFragment(sCompareFragment, "Compare");
+        adapter.addFragment(sCompareFragment, getString(R.string.compare_fragment));
         sFavoriteFragment = new FavoritesFragment();
-        adapter.addFragment(sFavoriteFragment, "Favorites");
+        adapter.addFragment(sFavoriteFragment, getString(R.string.favorites_fragment));
         viewPager.setAdapter(adapter);
     }
 
