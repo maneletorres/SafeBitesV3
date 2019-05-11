@@ -69,7 +69,7 @@ public class IngredientsComparisonFragment extends Fragment {
 
     private void formatProductIngredients(String ingredientsText, TextView ingredientsTextView) {
         if (ingredientsText.equals("-")) {
-            ingredientsTextView.setText("There are no registered ingredients for this product.");
+            ingredientsTextView.setText(getString(R.string.no_registered_ingredients));
         } else {
             ingredientsTextView.setText(ingredientsText);
         }

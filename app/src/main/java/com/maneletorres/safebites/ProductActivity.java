@@ -84,8 +84,8 @@ public class ProductActivity extends AppCompatActivity {
         IngredientsFragment ingredientsFragment = new IngredientsFragment();
         ingredientsFragment.setArguments(bundle);
 
-        adapter.addFragment(nutrientsFragments, "Nutrients");
-        adapter.addFragment(ingredientsFragment, "Ingredients");
+        adapter.addFragment(nutrientsFragments, getString(R.string.nutrients_fragment));
+        adapter.addFragment(ingredientsFragment, getString(R.string.ingredients_fragment));
         viewPager.setAdapter(adapter);
     }
 }

@@ -80,8 +80,8 @@ public class ComparatorActivity extends AppCompatActivity {
         IngredientsComparisonFragment ingredientsComparison = new IngredientsComparisonFragment();
         ingredientsComparison.setArguments(bundle);
 
-        adapter.addFragment(nutrientsComparison, "Nutrients comp");
-        adapter.addFragment(ingredientsComparison, "Ingredients comp");
+        adapter.addFragment(nutrientsComparison, getString(R.string.nutrients_comparison_fragment));
+        adapter.addFragment(ingredientsComparison, getString(R.string.ingredients_comparison_fragment));
         viewPager.setAdapter(adapter);
     }
 }
