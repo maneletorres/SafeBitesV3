@@ -6,14 +6,14 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_magnify_white_24dp"
         android:orderInCategory="100"
-        android:title="Scan"
+        android:title="@string/item_scan"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_cancel"
         android:icon="@drawable/ic_close_circle_white_24dp"
         android:orderInCategory="100"
-        android:title="Cancel"
+        android:title="@string/item_cancel"
         android:visible="false"
         app:showAsAction="ifRoom" />
 </menu>
