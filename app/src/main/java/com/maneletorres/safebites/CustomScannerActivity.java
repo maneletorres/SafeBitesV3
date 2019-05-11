@@ -3,8 +3,8 @@ package com.maneletorres.safebites;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,7 +35,7 @@ public class CustomScannerActivity extends AppCompatActivity {
 
                     return true;
                 } else {
-                    Toast.makeText(this, "You must enter a search.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.enter_search), Toast.LENGTH_SHORT).show();
                 }
             }
             return false;
