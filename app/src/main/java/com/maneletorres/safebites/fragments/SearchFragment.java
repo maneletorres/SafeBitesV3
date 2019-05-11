@@ -144,7 +144,7 @@ public class SearchFragment extends Fragment {
                     loadFirstPage();
                     return true;
                 } else {
-                    Toast.makeText(getActivity(), "You must enter a search.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.enter_search), Toast.LENGTH_SHORT).show();
                 }
             }
             return false;
@@ -200,7 +200,7 @@ public class SearchFragment extends Fragment {
         if (networkInfo != null && networkInfo.isConnected()) {
             mEmptyTextView.setVisibility(View.GONE);
         } else {
-            mEmptyTextView.setText("No Internet connection");
+            mEmptyTextView.setText(getString(R.string.no_internet_connection));
             mEmptyTextView.setVisibility(View.VISIBLE);
         }
 
@@ -232,7 +232,7 @@ public class SearchFragment extends Fragment {
                         mProgressBar.setVisibility(View.GONE);
                         //mProgressBarTextView.setVisibility(View.GONE);
 
-                        mEmptyTextView.setText("No products found");
+                        mEmptyTextView.setText(getString(R.string.no_products_found));
                         mEmptyTextView.setVisibility(View.VISIBLE);
                     } else {
                         //createJSONNutrients(products);

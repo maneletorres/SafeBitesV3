@@ -141,7 +141,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                     if (mProductASpinner.getCount() > 0) {
                         startComparisonOption1(RC_SCAN_OPTION_2);
                     } else {
-                        Toast.makeText(getContext(), "There is no product saved as favorite to make the comparison", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.error_during_comparison_1), Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -160,15 +160,15 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                 if (scanResult != null) {
                     if (scanResult.getContents() == null) {
                         if (resultCode == RESULT_CANCELED) {
-                            Toast.makeText(getContext(), "Scan canceled by the user", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.user_cancellation), Toast.LENGTH_SHORT).show();
                         } else if (resultCode != RESULT_OK) {
-                            Toast.makeText(getContext(), "Error during scanning.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.error_during_scanning), Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         startScan(scanResult.getContents());
                     }
                 } else {
-                    Toast.makeText(getContext(), "Error during scanning.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.error_during_scanning), Toast.LENGTH_SHORT).show();
                     super.onActivityResult(requestCode, resultCode, data);
                 }
                 break;
@@ -222,7 +222,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                             break;
                     }
                 } else {
-                    Toast.makeText(getContext(), "Product not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -264,7 +264,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                 startActivity(intent);
             }
         } else {
-            Toast.makeText(getContext(), "There are not enough products saved as a favorite to make the comparison", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_during_comparison_2), Toast.LENGTH_SHORT).show();
         }
     }
 
