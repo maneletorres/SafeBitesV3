@@ -21,7 +21,7 @@
                 android:id="@+id/image_view_nutrients_header"
                 android:layout_width="@dimen/list_item_width"
                 android:layout_height="@dimen/list_item_height"
-                android:contentDescription="Image description" />
+                android:contentDescription="@string/product_image_description" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/holo_green_light"
                     android:gravity="center_horizontal"
-                    android:text="Suitable" />
+                    android:text="@string/suitable_product" />
 
                 <TextView
                     android:id="@+id/header_per_100g"
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="100 g"
+                    android:text="@string/standard_size_in_grams"
                     android:textAlignment="textEnd"
                     android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Per portion"
+                    android:text="@string/per_portion"
                     android:textAlignment="textEnd"
                     android:textStyle="bold" />
 

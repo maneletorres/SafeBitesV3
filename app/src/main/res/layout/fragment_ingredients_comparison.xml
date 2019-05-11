@@ -19,7 +19,7 @@
                 android:layout_height="@dimen/list_item_height"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="8dp"
-                android:contentDescription="Image description A"
+                android:contentDescription="@string/product_image_A_description"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/ic_launcher_background" />
 
@@ -27,7 +27,7 @@
                 android:id="@+id/ingredients_A_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ingredients A" />
+                android:text="@string/ingredients_A" />
 
         </LinearLayout>
 
@@ -51,7 +51,7 @@
                 android:layout_height="@dimen/list_item_height"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="8dp"
-                android:contentDescription="Image description B"
+                android:contentDescription="@string/product_image_B_description"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/ic_launcher_background" />
 
@@ -59,7 +59,7 @@
                 android:id="@+id/ingredients_B_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ingredients B" />
+                android:text="@string/ingredients_B" />
 
         </LinearLayout>
 
