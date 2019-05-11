@@ -12,21 +12,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.maneletorres.safebites.api.ProductApi;
-import com.maneletorres.safebites.api.ProductResponse;
-import com.maneletorres.safebites.api.ProductService;
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.entities.ProductNotFormatted;
 import com.maneletorres.safebites.fragments.CompareFragment;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.ScanFragment;
@@ -34,17 +27,8 @@ import com.maneletorres.safebites.fragments.SearchFragment;
 import com.maneletorres.safebites.fragments.SectionsPageAdapter;
 import com.maneletorres.safebites.utils.Utils;
 
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
-import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
-import static com.maneletorres.safebites.utils.Utils.TWO_PANE;
-import static com.maneletorres.safebites.utils.Utils.formatProduct;
 import static com.maneletorres.safebites.utils.Utils.sCompareFragment;
 import static com.maneletorres.safebites.utils.Utils.sFavoriteFragment;
 import static com.maneletorres.safebites.utils.Utils.sUser;
@@ -53,22 +37,12 @@ import static com.maneletorres.safebites.utils.Utils.staticListenerLoad;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private EditText mSearchEditText;
-    private ProductService mProductService;
-    private boolean mTwoPane;
-    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.v("STATUS", "onCreate - MainActivity");
         // Load of static Listener on the FRDB:
-        //if (sProduct == null){
         if (sUser.getProducts() == null) {
             staticListenerLoad();
-        }
-
-        // Master-detail configuration:
-        if (getResources().getBoolean(R.bool.has_two_panes)) {
-            mTwoPane = true;
         }
 
         super.onCreate(savedInstanceState);
@@ -119,12 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ViewPager viewPager = findViewById(R.id.viewPager);
         setupViewPager(viewPager);
 
-        mTabLayout = findViewById(R.id.tabs);
+        TabLayout mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(viewPager);
-        //setupCameraTabItem();
-
-        // Initialization of the product service:
-        mProductService = ProductApi.getProduct().create(ProductService.class);
     }
 
     @Override
@@ -188,94 +158,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sFavoriteFragment = new FavoritesFragment();
         adapter.addFragment(sFavoriteFragment, "Favorites");
         viewPager.setAdapter(adapter);
-        //viewPager.setCurrentItem(1);
     }
 
     @Override
     public void onBackPressed() {
-        Log.v("STATUS", "onBackPressed");
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
         }
-    }
-
-    private void setupCameraTabItem() {
-        // Enter the icon for the Camera TabItem:
-        Objects.requireNonNull(mTabLayout.getTabAt(0)).setIcon(R.drawable.ic_barcode_scan_white_24dp);
-
-        // Adjust the size for the Camera TabItem:
-        LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(0));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-        layoutParams.weight = 0.5f;
-        layout.setLayoutParams(layoutParams);
-    }
-
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v("STATUS", "onActivityResult");
-        Log.v("STATUS", "requestCode: " + requestCode);
-        IntentResult scanResult = parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
-        if (requestCode == RC_SCAN) {
-            if (scanResult != null) {
-                if (scanResult.getContents() == null) {
-                    if (resultCode == RESULT_CANCELED) {
-                        Toast.makeText(this, "Scan canceled by the user", Toast.LENGTH_SHORT).show();
-                    } else if (resultCode != RESULT_OK) {
-                        Toast.makeText(this, "Error during scanning.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    startScan(scanResult.getContents());
-                }
-            } else {
-                Toast.makeText(this, "Error during scanning.", Toast.LENGTH_SHORT).show();
-                super.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-    }*/
-
-    private void startScan(String scanResult) {
-        /*mButtonsLinearLayout.setVisibility(View.GONE);
-        mScanProgressBar.setVisibility(View.VISIBLE);
-        mScanTextView.setVisibility(View.VISIBLE);*/
-
-        callProductApi(scanResult);
-    }
-
-    private void callProductApi(String scanResult) {
-        mProductService.getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
-                ProductNotFormatted product = Objects.requireNonNull(response.body()).getProduct();
-                Product p = formatProduct(product);
-
-                if (p != null) {
-                    Intent intent = new Intent(getApplicationContext(), ProductActivity.class);
-                    intent.putExtra(TWO_PANE, mTwoPane);
-                    intent.putExtra(PRODUCT, p);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Product not found", Toast.LENGTH_SHORT).show();
-                }
-
-                /*mScanProgressBar.setVisibility(View.GONE);
-                mScanTextView.setVisibility(View.GONE);
-                mButtonsLinearLayout.setVisibility(View.VISIBLE);*/
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ProductResponse> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.v("STATUS", "onDestroy");
-        super.onDestroy();
     }
 
     public interface MyInterface {
