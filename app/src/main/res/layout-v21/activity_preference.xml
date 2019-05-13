@@ -109,6 +109,7 @@
             <Button
                 android:id="@+id/save_data_button"
                 style="@style/ButtonStyle"
+                android:backgroundTint="@color/colorAccent"
                 android:contentDescription="@string/save_data_button_description"
                 android:text="@string/save_data_button" />
 
@@ -138,6 +139,7 @@
             <Button
                 android:id="@+id/delete_user_button"
                 style="@style/ButtonStyle"
+                android:backgroundTint="@color/colorAccent"
                 android:contentDescription="@string/delete_data_button_description"
                 android:text="@string/delete_user_button" />
 
