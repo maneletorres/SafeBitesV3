@@ -16,7 +16,7 @@
             android:id="@+id/scan_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/scan_button_description"
             android:drawableEnd="@drawable/ic_barcode_scan_black_24dp"
             android:drawableRight="@drawable/ic_barcode_scan_black_24dp"
             android:text="@string/scan_button" />
