@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/product_B_container"
         android:layout_centerInParent="true"
+        android:backgroundTint="@color/colorAccent"
         android:contentDescription="@string/compare_button_description"
         android:text="@string/compare" />
 
@@ -94,33 +95,5 @@
         android:background="#00000000"
         android:text="@string/comparing_text"
         android:visibility="gone" />
-
-    <View
-        android:id="@+id/horizontal_separation_view"
-        style="@style/HorizontalViewStyle"
-        android:layout_below="@id/compare_button"
-        android:layout_marginTop="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/horizontal_separation_view"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/compare_frame_layout_1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <View style="@style/VerticalViewStyle" />
-
-        <FrameLayout
-            android:id="@+id/compare_frame_layout_2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-    </LinearLayout>
 
 </RelativeLayout>
