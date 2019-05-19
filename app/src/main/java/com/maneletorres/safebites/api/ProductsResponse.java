@@ -22,7 +22,7 @@ public class ProductsResponse {
     private int pageSize;
 
     /**
-     *
+     * Number of products in total.
      */
     @SerializedName("count")
     @Expose

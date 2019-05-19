@@ -28,28 +28,4 @@ public class ProductResponse {
     public void setProduct(ProductNotFormatted product) {
         this.product = product;
     }
-
-    public String getStatus_verbose() {
-        return status_verbose;
-    }
-
-    public void setStatus_verbose(String status_verbose) {
-        this.status_verbose = status_verbose;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }
