@@ -38,7 +38,9 @@ public class ProductNotFormatted {
     @Expose
     private JsonArray traces_hierarchy;
 
-    public ProductNotFormatted(String product_name, String code, JsonObject nutriments, String image_small_url, String ingredients_text, String serving_size, JsonArray allergens_hierarchy, JsonArray traces_hierarchy) {
+    public ProductNotFormatted(String product_name, String code, JsonObject nutriments,
+                               String image_small_url, String ingredients_text, String serving_size,
+                               JsonArray allergens_hierarchy, JsonArray traces_hierarchy) {
         this.product_name = product_name;
         this.code = code;
         this.nutriments = nutriments;
