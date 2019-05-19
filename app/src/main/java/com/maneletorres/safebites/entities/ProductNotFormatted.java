@@ -53,63 +53,31 @@ public class ProductNotFormatted {
         return product_name;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
-    }
-
     public String getCode() {
         return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public JsonObject getNutriments() {
         return nutriments;
     }
 
-    public void setNutriments(JsonObject nutriments) {
-        this.nutriments = nutriments;
-    }
-
     public String getImage_small_url() {
         return image_small_url;
-    }
-
-    public void setImage_small_url(String image_small_url) {
-        this.image_small_url = image_small_url;
     }
 
     public String getIngredients_text() {
         return ingredients_text;
     }
 
-    public void setIngredients_text(String ingredients_text) {
-        this.ingredients_text = ingredients_text;
-    }
-
     public String getServing_size() {
         return serving_size;
-    }
-
-    public void setServing_size(String serving_size) {
-        this.serving_size = serving_size;
     }
 
     public JsonArray getAllergens_hierarchy() {
         return allergens_hierarchy;
     }
 
-    public void setAllergens_hierarchy(JsonArray allergens_hierarchy) {
-        this.allergens_hierarchy = allergens_hierarchy;
-    }
-
     public JsonArray getTraces_hierarchy() {
         return traces_hierarchy;
-    }
-
-    public void setTraces_hierarchy(JsonArray traces_hierarchy) {
-        this.traces_hierarchy = traces_hierarchy;
     }
 }
