@@ -23,7 +23,8 @@ public class NutrientAdapter extends Adapter<ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new NutrientViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_nutrient, parent, false));
+        return new NutrientViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_nutrient, parent, false));
     }
 
     @Override
