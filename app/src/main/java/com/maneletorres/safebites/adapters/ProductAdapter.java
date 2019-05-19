@@ -102,20 +102,27 @@ public class ProductAdapter extends Adapter<ViewHolder> {
 
                 String image_resource = currentProduct.getImage_resource();
                 if (image_resource.equals("-")) {
-                    mProductViewHolder.mImageResource.setImageResource(R.drawable.no_image_available);
+                    mProductViewHolder.mImageResource
+                            .setImageResource(R.drawable.no_image_available);
                 } else {
                     Glide.with(mContext)
                             .load(currentProduct.getImage_resource())
                             .listener(new RequestListener<Drawable>() {
                                 @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    mProductViewHolder.mImageResource.setImageResource(R.drawable.no_image_available);
+                                public boolean onLoadFailed(@Nullable GlideException e,
+                                                            Object model, Target<Drawable> target,
+                                                            boolean isFirstResource) {
+                                    mProductViewHolder.mImageResource
+                                            .setImageResource(R.drawable.no_image_available);
                                     mProductViewHolder.mProgressBar.setVisibility(View.GONE);
                                     return false;
                                 }
 
                                 @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                public boolean onResourceReady(Drawable resource, Object model,
+                                                               Target<Drawable> target,
+                                                               DataSource dataSource,
+                                                               boolean isFirstResource) {
                                     mProductViewHolder.mProgressBar.setVisibility(View.GONE);
                                     return false;
                                 }
@@ -155,7 +162,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    public Product getItem(int position) {
+    private Product getItem(int position) {
         return mProducts.get(position);
     }
 
@@ -215,9 +222,11 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                             .beginTransaction();
 
                     if (mCurrentFragment instanceof SearchFragment) {
-                        fragmentTransaction.replace(R.id.search_frame_layout, completeProductFragment);
+                        fragmentTransaction.replace(R.id.search_frame_layout,
+                                completeProductFragment);
                     } else if (mCurrentFragment instanceof FavoritesFragment) {
-                        fragmentTransaction.replace(R.id.favorites_frame_layout, completeProductFragment);
+                        fragmentTransaction.replace(R.id.favorites_frame_layout,
+                                completeProductFragment);
                     }
 
                     fragmentTransaction.commit();
@@ -230,10 +239,11 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                 final Product currentProduct = mProducts.get(getAdapterPosition());
 
                 // Initialization of the reference to the products of FRDB:
-                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(Utils.sUID).child("products");
+                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference("users").child(Utils.sUID).child("products");
                 productsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String upc = currentProduct.getUpc();
                         if (snapshot.hasChild(upc)) {
                             productsDatabaseReference.child(upc).removeValue();
