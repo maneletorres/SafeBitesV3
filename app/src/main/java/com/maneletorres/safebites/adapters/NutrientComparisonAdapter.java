@@ -26,7 +26,8 @@ public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new SimpleNutrientViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_nutrient_comparison, parent, false));
+        return new SimpleNutrientViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_nutrient_comparison, parent, false));
     }
 
     @Override
@@ -42,14 +43,16 @@ public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
             simpleNutrientViewHolder.mProductANutrient.setText("-");
 
         } else {
-            simpleNutrientViewHolder.mProductANutrient.setText(productAQuantity.concat(" " + currentSimplifiedNutrient.getUnit()));
+            simpleNutrientViewHolder.mProductANutrient
+                    .setText(productAQuantity.concat(" " + currentSimplifiedNutrient.getUnit()));
         }
 
         String productBQuantity = currentSimplifiedNutrient.getQuantityB();
         if (productBQuantity.equals("-")) {
             simpleNutrientViewHolder.mProductBNutrient.setText("-");
         } else {
-            simpleNutrientViewHolder.mProductBNutrient.setText(productBQuantity.concat(" " + currentSimplifiedNutrient.getUnit()));
+            simpleNutrientViewHolder.mProductBNutrient.setText(productBQuantity
+                    .concat(" " + currentSimplifiedNutrient.getUnit()));
         }
     }
 
