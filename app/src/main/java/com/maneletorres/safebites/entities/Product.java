@@ -57,7 +57,8 @@ public class Product implements Parcelable {
     public Product() {
     }
 
-    public Product(String upc, String name, String image_resource, ArrayList<Nutrient> nutrients, String ingredients, String serving_size, ArrayList<String> allergens) {
+    public Product(String upc, String name, String image_resource, ArrayList<Nutrient> nutrients,
+                   String ingredients, String serving_size, ArrayList<String> allergens) {
         this.upc = upc;
         this.name = name;
         this.image_resource = image_resource;
@@ -98,10 +99,6 @@ public class Product implements Parcelable {
         return upc;
     }
 
-    public void setUpc(String upc) {
-        this.upc = upc;
-    }
-
     public String getName() {
         return name;
     }
@@ -114,40 +111,20 @@ public class Product implements Parcelable {
         return image_resource;
     }
 
-    public void setImage_resource(String image_resource) {
-        this.image_resource = image_resource;
-    }
-
     public ArrayList<Nutrient> getNutrients() {
         return nutrients;
-    }
-
-    public void setNutrients(ArrayList<Nutrient> nutrients) {
-        this.nutrients = nutrients;
     }
 
     public String getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
-        this.ingredients = ingredients;
-    }
-
     public String getServing_size() {
         return serving_size;
     }
 
-    public void setServing_size(String serving_size) {
-        this.serving_size = serving_size;
-    }
-
     public ArrayList<String> getAllergens() {
         return allergens;
-    }
-
-    public void setAllergens(ArrayList<String> allergens) {
-        this.allergens = allergens;
     }
 
     @NonNull
