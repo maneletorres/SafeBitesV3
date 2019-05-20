@@ -71,7 +71,6 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
 
     private void prepareProductsLoading() {
         mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
-        //mProductAdapter.addAll(sProducts);
         mProductAdapter.addAll(sUser.getProducts());
         mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
         checkProductsNumber();
