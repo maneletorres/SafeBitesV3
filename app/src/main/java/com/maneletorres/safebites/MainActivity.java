@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.maneletorres.safebites.fragments.CompareFragment;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.ScanFragment;
@@ -29,10 +31,6 @@ import com.maneletorres.safebites.utils.Utils;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
-import static com.maneletorres.safebites.utils.Utils.sCompareFragment;
-import static com.maneletorres.safebites.utils.Utils.sFavoriteFragment;
-import static com.maneletorres.safebites.utils.Utils.sUser;
-import static com.maneletorres.safebites.utils.Utils.staticListenerLoad;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -40,22 +38,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        // Load of static Listener on the FRDB:
-        if (sUser.getProducts() == null) {
-            staticListenerLoad();
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             switch (extras.getInt(TOAST_MESSAGE)) {
                 case 0:
-                    Toast.makeText(this, getString(R.string.successful_registration, sUser.getDisplayName()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.successful_registration, firebaseUser.getDisplayName()), Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(this, getString(R.string.welcome_message, sUser.getDisplayName()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.welcome_message, firebaseUser.getDisplayName()), Toast.LENGTH_LONG).show();
                     break;
                 case 2:
                     Toast.makeText(this, getString(R.string.modified_allergens), Toast.LENGTH_LONG).show();
@@ -85,16 +79,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View headerView = navigationView.getHeaderView(0);
         TextView displayNameTextView = headerView.findViewById(R.id.displayNameTextView);
-        displayNameTextView.setText(sUser.getDisplayName());
+        displayNameTextView.setText(firebaseUser.getDisplayName());
 
         TextView emailTextView = headerView.findViewById(R.id.emailTextView);
-        emailTextView.setText(sUser.getEmail());
+        emailTextView.setText(firebaseUser.getEmail());
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         setupViewPager(viewPager);
 
         TabLayout mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(viewPager);
+
     }
 
     @Override
@@ -153,10 +148,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ScanFragment(), getString(R.string.scan_fragment));
         adapter.addFragment(new SearchFragment(), getString(R.string.search_fragment));
-        sCompareFragment = new CompareFragment();
-        adapter.addFragment(sCompareFragment, getString(R.string.compare_fragment));
-        sFavoriteFragment = new FavoritesFragment();
-        adapter.addFragment(sFavoriteFragment, getString(R.string.favorites_fragment));
+        adapter.addFragment(new CompareFragment(), getString(R.string.compare_fragment));
+        adapter.addFragment(new FavoritesFragment(), getString(R.string.favorites_fragment));
         viewPager.setAdapter(adapter);
     }
 
@@ -166,9 +159,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
-    }
-
-    public interface MyInterface {
-        void updateProducts();
     }
 }
