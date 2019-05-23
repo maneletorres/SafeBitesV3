@@ -42,14 +42,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String displayName = "ANONYMOUS";
+        String email = "ANONYMOUS";
+        if (firebaseUser != null) {
+            displayName = firebaseUser.getDisplayName();
+            email = firebaseUser.getEmail();
+        }
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             switch (extras.getInt(TOAST_MESSAGE)) {
                 case 0:
-                    Toast.makeText(this, getString(R.string.successful_registration, firebaseUser.getDisplayName()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.successful_registration, displayName), Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(this, getString(R.string.welcome_message, firebaseUser.getDisplayName()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.welcome_message, email), Toast.LENGTH_LONG).show();
                     break;
                 case 2:
                     Toast.makeText(this, getString(R.string.modified_allergens), Toast.LENGTH_LONG).show();
@@ -79,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View headerView = navigationView.getHeaderView(0);
         TextView displayNameTextView = headerView.findViewById(R.id.displayNameTextView);
-        displayNameTextView.setText(firebaseUser.getDisplayName());
+        displayNameTextView.setText(displayName);
 
         TextView emailTextView = headerView.findViewById(R.id.emailTextView);
-        emailTextView.setText(firebaseUser.getEmail());
+        emailTextView.setText(email);
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         setupViewPager(viewPager);
