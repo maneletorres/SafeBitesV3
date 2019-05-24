@@ -2,32 +2,21 @@ package com.maneletorres.safebites.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Nutrient;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.entities.ProductNotFormatted;
-import com.maneletorres.safebites.entities.User;
-import com.maneletorres.safebites.fragments.CompareFragment;
-import com.maneletorres.safebites.fragments.FavoritesFragment;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
 
 public class Utils {
@@ -47,14 +36,7 @@ public class Utils {
     public static final int RC_SCAN_OPTION_1_SECOND_EXECUTION = 12;
     public static final int RC_SCAN_OPTION_2 = 2;
 
-    // Static user variables:
-    public static User sUser;
-    public static String sUID;
-    //public static ArrayList<Product> sProducts;
-    public static CompareFragment sCompareFragment;
-    public static FavoritesFragment sFavoriteFragment;
-
-    public static Product formatProduct(ProductNotFormatted product) {
+    public static Product formatProduct(Context context, ProductNotFormatted product) {
         try {
             String[] nutrients_name = {
                     // Ordered nutrients:
@@ -323,82 +305,7 @@ public class Utils {
         }
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         assert inputMethodManager != null;
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-    }
-
-    public static void staticListenerLoad() {
-        //sProducts = new ArrayList<>();
-        sUser.setProducts(new ArrayList<>());
-
-        // Reference to the user's favorite products:
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("products");
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Product product = dataSnapshot.getValue(Product.class);
-
-                //sProducts.add(product);
-                sUser.addProduct(product);
-
-                sCompareFragment.updateProducts();
-                sFavoriteFragment.updateProducts();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Product product = dataSnapshot.getValue(Product.class);
-
-                boolean condition = false;
-                ArrayList<Product> products = sUser.getProducts();
-                for (int i = 0; i < products.size() && !condition; i++) {
-                    Product currentProduct = products.get(i);
-                    if (currentProduct.getUpc().equals(product.getUpc())) {
-                        condition = true;
-                        //sProducts.remove(currentProduct);
-                        sUser.removeProduct(product);
-                    }
-                }
-
-                sCompareFragment.updateProducts();
-                sFavoriteFragment.updateProducts();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-        databaseReference.addChildEventListener(childEventListener);
-
-        // Reference to the user's allergies:
-        DatabaseReference allergiesDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("allergies");
-        allergiesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, Boolean> userAllergens = (HashMap<String, Boolean>) dataSnapshot.getValue();
-                sUser.setAllergies(userAllergens);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    // Testing:
-    public static void deleteUserInformation() {
-        sUser = null;
-        sUID = null;
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+                .getWindowToken(), 0);
     }
 }
