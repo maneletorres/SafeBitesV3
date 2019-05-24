@@ -17,6 +17,15 @@
     <string name="error_during_comparison_2">There are not enough products saved as a favorite to make the comparison</string>
     <string name="no_registered_ingredients">There are no registered ingredients for this product</string>
 
+    <!-- AlertDialog: -->
+    <string name="alert_dialog_positive_button" translatable="false">OK</string>
+    <string name="alert_dialog_negative_button">Cancel</string>
+    <string name="save_data_alert_dialog_title">Information:</string>
+    <string name="save_data_alert_dialog_message_1">Are you sure you want to save the changes made to your allergies?</string>
+    <string name="save_data_alert_dialog_message_2">Are you sure you want to create the user %1$s with email %2$s?</string>
+    <string name="delete_user_alert_dialog_title">Warning:</string>
+    <string name="delete_user_alert_dialog_message">This action cannot be undone. Are you sure you want to delete the user %1$s with email %2$s?"</string>
+
     <!-- -->
     <string name="no_products_found"> No products found</string>
     <string name="standard_size_in_millimeters" translatable="false">100 ml</string>
@@ -45,6 +54,7 @@
     <string name="scan_button_description">Scan button</string>
     <string name="back_button">Back</string>
     <string name="back_button_description">Back button</string>
+    <string name="create_user_button">Create user</string>
     <string name="save_data_button">Save data</string>
     <string name="save_data_button_description">Floating save data button</string>
     <string name="delete_user_button">Delete user</string>
@@ -87,7 +97,7 @@
     <string name="chooser_message">Choose where you want to share SafeBites App:</string>
 
     <!-- Fragments: -->
-    <string name="scan_fragment">"Scan   "</string>
+    <string name="scan_fragment">"Scan"</string>
     <string name="search_fragment">Search</string>
     <string name="compare_fragment">Compare</string>
     <string name="favorites_fragment">Favorites</string>
@@ -205,4 +215,11 @@
     <string name="app_mentions" translatable="false">This project is based on the Open Food Facts group database and uses the ZXing library ("Zebra Crossing"), to which their enormous work and fantastic initiative are appreciated, making reference to them in the following links:</string>
     <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
     <string name="mention2" translatable="false"><a href="some site">https://github.com/zxing/zxing</a></string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">2592646150777618</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb2592646150777618</string>
+    <!-- Twitter consumer key and secret -->
+    <string name="twitter_consumer_key" translatable="false">hVoY35ddeCJVNhoyns8t49Ept</string>
+    <string name="twitter_consumer_secret" translatable="false">cLDid0RrWA7I6lx5JBm3UnTdrl4ZuCvqfnkXbAUeyiU7JLipAc</string>
 </resources>
