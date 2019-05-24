@@ -16,7 +16,8 @@ import static com.maneletorres.safebites.utils.Utils.INGREDIENTS;
 public class IngredientsFragment extends Fragment {
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ingredients, container, false);
 
         TextView ingredientsTextView = view.findViewById(R.id.ingredients_textView);
