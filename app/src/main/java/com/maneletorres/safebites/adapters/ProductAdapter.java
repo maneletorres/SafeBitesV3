@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,18 +24,12 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.fragments.CompleteProductFragment;
 import com.maneletorres.safebites.fragments.FavoritesFragment;
 import com.maneletorres.safebites.fragments.SearchFragment;
-import com.maneletorres.safebites.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +40,13 @@ public class ProductAdapter extends Adapter<ViewHolder> {
     private static final int ITEM = 0;
     private static final int LOADING = 1;
 
-    private boolean isLoadingAdded = false;
-
     // Product adapter components:
     private Context mContext;
     private Fragment mCurrentFragment;
     private ProductViewHolder mProductViewHolder;
     private List<Product> mProducts;
     private boolean mTwoPane;
+    private boolean isLoadingAdded = false;
 
     public ProductAdapter(Context context, Fragment fragment, boolean twoPane) {
         this.mProducts = new ArrayList<>();
@@ -132,12 +124,6 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                 mProductViewHolder.itemView.setTag(currentProduct);
                 mProductViewHolder.mName.setText(currentProduct.getName());
                 mProductViewHolder.mUpc.setText(currentProduct.getUpc());
-
-                // Checking the fragment that is treated for the activation of 'mFavoriteCondition'
-                // button:
-                if (mCurrentFragment instanceof FavoritesFragment) {
-                    mProductViewHolder.mFavoriteCondition.setVisibility(View.VISIBLE);
-                }
                 break;
             case LOADING:
                 break;
@@ -149,7 +135,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         return mProducts == null ? 0 : mProducts.size();
     }
 
-    private void add(Product p) {
+    public void add(Product p) {
         mProducts.add(p);
         notifyItemInserted(mProducts.size() - 1);
     }
@@ -162,7 +148,23 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    private Product getItem(int position) {
+    public void removeProduct(String productUpc) {
+        boolean condition = false;
+        Product product = null;
+        for (int i = 0; i < mProducts.size() && !condition; i++) {
+            Product currentProduct = mProducts.get(i);
+            if (currentProduct.getUpc().equals(productUpc)) {
+                product = currentProduct;
+                condition = true;
+            }
+        }
+
+        if (product != null) {
+            mProducts.remove(product);
+        }
+    }
+
+    public Product getItem(int position) {
         return mProducts.get(position);
     }
 
@@ -187,7 +189,6 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         private TextView mUpc;
         private TextView mName;
         private ImageView mImageResource;
-        private ImageButton mFavoriteCondition;
         private ProgressBar mProgressBar;
 
         ProductViewHolder(View itemView) {
@@ -196,15 +197,10 @@ public class ProductAdapter extends Adapter<ViewHolder> {
             mUpc = itemView.findViewById(R.id.product_extra_information);
             mName = itemView.findViewById(R.id.product_name);
             mImageResource = itemView.findViewById(R.id.product_image);
-            mFavoriteCondition = itemView.findViewById(R.id.favorite_condition_image_button);
             mProgressBar = itemView.findViewById(R.id.image_progress_bar);
 
             // OnClickListener configuration on the current product to access it:
             itemView.setOnClickListener(this);
-
-            // OnClickListener configuration on the 'mFavoriteCondition' ImageButton to save/remove
-            // the current product:
-            mFavoriteCondition.setOnClickListener(this);
         }
 
         @Override
@@ -235,26 +231,6 @@ public class ProductAdapter extends Adapter<ViewHolder> {
                     intent.putExtra(PRODUCT, (Parcelable) v.getTag());
                     mContext.startActivity(intent);
                 }
-            } else if (v.getId() == mFavoriteCondition.getId()) {
-                final Product currentProduct = mProducts.get(getAdapterPosition());
-
-                // Initialization of the reference to the products of FRDB:
-                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference("users").child(Utils.sUID).child("products");
-                productsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String upc = currentProduct.getUpc();
-                        if (snapshot.hasChild(upc)) {
-                            productsDatabaseReference.child(upc).removeValue();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
         }
     }
