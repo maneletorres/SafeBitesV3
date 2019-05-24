@@ -19,10 +19,13 @@ import java.util.Objects;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 import static com.maneletorres.safebites.utils.Utils.sUser;
 
-public class FavoritesFragment extends Fragment implements MainActivity.MyInterface {
-    /**
-     * Whether or not the fragment is in two-pane mode, i.e. running on a tablet device.
-     */
+public class FavoritesFragment extends Fragment {
+    // FRDB variables:
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mFavoritesDatabaseReference;
+    private ChildEventListener mChildEventListener;
+
+    // Other variables:
     private boolean mTwoPane;
 
     // Other variables:
@@ -91,6 +94,92 @@ public class FavoritesFragment extends Fragment implements MainActivity.MyInterf
             } else {
                 mView.setVisibility(View.GONE);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
+        mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
+
+        checkProductsNumber();
+        attachDatabaseReadListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        detachDatabaseReadListener();
+    }
+
+    private void attachDatabaseReadListener() {
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String product_upc = dataSnapshot.getKey();
+                    if (product_upc != null) {
+                        DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
+                                .getReference("products").child(product_upc);
+                        productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mProductAdapter.add(dataSnapshot.getValue(Product.class));
+                                mProductAdapter.notifyDataSetChanged();
+
+                                prepareProductsLoading();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    String product_upc = dataSnapshot.getKey();
+                    if (product_upc != null) {
+                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference("users")
+                                .child(mFirebaseUser.getUid()).child("products").child(product_upc);
+                        dr.removeValue();
+
+                        // Crear una nueva tabla productos / usuarios ya que es muchos a mucho y actuar en consecuencia
+                        mProductAdapter.removeProduct(product_upc);
+                        mProductAdapter.notifyDataSetChanged();
+
+                        prepareProductsLoading();
+                    }
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mFavoritesDatabaseReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void detachDatabaseReadListener() {
+        if (mChildEventListener != null) {
+            mFavoritesDatabaseReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
         }
     }
 }
