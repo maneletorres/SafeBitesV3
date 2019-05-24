@@ -113,7 +113,7 @@ public class AuthActivity extends AppCompatActivity {
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChild(sUID)) {
+                    if (dataSnapshot.hasChild(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))) {
                         Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                         intent.putExtra(TOAST_MESSAGE, 1);
                         startActivity(intent);
