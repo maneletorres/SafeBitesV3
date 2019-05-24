@@ -37,7 +37,6 @@ public class ProductActivity extends AppCompatActivity {
             mProduct = mBundle.getParcelable(PRODUCT);
 
             if (!twoPane) {
-                // Initialization of the components:
                 ViewPager mViewPager = findViewById(R.id.viewPagerContainer);
                 setupViewPager(mViewPager);
 
