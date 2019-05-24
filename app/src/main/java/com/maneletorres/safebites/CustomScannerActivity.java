@@ -30,12 +30,14 @@ public class CustomScannerActivity extends AppCompatActivity {
                 if (mEditText != null && mEditText.getText().length() > 0) {
                     Utils.hideSoftKeyboard(this);
 
-                    setResult(RESULT_OK, new Intent().putExtra(Intents.Scan.RESULT, mEditText.getText().toString()));
+                    setResult(RESULT_OK, new Intent().putExtra(Intents.Scan.RESULT, mEditText.
+                            getText().toString()));
                     finish();
 
                     return true;
                 } else {
-                    Toast.makeText(this, getString(R.string.enter_search), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.enter_search_recommendation), Toast.LENGTH_SHORT).
+                            show();
                 }
             }
             return false;
@@ -78,9 +80,10 @@ public class CustomScannerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        Log.v("STATUS", "onBackPressed - Custom");
-        // Internamente no actúa igual que el botón de retroceso superior. Falta hacer onDestroy cuándo se tira hacia atrás dentro de este método (onBackPressed).
-        startActivity(new Intent(this, MainActivity.class));
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Toast.makeText(this, getString(R.string.scan_cancellation), Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
