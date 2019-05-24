@@ -47,18 +47,6 @@
             android:name=".PreferenceActivity"
             android:screenOrientation="portrait" />
 
-        <!--<activity
-            android:name=".ConnectionTesterActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        </activity>
-
-        -<receiver android:name=".NetworkStateReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>-->
-
         <activity
             android:name=".CustomScannerActivity"
             android:parentActivityName=".MainActivity"
