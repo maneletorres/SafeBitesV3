@@ -19,15 +19,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.maneletorres.safebites.entities.User;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
-import static com.maneletorres.safebites.utils.Utils.sUID;
-import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class AuthActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
@@ -48,9 +45,6 @@ public class AuthActivity extends AppCompatActivity {
             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
                 // User is signed in:
-                sUID = firebaseUser.getUid();
-                sUser = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName());
-
                 mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
                 attachDatabaseReadListener();
             } else {
