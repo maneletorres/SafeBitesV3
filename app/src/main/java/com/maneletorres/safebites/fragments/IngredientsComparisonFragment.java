@@ -28,16 +28,22 @@ import static com.maneletorres.safebites.utils.Utils.INGREDIENTS_B;
 public class IngredientsComparisonFragment extends Fragment {
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ingredients_comparison, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_ingredients_comparison, container,
+                false);
 
         Bundle extras = getArguments();
         if (extras != null) {
-            formatProductImage(view.findViewById(R.id.product_A_image), Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_A)));
-            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_A)), view.findViewById(R.id.ingredients_A_textView));
+            formatProductImage(view.findViewById(R.id.product_A_image),
+                    Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_A)));
+            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_A)),
+                    view.findViewById(R.id.ingredients_A_textView));
 
-            formatProductImage(view.findViewById(R.id.product_B_image), Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_B)));
-            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_B)), view.findViewById(R.id.ingredients_B_textView));
+            formatProductImage(view.findViewById(R.id.product_B_image),
+                    Objects.requireNonNull(extras.getString(IMAGE_RESOURCE_B)));
+            formatProductIngredients(Objects.requireNonNull(extras.getString(INGREDIENTS_B)),
+                    view.findViewById(R.id.ingredients_B_textView));
         }
 
         return view;
@@ -51,15 +57,18 @@ public class IngredientsComparisonFragment extends Fragment {
                     .load(productImageResource)
                     .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target,
+                                                    boolean isFirstResource) {
                             productImageView.setImageResource(R.drawable.no_image_available);
-                            //mProgressBar.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            //mProgressBar.setVisibility(View.GONE);
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       DataSource dataSource,
+                                                       boolean isFirstResource) {
                             return false;
                         }
                     })
