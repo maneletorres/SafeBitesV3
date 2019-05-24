@@ -31,7 +31,8 @@ import static com.maneletorres.safebites.utils.Utils.PRODUCT_A;
 import static com.maneletorres.safebites.utils.Utils.PRODUCT_B;
 
 public class NutrientsComparisonFragment extends Fragment {
-    private List<NutrientComparison> createSimplifiedNutrientObjects(List<Nutrient> productANutrients, List<Nutrient> productBNutrients) {
+    private List<NutrientComparison> createSimplifiedNutrientObjects(
+            List<Nutrient> productANutrients, List<Nutrient> productBNutrients) {
         List<NutrientComparison> simplifiedNutrients = new ArrayList<>();
 
         List<Nutrient> unitedNutrients;
@@ -54,16 +55,20 @@ public class NutrientsComparisonFragment extends Fragment {
                 for (int j = i + 1; j < unitedNutrients.size(); j++) {
                     Nutrient secondNutrient = unitedNutrients.get(j);
                     if (firstNutrient.getName().equals(secondNutrient.getName())) {
-                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), firstNutrient.getPer_100g(), secondNutrient.getPer_100g(), firstNutrient.getUnit());
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(),
+                                firstNutrient.getPer_100g(), secondNutrient.getPer_100g(),
+                                firstNutrient.getUnit());
                         simplifiedNutrients.add(simplifiedNutrient);
                     }
                 }
 
                 if (simplifiedNutrient == null) {
                     if (productANutrients != null && i < productANutrients.size()) {
-                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), firstNutrient.getPer_100g(), "-", firstNutrient.getUnit());
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(),
+                                firstNutrient.getPer_100g(), "-", firstNutrient.getUnit());
                     } else {
-                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(), "-", firstNutrient.getPer_100g(), firstNutrient.getUnit());
+                        simplifiedNutrient = new NutrientComparison(firstNutrient.getName(),
+                                "-", firstNutrient.getPer_100g(), firstNutrient.getUnit());
                     }
                     simplifiedNutrients.add(simplifiedNutrient);
                 }
@@ -86,8 +91,10 @@ public class NutrientsComparisonFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_nutrients_comparison, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_nutrients_comparison, container,
+                false);
 
         Bundle extras = getArguments();
         if (extras != null) {
@@ -95,14 +102,18 @@ public class NutrientsComparisonFragment extends Fragment {
             Product mProductB = extras.getParcelable(PRODUCT_B);
 
             // Initialization of the components:
-            formatProductImage(view.findViewById(R.id.product_A_image), Objects.requireNonNull(mProductA).getImage_resource());
+            formatProductImage(view.findViewById(R.id.product_A_image),
+                    Objects.requireNonNull(mProductA).getImage_resource());
             formatProductName(view.findViewById(R.id.product_A_name), mProductA.getName());
 
-            formatProductImage(view.findViewById(R.id.product_B_image), Objects.requireNonNull(mProductB).getImage_resource());
+            formatProductImage(view.findViewById(R.id.product_B_image),
+                    Objects.requireNonNull(mProductB).getImage_resource());
             formatProductName(view.findViewById(R.id.product_B_name), mProductB.getName());
 
-            List<NutrientComparison> simplifiedNutrients = createSimplifiedNutrientObjects(mProductA.getNutrients(), mProductB.getNutrients());
-            NutrientComparisonAdapter mSimplifiedNutrientAdapter = new NutrientComparisonAdapter(simplifiedNutrients);
+            List<NutrientComparison> simplifiedNutrients = createSimplifiedNutrientObjects(mProductA
+                    .getNutrients(), mProductB.getNutrients());
+            NutrientComparisonAdapter mSimplifiedNutrientAdapter =
+                    new NutrientComparisonAdapter(simplifiedNutrients);
             RecyclerView recyclerView = view.findViewById(R.id.simplified_nutrients_recycler);
             recyclerView.setAdapter(mSimplifiedNutrientAdapter);
         }
@@ -118,14 +129,19 @@ public class NutrientsComparisonFragment extends Fragment {
                     .load(productImageResource)
                     .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target,
+                                                    boolean isFirstResource) {
                             productImageView.setImageResource(R.drawable.no_image_available);
                             //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       DataSource dataSource,
+                                                       boolean isFirstResource) {
                             //mProductViewHolder.mProgressBar.setVisibility(View.GONE);
                             return false;
                         }
