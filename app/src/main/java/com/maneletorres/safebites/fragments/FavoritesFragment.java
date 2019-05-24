@@ -10,14 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.maneletorres.safebites.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
+import com.maneletorres.safebites.entities.Product;
 
 import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
-import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class FavoritesFragment extends Fragment {
     // FRDB variables:
@@ -27,8 +34,6 @@ public class FavoritesFragment extends Fragment {
 
     // Other variables:
     private boolean mTwoPane;
-
-    // Other variables:
     private RecyclerView mFavoriteProductsRecyclerView;
     private ProductAdapter mProductAdapter;
     private TextView mEmptyTextView;
@@ -36,7 +41,8 @@ public class FavoritesFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         // Master-detail configuration:
@@ -45,12 +51,14 @@ public class FavoritesFragment extends Fragment {
             mTwoPane = true;
         }
 
+        // Initialization of the FRDB components:
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        mFavoritesDatabaseReference = FirebaseDatabase.getInstance().getReference("favorites")
+                .child(mFirebaseUser.getUid());
+
         // Initialization of the components:
         mEmptyTextView = view.findViewById(R.id.empty_textView);
         mFavoriteProductsRecyclerView = view.findViewById(R.id.favorite_products_recycler_view);
-
-        // Loading of the products:
-        prepareProductsLoading();
 
         return view;
     }
@@ -64,25 +72,13 @@ public class FavoritesFragment extends Fragment {
         }
     }
 
-    // IMPORTANT: this method can be executed before the onCreateView method is executed.
-    @Override
-    public void updateProducts() {
-        if (mProductAdapter != null) {
-            prepareProductsLoading();
-        }
-    }
-
     private void prepareProductsLoading() {
-        mProductAdapter = new ProductAdapter(getContext(), this, mTwoPane);
-        mProductAdapter.addAll(sUser.getProducts());
-        mFavoriteProductsRecyclerView.setAdapter(mProductAdapter);
         checkProductsNumber();
 
         if (mTwoPane) {
-            int productsNumber = mProductAdapter.getItemCount();
-            if (productsNumber > 0) {
+            if (mProductAdapter.getItemCount() > 0) {
                 Bundle arguments = new Bundle();
-                arguments.putParcelable(PRODUCT, sUser.getProducts().get(0));
+                arguments.putParcelable(PRODUCT, mProductAdapter.getItem(0));
 
                 CompleteProductFragment completeProductFragment = new CompleteProductFragment();
                 completeProductFragment.setArguments(arguments);
