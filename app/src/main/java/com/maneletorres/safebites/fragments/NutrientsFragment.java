@@ -19,6 +19,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,25 +30,30 @@ import com.maneletorres.safebites.adapters.NutrientAdapter;
 import com.maneletorres.safebites.entities.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
-import static com.maneletorres.safebites.utils.Utils.sUID;
-import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class NutrientsFragment extends Fragment implements View.OnClickListener {
     // FRDB variables:
-    private DatabaseReference mProductsDatabaseReference;
+    private DatabaseReference mUserDBRef;
+    private DatabaseReference mUserFavoritesDBRef;
+    private ValueEventListener mUserAllergiesValueEventListener;
+    private ValueEventListener mUserProductsValueEventListener;
 
     // Other variables:
+    private TextView apt_product;
+    private String mUid;
     private FloatingActionButton mSaveOrDeleteFAB;
     private Product mProduct;
     private boolean mProductExists;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nutrients, container, false);
 
         Bundle extras = getArguments();
@@ -55,121 +61,25 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
             mProduct = extras.getParcelable(PRODUCT);
 
             // Initialization of the components:
+            mUid = FirebaseAuth.getInstance().getUid();
+            mUserDBRef = FirebaseDatabase.getInstance()
+                    .getReference(getString(R.string.users)).child(mUid);
+            mUserFavoritesDBRef = FirebaseDatabase.getInstance()
+                    .getReference().child(getString(R.string.favorites)).child(mUid);
+
             ImageView image_nutrients = view.findViewById(R.id.image_view_nutrients_header);
             TextView name = view.findViewById(R.id.product_name_text_view);
             TextView upc = view.findViewById(R.id.product_upc_text_view);
-            TextView apt_product = view.findViewById(R.id.apt_product_text_view);
+            apt_product = view.findViewById(R.id.apt_product_text_view);
             TextView header_per_100g = view.findViewById(R.id.header_per_100g);
             TextView header_per_serving = view.findViewById(R.id.header_per_serving);
             mSaveOrDeleteFAB = view.findViewById(R.id.save_or_delete_FAB);
-
-            // Initialization of the FRDB components:
-            //DatabaseReference userDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID);
-            mProductsDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID).child("products");
-
-            // Listener that checks if the product exists in the Firebase Realtime Database to
-            // modify accordingly 'mSaveOrDeleteFAB':
-            mProductsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String upc = mProduct.getUpc();
-                    if (snapshot.hasChild(upc)) {
-                        mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
-                        mSaveOrDeleteFAB.setContentDescription("Delete ImageButton");
-                        mProductExists = true;
-                    } else {
-                        mSaveOrDeleteFAB.setImageResource(R.drawable.content_save);
-                        mSaveOrDeleteFAB.setContentDescription("Save ImageButton");
-                        mProductExists = false;
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-            /*DatabaseReference mAllergiesDatabaseReference = userDatabaseReference.child("allergies");
-            mAllergiesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ArrayList<String> productAllergens = mProduct.getAllergens();
-                    if (productAllergens != null) {
-                        HashMap<String, Boolean> userAllergens = (HashMap<String, Boolean>) dataSnapshot.getValue();
-
-                        boolean condition = false;
-                        for (Map.Entry<String, Boolean> entry : userAllergens.entrySet()) {
-                            if (!condition) {
-                                String key = entry.getKey();
-                                Boolean value = entry.getValue();
-
-                                for (int i = 0; i < productAllergens.size() && !condition; i++) {
-                                    String allergy = productAllergens.get(i);
-                                    if (allergy.equals(key) && value) {
-                                        condition = true;
-                                    }
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        if (condition) {
-                            apt_product.setText("Unfit");
-                            apt_product.setBackgroundColor(Color.parseColor("#FF0000"));
-                        } else {
-                            apt_product.setText("Suitable");
-                            apt_product.setBackgroundColor(Color.parseColor("#ff99cc00"));
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });*/
+            mSaveOrDeleteFAB.setOnClickListener(this);
 
             // Loading of nutrients:
             NutrientAdapter nutrientAdapter = new NutrientAdapter(mProduct.getNutrients());
             RecyclerView recyclerView = view.findViewById(R.id.nutrient_recycler);
             recyclerView.setAdapter(nutrientAdapter);
-
-            // OnClickListener configuration on the FAB to save or delete a product as a favorite:
-            mSaveOrDeleteFAB.setOnClickListener(this);
-
-            // Allergy check:
-            boolean condition = false;
-            Map<String, Boolean> userAllergies = sUser.getAllergies();
-            if (userAllergies != null) {
-                for (Map.Entry<String, Boolean> entry : userAllergies.entrySet()) {
-                    if (!condition) {
-                        String key = entry.getKey();
-                        Boolean value = entry.getValue();
-
-                        ArrayList<String> productAllergies = mProduct.getAllergens();
-                        if (productAllergies != null) {
-                            for (int i = 0; i < productAllergies.size() && !condition; i++) {
-                                String allergy = productAllergies.get(i);
-                                if (allergy.equals(key) && value) {
-                                    condition = true;
-                                }
-                            }
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            if (condition) {
-                apt_product.setText("Unfit");
-                apt_product.setBackgroundColor(Color.parseColor("#FF0000"));
-            } else {
-                apt_product.setText("Suitable");
-                apt_product.setBackgroundColor(Color.parseColor("#ff99cc00"));
-            }
 
             // Loading the information in the elements of the layout:
             String image_resource = mProduct.getImage_resource();
@@ -180,15 +90,18 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                         .load(image_resource)
                         .listener(new RequestListener<Drawable>() {
                             @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                        Target<Drawable> target,
+                                                        boolean isFirstResource) {
                                 image_nutrients.setImageResource(R.drawable.no_image_available);
-                                //mProgressBar.setVisibility(View.GONE);
                                 return false;
                             }
 
                             @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                //mProgressBar.setVisibility(View.GONE);
+                            public boolean onResourceReady(Drawable resource, Object model,
+                                                           Target<Drawable> target,
+                                                           DataSource dataSource,
+                                                           boolean isFirstResource) {
                                 return false;
                             }
                         }).into(image_nutrients);
@@ -199,7 +112,7 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
 
             String serving_size = mProduct.getServing_size();
             if (serving_size.contains("ml")) {
-                header_per_100g.setText("100 ml");
+                header_per_100g.setText(getString(R.string.standard_size_in_millimeters));
             }
 
             header_per_serving.setText(portionHeaderFormat(serving_size));
@@ -212,18 +125,68 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         if (view.getId() == R.id.save_or_delete_FAB) {
             if (mProductExists) {
-                // Removal of the product from the Firebase Realtime Database:
-                mProductsDatabaseReference.child(mProduct.getUpc()).removeValue();
+                // Removal of the product from the FRDB:
+
+                // 'favorites':
+                DatabaseReference favoritesDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference().child("favorites").child(mUid).child(mProduct.getUpc());
+                favoritesDatabaseReference.removeValue();
+
+                // 'products':
+                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference().child("tests").child(mProduct.getUpc());
+                productsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getChildrenCount() == 0) {
+                            FirebaseDatabase.getInstance().getReference().child("products")
+                                    .child(mProduct.getUpc()).removeValue();
+                            productsDatabaseReference.removeEventListener(this);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // 'tests':
+                DatabaseReference testsDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference().child("tests").child(mProduct.getUpc()).child(mUid);
+                testsDatabaseReference.removeValue();
 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.content_save);
-                mSaveOrDeleteFAB.setContentDescription("Save ImageButton");
+                mSaveOrDeleteFAB.setContentDescription(getString(R.string.save_data_button_description));
                 mProductExists = false;
             } else {
-                // Upload of the product to the Firebase Realtime Database:
-                mProductsDatabaseReference.child(mProduct.getUpc()).setValue(mProduct);
+                // Upload of the product to the FRDB:
+
+                // 'favorites':
+                Map<String, Object> favorites = new HashMap<>();
+                favorites.put(mProduct.getUpc(), true);
+
+                DatabaseReference favoritesDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference().child("favorites").child(mUid);
+                favoritesDatabaseReference.updateChildren(favorites);
+
+                // 'products':
+                Map<String, Object> products = new HashMap<>();
+                products.put(mProduct.getUpc(), mProduct);
+
+                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference().child("products");
+                productsDatabaseReference.updateChildren(products);
+
+                // 'tests':
+                Map<String, Object> tests = new HashMap<>();
+                tests.put(mUid, true);
+
+                DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child("tests");
+                dr.child(mProduct.getUpc()).updateChildren(tests);
 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
-                mSaveOrDeleteFAB.setContentDescription("Delete ImageButton");
+                mSaveOrDeleteFAB.setContentDescription(getString(R.string.delete_data_button_description));
                 mProductExists = true;
             }
         }
@@ -249,6 +212,102 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
 
                 return aux.substring(0, delimiterPosition) + " " + aux.substring(delimiterPosition);
             }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        detachDatabaseReadListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        attachDatabaseReadListener();
+    }
+
+    private void attachDatabaseReadListener() {
+        if (mUserAllergiesValueEventListener == null) {
+            mUserAllergiesValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<String> productAllergens = mProduct.getAllergens();
+                    if (productAllergens != null) {
+                        HashMap<String, Boolean> userAllergens = (HashMap<String, Boolean>)
+                                dataSnapshot.getValue();
+
+                        boolean condition = false;
+                        for (Map.Entry<String, Boolean> entry : userAllergens.entrySet()) {
+                            if (!condition) {
+                                String key = entry.getKey();
+                                Boolean value = entry.getValue();
+
+                                for (int i = 0; i < productAllergens.size() && !condition; i++) {
+                                    String allergy = productAllergens.get(i);
+                                    if (allergy.equals(key) && value) {
+                                        condition = true;
+                                    }
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (condition) {
+                            apt_product.setText(getString(R.string.unfit_product));
+                            apt_product.setBackgroundColor(Color.parseColor("#FF0000"));
+                        } else {
+                            apt_product.setText(getString(R.string.suitable_product));
+                            apt_product.setBackgroundColor(Color.parseColor("#ff99cc00"));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mUserDBRef.child("allergies").addListenerForSingleValueEvent(mUserAllergiesValueEventListener);
+        }
+
+        if (mUserProductsValueEventListener == null) {
+            mUserProductsValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String upc = mProduct.getUpc();
+                    if (snapshot.hasChild(upc)) {
+                        mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
+                        mSaveOrDeleteFAB.setContentDescription("Floating delete data button");
+                        mProductExists = true;
+                    } else {
+                        mSaveOrDeleteFAB.setImageResource(R.drawable.content_save);
+                        mSaveOrDeleteFAB.setContentDescription("Floating save data button");
+                        mProductExists = false;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mUserFavoritesDBRef.addListenerForSingleValueEvent(mUserProductsValueEventListener);
+        }
+    }
+
+    private void detachDatabaseReadListener() {
+        if (mUserAllergiesValueEventListener != null) {
+            mUserDBRef.removeEventListener(mUserAllergiesValueEventListener);
+            mUserAllergiesValueEventListener = null;
+        }
+
+        if (mUserProductsValueEventListener != null) {
+            mUserFavoritesDBRef.removeEventListener(mUserProductsValueEventListener);
+            mUserProductsValueEventListener = null;
         }
     }
 }
