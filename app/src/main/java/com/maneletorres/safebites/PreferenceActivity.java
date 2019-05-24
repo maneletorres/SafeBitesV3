@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.CheckBox;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,11 +25,10 @@ import java.util.Objects;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
-import static com.maneletorres.safebites.utils.Utils.sUID;
-import static com.maneletorres.safebites.utils.Utils.sUser;
 
 public class PreferenceActivity extends AppCompatActivity implements View.OnClickListener {
     // Firebase variables:
+    private FirebaseUser mFirebaseUser;
     private DatabaseReference mUserDatabaseReference;
     private DatabaseReference mAllergiesDatabaseReference;
     private ValueEventListener mValueEventListener;
@@ -121,18 +122,22 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             allergies.put("en:sulphur-dioxide-and-sulphites", sulphurDioxideAndSulphitesCheckBox.isChecked());
                             allergies.put("en:lupin", lupinAllergyCheckBox.isChecked());
                             allergies.put("en:molluscs", molluscsAllergyCheckBox.isChecked());
-                            sUser.setAllergies(allergies);
 
                             // Modification of the allergens of the current user in the FRDB:
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("allergies", allergies);
+
                             Intent intent = new Intent(PreferenceActivity.this, MainActivity.class);
                             if (callingActivityName.equals("AuthActivity")) {
-                                mUserDatabaseReference.setValue(sUser);
+                                map.put("displayName", mFirebaseUser.getDisplayName());
+                                map.put("eMail", mFirebaseUser.getEmail());
+
                                 intent.putExtra(TOAST_MESSAGE, 0);
                             } else if (callingActivityName.equals("MainActivity")) {
-                                mAllergiesDatabaseReference.setValue(allergies);
                                 intent.putExtra(TOAST_MESSAGE, 2);
                             }
 
+                            mUserDatabaseReference.updateChildren(map);
                             startActivity(intent);
                         })
                         .setNegativeButton("Cancel", (dialog, which) -> {
