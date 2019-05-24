@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.firebase.ui.auth.AuthUI;
@@ -49,6 +50,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
     private CheckBox lupinAllergyCheckBox;
     private CheckBox molluscsAllergyCheckBox;
     private String callingActivityName;
+    private String mAlertDialogMessage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,18 +85,21 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             lupinAllergyCheckBox = findViewById(R.id.lupin_allergy_text_view);
             molluscsAllergyCheckBox = findViewById(R.id.molluscs_allergy_text_view);
 
-            // OnClickListener configuration on the button to discard changes on the user's allergens:
-            findViewById(R.id.back_button).setOnClickListener(this);
-
             // OnClickListener configuration on the button to save changes on the user's allergens:
-            findViewById(R.id.save_data_button).setOnClickListener(this);
+            Button saveDataButton = findViewById(R.id.save_data_button);
+            saveDataButton.setOnClickListener(this);
 
             // Depending on the value of the callingActivityName variable, both the separating view
             // and the Danger Zone LinearLayout will be hidden or displayed:
             if (callingActivityName.equals("AuthActivity")) {
+                mAlertDialogMessage = getString(R.string.save_data_alert_dialog_message_2, mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
+
+                saveDataButton.setText(getString(R.string.create_user_button));
                 findViewById(R.id.separator_view).setVisibility(View.GONE);
                 findViewById(R.id.danger_zone_linear_layout).setVisibility(View.GONE);
             } else if (callingActivityName.equals("MainActivity")) {
+                mAlertDialogMessage = getString(R.string.save_data_alert_dialog_message_1);
+
                 // OnClickListener configuration on the button to save changes on the user's allergens:
                 findViewById(R.id.delete_user_button).setOnClickListener(this);
             }
@@ -106,7 +111,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.save_data_button:
                 new AlertDialog.Builder(this)
-                        .setPositiveButton("OK", (dialog, which) -> {
+                        .setPositiveButton(getString(R.string.alert_dialog_positive_button), (dialog, which) -> {
                             Map<String, Boolean> allergies = new HashMap<>();
                             allergies.put("en:gluten", glutenAllergyCheckBox.isChecked());
                             allergies.put("en:crustaceans", crustaceansAllergyCheckBox.isChecked());
@@ -140,17 +145,17 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             mUserDatabaseReference.updateChildren(map);
                             startActivity(intent);
                         })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
+                        .setNegativeButton(getString(R.string.alert_dialog_negative_button), (dialog, which) -> {
 
                         })
-                        .setTitle("Information:")
-                        .setMessage("Are you sure you want to save the changes made to your allergies?")
+                        .setTitle(getString(R.string.save_data_alert_dialog_title))
+                        .setMessage(mAlertDialogMessage)
                         .create()
                         .show();
                 break;
             case R.id.delete_user_button:
                 new AlertDialog.Builder(this)
-                        .setPositiveButton("OK", (dialog, which) -> {
+                        .setPositiveButton(getString(R.string.alert_dialog_positive_button), (dialog, which) -> {
                             // Deletion of the current user:
                             mUserDatabaseReference.removeValue();
 
@@ -159,7 +164,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                                     .signOut(this)
                                     .addOnCompleteListener(task -> {
                                         // User is now signed out:
-                                        Intent intent = new Intent(PreferenceActivity.this, AuthActivity.class);
+                                        Intent intent = new Intent(this, AuthActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -167,10 +172,10 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                                         finish();
                                     });
                         })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
+                        .setNegativeButton(getString(R.string.alert_dialog_negative_button), (dialog, which) -> {
                         })
-                        .setTitle("Warning:")
-                        .setMessage("This action cannot be undone. Are you sure you want to delete the user " + sUser.getDisplayName() + " with email " + sUser.getEmail() + "?")
+                        .setTitle(getString(R.string.delete_user_alert_dialog_title))
+                        .setMessage(getString(R.string.delete_user_alert_dialog_message, mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail()))
                         .create()
                         .show();
                 break;
@@ -187,8 +192,10 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onBackPressed() {
-        returnToParentActivity();
+    protected void onResume() {
+        super.onResume();
+
+        attachDatabaseReadListener();
     }
 
     @Override
@@ -198,19 +205,13 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
         detachDatabaseReadListener();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        attachDatabaseReadListener();
-    }
-
     private void attachDatabaseReadListener() {
         if (mValueEventListener == null) {
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Map<String, Boolean> allergies = (HashMap<String, Boolean>) dataSnapshot.getValue();
+                    Map<String, Boolean> allergies = (HashMap<String,
+                            Boolean>) dataSnapshot.getValue();
                     if (allergies != null) {
                         glutenAllergyCheckBox.setChecked(allergies.get("en:gluten"));
                         crustaceansAllergyCheckBox.setChecked(allergies.get("en:crustaceans"));
@@ -223,7 +224,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                         celeryAllergyCheckBox.setChecked(allergies.get("en:celery"));
                         mustardAllergyCheckBox.setChecked(allergies.get("en:mustard"));
                         sesameSeedsAllergyCheckBox.setChecked(allergies.get("en:sesame-seeds"));
-                        sulphurDioxideAndSulphitesCheckBox.setChecked(allergies.get("en:sulphur-dioxide-and-sulphites"));
+                        sulphurDioxideAndSulphitesCheckBox
+                                .setChecked(allergies.get("en:sulphur-dioxide-and-sulphites"));
                         lupinAllergyCheckBox.setChecked(allergies.get("en:lupin"));
                         molluscsAllergyCheckBox.setChecked(allergies.get("en:molluscs"));
                     }
@@ -256,6 +258,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                     });
         } else if (callingActivityName.equals("MainActivity")) {
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
 }
