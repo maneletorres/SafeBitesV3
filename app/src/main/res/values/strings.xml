@@ -2,6 +2,12 @@
     <string name="app_name">SafeBites</string>
     <string name="app_description" translatable="false">SafeBites is an application that allows you to quickly and easily discover the nutritional values of a food, in order to decide if it is suitable for your personal consumption, as well as making a quick comparison between two products to analyse which is healthier.</string>
 
+    <!-- FRDB: -->
+    <string name="favorites" translatable="false">favorites</string>
+    <string name="tests" translatable="false">tests</string>
+    <string name="products" translatable="false">products</string>
+    <string name="users" translatable="false">users</string>
+
     <!-- Toast messages: -->
     <string name="user_cancellation">Sign in canceled by the user</string>
     <string name="no_internet_connection">No Internet connection</string>
@@ -215,11 +221,4 @@
     <string name="app_mentions" translatable="false">This project is based on the Open Food Facts group database and uses the ZXing library ("Zebra Crossing"), to which their enormous work and fantastic initiative are appreciated, making reference to them in the following links:</string>
     <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
     <string name="mention2" translatable="false"><a href="some site">https://github.com/zxing/zxing</a></string>
-
-    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
-    <string name="facebook_application_id" translatable="false">2592646150777618</string>
-    <string name="facebook_login_protocol_scheme" translatable="false">fb2592646150777618</string>
-    <!-- Twitter consumer key and secret -->
-    <string name="twitter_consumer_key" translatable="false">hVoY35ddeCJVNhoyns8t49Ept</string>
-    <string name="twitter_consumer_secret" translatable="false">cLDid0RrWA7I6lx5JBm3UnTdrl4ZuCvqfnkXbAUeyiU7JLipAc</string>
 </resources>
