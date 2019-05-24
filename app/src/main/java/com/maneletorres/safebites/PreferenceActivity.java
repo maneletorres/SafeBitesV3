@@ -57,82 +57,14 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
         // Placement of the back arrow on the Action Bar:
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        // Collection of data sent by AuthActivity and MainActivity:
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            // Collection of the variable sent by AuthActivity or MainActivity:
             callingActivityName = extras.getString(CLASS_NAME);
 
-            // FRDB components initialization:
-            mUserDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(sUID);
+            // Firebase components initialization:
+            mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            mUserDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(mFirebaseUser.getUid());
             mAllergiesDatabaseReference = mUserDatabaseReference.child("allergies");
-
-            /*mAllergiesDatabaseReference.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Boolean value = (Boolean) dataSnapshot.getValue();
-                    switch (Objects.requireNonNull(dataSnapshot.getKey())) {
-                        case "en:gluten":
-                            glutenAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:crustaceans":
-                            crustaceansAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:eggs":
-                            eggsAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:fish":
-                            fishAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:peanuts":
-                            peanutsAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:soybeans":
-                            soyBeansAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:milk":
-                            milkAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:nuts":
-                            nutsAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:celery":
-                            celeryAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:mustard":
-                            mustardAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:sesame-seeds":
-                            sesameSeedsAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:sulphur-dioxide-and-sulphites":
-                            sulphurDioxideAndSulphitesCheckBox.setChecked(value);
-                            break;
-                        case "en:lupin":
-                            lupinAllergyCheckBox.setChecked(value);
-                            break;
-                        case "en:molluscs":
-                            molluscsAllergyCheckBox.setChecked(value);
-                            break;
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });*/
 
             // Initialization of the components:
             glutenAllergyCheckBox = findViewById(R.id.gluten_allergy_text_view);
@@ -171,9 +103,6 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back_button:
-                returnToParentActivity();
-                break;
             case R.id.save_data_button:
                 new AlertDialog.Builder(this)
                         .setPositiveButton("OK", (dialog, which) -> {
@@ -317,7 +246,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                     .signOut(this)
                     .addOnCompleteListener(task -> {
                         // User is now signed out:
-                        startActivity(new Intent(PreferenceActivity.this, AuthActivity.class));
+                        startActivity(new Intent(this, AuthActivity.class));
                         finish();
                     });
         } else if (callingActivityName.equals("MainActivity")) {
