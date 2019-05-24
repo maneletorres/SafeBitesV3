@@ -53,13 +53,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (extras != null) {
             switch (extras.getInt(TOAST_MESSAGE)) {
                 case 0:
-                    Toast.makeText(this, getString(R.string.successful_registration, displayName), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            getString(R.string.successful_registration, displayName),
+                            Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(this, getString(R.string.welcome_message, email), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.welcome_message, email),
+                            Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    Toast.makeText(this, getString(R.string.modified_allergens), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.modified_allergens),
+                            Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -71,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mSearchEditText = findViewById(R.id.search_edit_text);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -96,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         TabLayout mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(viewPager);
-
     }
 
     @Override
@@ -111,16 +115,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_home:
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-                break;
             case R.id.nav_log_out:
                 AuthUI.getInstance()
                         .signOut(this)
                         .addOnCompleteListener(task -> {
                             // User is now signed out:
-                            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                            Intent intent = new Intent(this, AuthActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                     | Intent.FLAG_ACTIVITY_CLEAR_TOP
                                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(this, PreferenceActivity.class);
                 intent.putExtra(CLASS_NAME, "MainActivity");
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_share:
                 String message = getResources().getString(R.string.accompanying_message) + "\n" +
@@ -140,10 +141,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, message);
                 intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
-                startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooser_message)));
+                startActivity(Intent.createChooser(intent,
+                        getResources().getString(R.string.chooser_message)));
                 break;
             case R.id.nav_information:
                 startActivity(new Intent(this, InformationActivity.class));
+                finish();
                 break;
         }
 
