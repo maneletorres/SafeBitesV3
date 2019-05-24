@@ -40,27 +40,28 @@ public class Utils {
         try {
             String[] nutrients_name = {
                     // Ordered nutrients:
-                    "Energy", "Fat", "Saturated fat", "Monounsaturated fat", "Polyunsaturated fat",
-                    "Carbohydrate", "Sugars", "Polyols", "Starch", "Fiber",
-                    "Proteins", "Salt", "Vitamin A", "Vitamin D", "Vitamin E",
-                    "Vitamin K", "Vitamin C", "Vitamin B1", "Vitamin B2", "Vitamin B3",
-                    "Vitamin B6", "Vitamin B9", "Vitamin B12", "Biotin", "Pantothenic acid",
-                    "Potassium", "Chloride", "Calcium", "Phosphorus", "Magnesium",
-                    "Iron", "Zinc", "Copper", "Manganese", "Fluoride",
-                    "Selenium", "Chromium", "Molybdenum", "Iodine",
+                    context.getString(R.string.energy), context.getString(R.string.fat), context.getString(R.string.saturated_fat), context.getString(R.string.monounsaturated_fat), context.getString(R.string.polyunsaturated_fat),
+                    context.getString(R.string.carbohydrate), context.getString(R.string.sugars), context.getString(R.string.polyols), context.getString(R.string.starch), context.getString(R.string.fiber),
+                    context.getString(R.string.proteins), context.getString(R.string.salt), context.getString(R.string.vitamin_a), context.getString(R.string.vitamin_d), context.getString(R.string.vitamin_e),
+                    context.getString(R.string.vitamin_k), context.getString(R.string.vitamin_c), context.getString(R.string.vitamin_b1), context.getString(R.string.vitamin_b2), context.getString(R.string.vitamin_b3),
+                    context.getString(R.string.vitamin_b6), context.getString(R.string.vitamin_b9), context.getString(R.string.vitamin_b12), context.getString(R.string.biotin), context.getString(R.string.pantothenic_acid),
+                    context.getString(R.string.potassium), context.getString(R.string.chloride), context.getString(R.string.calcium), context.getString(R.string.phosphorus), context.getString(R.string.magnesium),
+                    context.getString(R.string.iron), context.getString(R.string.zinc), context.getString(R.string.copper), context.getString(R.string.manganese), context.getString(R.string.fluoride),
+                    context.getString(R.string.selenium), context.getString(R.string.chromium), context.getString(R.string.molybdenum), context.getString(R.string.iodine),
 
                     // Disordered nutrients:
-                    "Sodium", "Casein", "Serum proteins", "Nucleotides", "Sucrose",
-                    "Glucose", "Fructose", "Lactose", "Maltose", "Maltodextrins",
-                    "Butyric acid", "Caproic acid", "Caprylic acid", "Capric acid",
-                    "Lauric acid", "Myristic acid", "Palmitic acid", "Stearic acid",
-                    "Arachidic acid", "Behenic acid", "Lignoceric acid", "Cerotic acid",
-                    "Montanic acid", "Melissic acid", "Omega 3 fat", "Alpha-linolenic acid",
-                    "Eicosapentaenoic acid", "Docosahexaenoic acid", "Omega-6 fat",
-                    "Linoleic acid", "Arachidonic acid", "Gamma-linolenic acid",
-                    "Dihomo-gamma-linolenic acid", "Omega-9 fat", "Oleic acid", "Elaidic acid",
-                    "Gondoic acid", "Mead acid", "Erucic acid", "Nervonic acid", "Trans fat",
-                    "Cholesterol", "Alcohol", "Silica", "Bicarbonate", "Caffeine", "Taurine", "PH"};
+                    context.getString(R.string.sodium), context.getString(R.string.casein), context.getString(R.string.serum_proteins), context.getString(R.string.nucleotides), context.getString(R.string.sucrose),
+                    context.getString(R.string.glucose), context.getString(R.string.fructose), context.getString(R.string.lactose), context.getString(R.string.maltose), context.getString(R.string.maltodextrins),
+                    context.getString(R.string.butyric_acid), context.getString(R.string.capric_acid), context.getString(R.string.caprylic_acid), context.getString(R.string.capric_acid),
+                    context.getString(R.string.lauric_acid), context.getString(R.string.myristic_acid), context.getString(R.string.palmitic_acid), context.getString(R.string.stearic_acid),
+                    context.getString(R.string.arachidic_acid), context.getString(R.string.behenic_acid), context.getString(R.string.lignoceric_acid), context.getString(R.string.cerotic_acid),
+                    context.getString(R.string.montanic_acid), context.getString(R.string.melissic_acid), context.getString(R.string.omega_3_fat), context.getString(R.string.alpha_linolenic_acid),
+                    context.getString(R.string.eicosapentaenoic_acid), context.getString(R.string.docosahexaenoic_acid), context.getString(R.string.omega_6_fat),
+                    context.getString(R.string.linoleic_acid), context.getString(R.string.arachidonic_acid), context.getString(R.string.gamma_linolenic_acid),
+                    context.getString(R.string.dihomo_gamma_linolenic_acid), context.getString(R.string.omega_9_fat), context.getString(R.string.oleic_acid), context.getString(R.string.elaidic_acid),
+                    context.getString(R.string.gondoic_acid), context.getString(R.string.mead_acid), context.getString(R.string.erucic_acid), context.getString(R.string.nervonic_acid), context.getString(R.string.trans_fat),
+                    context.getString(R.string.cholesterol), context.getString(R.string.alcohol), context.getString(R.string.silica), context.getString(R.string.bicarbonate), context.getString(R.string.caffeine), context.getString(R.string.taurine), context.getString(R.string.ph)
+            };
 
             String[] JSONElements_100g = {
                     // Ordered nutrients:
@@ -110,7 +111,8 @@ public class Utils {
                     "linoleic-acid_serving", "arachidonic-acid_serving", "gamma-linolenic-acid_serving",
                     "dihomo-gamma-linolenic-acid_serving", "omega-9-fat_serving", "oleic-acid_serving", "elaidic-acid_serving",
                     "gondoic-acid_serving", "mead-acid_serving", "erucic-acid_serving", "nervonic-acid_serving", "trans-fat_serving",
-                    "cholesterol_serving", "alcohol_serving", "silica_serving", "bicarbonate_serving", "caffeine_serving", "taurine_serving", "ph_serving"};
+                    "cholesterol_serving", "alcohol_serving", "silica_serving", "bicarbonate_serving", "caffeine_serving", "taurine_serving", "ph_serving"
+            };
 
             String[] JSONElements_unit = {
                     // Ordered nutrients:
@@ -134,7 +136,8 @@ public class Utils {
                     "linoleic-acid_unit", "arachidonic-acid_unit", "gamma-linolenic-acid_unit",
                     "dihomo-gamma-linolenic-acid_unit", "omega-9-fat_unit", "oleic-acid_unit", "elaidic-acid_unit",
                     "gondoic-acid_unit", "mead-acid_unit", "erucic-acid_unit", "nervonic-acid_unit", "trans-fat_unit",
-                    "cholesterol_unit", "alcohol_unit", "silica_unit", "bicarbonate_unit", "caffeine_unit", "taurine_unit", "ph_unit"};
+                    "cholesterol_unit", "alcohol_unit", "silica_unit", "bicarbonate_unit", "caffeine_unit", "taurine_unit", "ph_unit"
+            };
 
             // Default decimal separator modifier:
             DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
