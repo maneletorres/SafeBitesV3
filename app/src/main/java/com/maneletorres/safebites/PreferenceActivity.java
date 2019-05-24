@@ -123,8 +123,10 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             allergies.put("en:nuts", nutsAllergyCheckBox.isChecked());
                             allergies.put("en:celery", celeryAllergyCheckBox.isChecked());
                             allergies.put("en:mustard", mustardAllergyCheckBox.isChecked());
-                            allergies.put("en:sesame-seeds", sesameSeedsAllergyCheckBox.isChecked());
-                            allergies.put("en:sulphur-dioxide-and-sulphites", sulphurDioxideAndSulphitesCheckBox.isChecked());
+                            allergies.put("en:sesame-seeds",
+                                    sesameSeedsAllergyCheckBox.isChecked());
+                            allergies.put("en:sulphur-dioxide-and-sulphites",
+                                    sulphurDioxideAndSulphitesCheckBox.isChecked());
                             allergies.put("en:lupin", lupinAllergyCheckBox.isChecked());
                             allergies.put("en:molluscs", molluscsAllergyCheckBox.isChecked());
 
@@ -132,7 +134,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             HashMap<String, Object> map = new HashMap<>();
                             map.put("allergies", allergies);
 
-                            Intent intent = new Intent(PreferenceActivity.this, MainActivity.class);
+                            Intent intent = new Intent(this, MainActivity.class);
                             if (callingActivityName.equals("AuthActivity")) {
                                 map.put("displayName", mFirebaseUser.getDisplayName());
                                 map.put("eMail", mFirebaseUser.getEmail());
@@ -164,7 +166,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                                     .signOut(this)
                                     .addOnCompleteListener(task -> {
                                         // User is now signed out:
-                                        Intent intent = new Intent(this, AuthActivity.class);
+                                        Intent intent = new Intent(this,
+                                                AuthActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
