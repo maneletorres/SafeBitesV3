@@ -11,16 +11,11 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="@string/enter_barcode" />
-
         <EditText
             android:id="@+id/scan_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/enter_barcode"
             android:inputType="number"
             android:maxLines="1" />
 
