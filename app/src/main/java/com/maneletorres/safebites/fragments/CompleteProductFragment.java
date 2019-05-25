@@ -26,8 +26,10 @@ public class CompleteProductFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_complete_product, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_complete_product, container,
+                false);
 
         Bundle extras = getArguments();
         if (extras != null) {
@@ -78,7 +80,7 @@ public class CompleteProductFragment extends Fragment {
         return view;
     }
 
-    public void fragmentLoad() {
+    private void fragmentLoad() {
         Objects.requireNonNull(mFragmentManager)
                 .beginTransaction()
                 .replace(R.id.complete_product_frame_layout, mFragment)
