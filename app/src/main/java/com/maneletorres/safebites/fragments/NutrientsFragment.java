@@ -139,7 +139,7 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getChildrenCount() == 0) {
-                            FirebaseDatabase.getInstance().getReference().child(getString(R.string.products))
+                            FirebaseDatabase.getInstance().getReference().child("products")
                                     .child(mProduct.getUpc()).removeValue();
                             productsDatabaseReference.removeEventListener(this);
                         }
@@ -182,7 +182,8 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                 Map<String, Object> tests = new HashMap<>();
                 tests.put(mUid, true);
 
-                DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child(getString(R.string.usersProduct));
+                DatabaseReference dr = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.usersProduct));
                 dr.child(mProduct.getUpc()).updateChildren(tests);
 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
@@ -257,10 +258,10 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                         }
 
                         if (condition) {
-                            apt_product.setText(getString(R.string.unfit_product));
+                            apt_product.setText("Unfit");
                             apt_product.setBackgroundColor(Color.parseColor("#FF0000"));
                         } else {
-                            apt_product.setText(getString(R.string.suitable_product));
+                            apt_product.setText("Suitable");
                             apt_product.setBackgroundColor(Color.parseColor("#ff99cc00"));
                         }
                     }
@@ -271,7 +272,8 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
 
                 }
             };
-            mUserDBRef.child(getString(R.string.allergies)).addListenerForSingleValueEvent(mUserAllergiesValueEventListener);
+            mUserDBRef.child(getString(R.string.allergies))
+                    .addListenerForSingleValueEvent(mUserAllergiesValueEventListener);
         }
 
         if (mUserProductsValueEventListener == null) {
