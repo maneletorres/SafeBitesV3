@@ -250,7 +250,7 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public void returnToParentActivity() {
+    private void returnToParentActivity() {
         if (callingActivityName.equals("AuthActivity")) {
             AuthUI.getInstance()
                     .signOut(this)
