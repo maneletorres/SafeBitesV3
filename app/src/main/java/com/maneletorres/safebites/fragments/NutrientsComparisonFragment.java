@@ -65,10 +65,12 @@ public class NutrientsComparisonFragment extends Fragment {
                 if (simplifiedNutrient == null) {
                     if (productANutrients != null && i < productANutrients.size()) {
                         simplifiedNutrient = new NutrientComparison(firstNutrient.getName(),
-                                firstNutrient.getPer_100g(), "-", firstNutrient.getUnit());
+                                firstNutrient.getPer_100g(), "-", firstNutrient
+                                .getUnit());
                     } else {
                         simplifiedNutrient = new NutrientComparison(firstNutrient.getName(),
-                                "-", firstNutrient.getPer_100g(), firstNutrient.getUnit());
+                                "-", firstNutrient.getPer_100g(), firstNutrient
+                                .getUnit());
                     }
                     simplifiedNutrients.add(simplifiedNutrient);
                 }
