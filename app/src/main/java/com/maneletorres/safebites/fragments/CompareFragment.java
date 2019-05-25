@@ -336,7 +336,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
                 String product_upc = dataSnapshot.getKey();
 
                 DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference(getString(R.string.products)).child(product_upc);
+                        .getReference("products").child(product_upc);
                 productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
