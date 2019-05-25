@@ -3,10 +3,11 @@
     <string name="app_description" translatable="false">SafeBites is an application that allows you to quickly and easily discover the nutritional values of a food, in order to decide if it is suitable for your personal consumption, as well as making a quick comparison between two products to analyse which is healthier.</string>
 
     <!-- FRDB: -->
-    <string name="favorites" translatable="false">favorites</string>
-    <string name="tests" translatable="false">tests</string>
+    <string name="productsUser" translatable="false">productsUser</string>
+    <string name="usersProduct" translatable="false">usersProduct</string>
     <string name="products" translatable="false">products</string>
     <string name="users" translatable="false">users</string>
+    <string name="allergies" translatable="false">allergies</string>
 
     <!-- Toast messages: -->
     <string name="user_cancellation">Sign in canceled by the user</string>
@@ -53,13 +54,10 @@
     <string name="product_image_B_description">Product image B</string>
     <string name="standard_size_in_grams" translatable="false">100 g</string>
     <string name="per_portion">Per portion</string>
-    <string name="save_image_button_description">Save image button</string>
 
     <!-- Buttons: -->
     <string name="scan_button">Scan&#160;&#160;&#160;</string>
     <string name="scan_button_description">Scan button</string>
-    <string name="back_button">Back</string>
-    <string name="back_button_description">Back button</string>
     <string name="create_user_button">Create user</string>
     <string name="save_data_button">Save data</string>
     <string name="save_data_button_description">Floating save data button</string>
@@ -89,7 +87,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_image">Navigation header image</string>
-    <string name="nav_home" translatable="false">Home</string>
     <string name="nav_user">User</string>
     <string name="nav_preferences">Preferences</string>
     <string name="nav_log_out">Log out</string>

@@ -65,7 +65,6 @@
     <string name="alpha_linolenic_acid">Ácido alfa-linolénico</string>
     <string name="arachidic_acid">Ácido araquídico</string>
     <string name="arachidonic_acid">Ácido araquidónico</string>
-    <string name="back_button">Atrás</string>
     <string name="behenic_acid">Ácido behénico</string>
     <string name="bicarbonate">Bicarbonato</string>
     <string name="biotin">Biotina</string>
@@ -120,7 +119,7 @@
     <string name="modified_allergens">Los cambios en las alergias del usuario han sido guardadas</string>
     <string name="no_internet_connection">No hay conexión a Internet</string>
     <string name="no_registered_ingredients">No hay ingredientes registrados para este producto.</string>
-    <string name="welcome_message">Bienvenido de nuevo a SafeBites %1$s!</string>
+    <string name="welcome_message">¡Bienvenido de nuevo a SafeBites %1$s!</string>
     <string name="zxing_informer">Ingrese manualmente o coloque un código de barras dentro del rectángulo del visor para realizar un escaneo.</string>
     <string name="user_cancellation">Inicio de sesión cancelado por el usuario</string>
     <string name="accompanying_message">¡Hey colega! Echa un vistazo a esta nueva e increíble aplicación:</string>
@@ -145,7 +144,7 @@
     <string name="search_fragment">Buscar</string>
     <string name="sesame_seeds__allergy">Granos de sésamo</string>
     <string name="serum_proteins">Proteína de suero</string>
-    <string name="successful_registration">!El usuario %1$s ha sido registrado en SafeBites!</string>
+    <string name="successful_registration">¡El usuario %1$s ha sido registrado en SafeBites!</string>
     <string name="sulphur_dioxide_and_sulphites_allergy">Dióxido de azufre y sulfitos</string>
     <string name="mead_acid">"Ácido eicosatrienoico "</string>
     <string name="scanning_text">Scanning&#8230;</string>
@@ -159,7 +158,6 @@
     <string name="item_scan">Buscar</string>
     <string name="scan_button">Escanear&#160;&#160;&#160;</string>
     <string name="enter_search">Introduzca una búsqueda</string>
-    <string name="back_button_description">Botón de atrás</string>
     <string name="compare_button_description">Botón para comparar productos</string>
     <string name="delete_data_button_description">Botón flotante para borrar información</string>
     <string name="ingredients_A">Ingredientes A</string>
@@ -170,5 +168,11 @@
     <string name="product_image_description">Imagen del producto</string>
     <string name="product_A">Producto A</string>
     <string name="product_B">Producto B</string>
-    <string name="save_image_button_description">Botón-imagen para guardar</string>
+    <string name="alert_dialog_negative_button">Cancelar</string>
+    <string name="delete_user_alert_dialog_title">Advertencia:</string>
+    <string name="delete_user_alert_dialog_message">Esta acción no se podrá deshacer. ¿Está seguro de que desea eliminar el usuario %1$s con correo electrónico %2$s?</string>
+    <string name="save_data_alert_dialog_title">Información:</string>
+    <string name="create_user_button">Crear usuario</string>
+    <string name="save_data_alert_dialog_message_2">¿Está seguro de que desea crear el usuario %1$s con correo electrónico %2$s?</string>
+    <string name="save_data_alert_dialog_message_1">¿Está seguro de que desea guardar los cambios realizados en sus alergias?</string>
 </resources>
