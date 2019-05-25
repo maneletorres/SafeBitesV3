@@ -215,7 +215,6 @@
     <string name="ph">PH</string>
 
     <!-- App mentions: -->
-    <string name="app_mentions">This project has been built on the basis of the REST API created and maintained by the non-profit organization Open Food Facts, who is grateful for the enormous work done and the fantastic initiative that represents the tool that they have offered for free; making reference to this in the following links:</string>
+    <string name="app_mentions">This project has been built on the basis of the REST API created and maintained by the non-profit organization Open Food Facts, who is grateful for the enormous work done and the fantastic initiative that represents the tool that they have offered for free; making reference to this in the following link:</string>
     <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
-    <string name="mention2" translatable="false"><a href="some site">https://github.com/zxing/zxing</a></string>
 </resources>
