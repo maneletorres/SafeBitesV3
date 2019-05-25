@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SafeBites</string>
-    <string name="app_description" translatable="false">SafeBites is an application that allows you to quickly and easily discover the nutritional values of a food, in order to decide if it is suitable for your personal consumption, as well as making a quick comparison between two products to analyse which is healthier.</string>
+    <string name="app_description">SafeBites is an application developed for mobile devices with the Android operating system, which allows to quickly and easily contrast the nutritional information of a food product in question with the specific nutritional requirements of the user; as well as the realization of a quick comparison between the nutritional characteristics of two products in order to analyze which is healthier and/or more recommendable for one\'s own consumption.</string>
 
     <!-- FRDB: -->
     <string name="productsUser" translatable="false">productsUser</string>
@@ -215,7 +215,7 @@
     <string name="ph">PH</string>
 
     <!-- App mentions: -->
-    <string name="app_mentions" translatable="false">This project is based on the Open Food Facts group database and uses the ZXing library ("Zebra Crossing"), to which their enormous work and fantastic initiative are appreciated, making reference to them in the following links:</string>
+    <string name="app_mentions">This project has been built on the basis of the REST API created and maintained by the non-profit organization Open Food Facts, who is grateful for the enormous work done and the fantastic initiative that represents the tool that they have offered for free; making reference to this in the following links:</string>
     <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
     <string name="mention2" translatable="false"><a href="some site">https://github.com/zxing/zxing</a></string>
 </resources>
