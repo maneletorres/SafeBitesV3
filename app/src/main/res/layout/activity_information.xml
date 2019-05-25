@@ -37,12 +37,12 @@
         android:text="@string/mention1"
         android:textAlignment="center" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/app_mention2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:text="@string/mention2"
-        android:textAlignment="center" />
+        android:textAlignment="center" />-->
 
 </LinearLayout>
