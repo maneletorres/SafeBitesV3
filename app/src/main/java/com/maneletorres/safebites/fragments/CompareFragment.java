@@ -17,18 +17,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.maneletorres.safebites.ComparatorActivity;
 import com.maneletorres.safebites.CustomScannerActivity;
-import com.maneletorres.safebites.MainActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.api.ProductApi;
+import com.maneletorres.safebites.api.ProductApi.ProductService;
 import com.maneletorres.safebites.api.ProductResponse;
-import com.maneletorres.safebites.api.ProductService;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.entities.ProductNotFormatted;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,14 +57,14 @@ import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_1_SECOND_EXE
 import static com.maneletorres.safebites.utils.Utils.RC_SCAN_OPTION_2;
 import static com.maneletorres.safebites.utils.Utils.TWO_PANE;
 import static com.maneletorres.safebites.utils.Utils.formatProduct;
-import static com.maneletorres.safebites.utils.Utils.sUser;
 
-public class CompareFragment extends Fragment implements View.OnClickListener, MainActivity.MyInterface {
-    /**
-     * Whether or not the fragment is in two-pane mode, i.e. running on a tablet device.
-     */
+public class CompareFragment extends Fragment implements View.OnClickListener {
+    // FRDB variables:
+    private DatabaseReference mProductsDatabaseReference;
+    private ChildEventListener mChildEventListener;
+
+    // Other variables:
     private boolean mTwoPane;
-
     private LinearLayout mProductAContainer;
     private LinearLayout mProductBContainer;
     private Button mScanButton;
@@ -70,16 +77,22 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     private int request_code;
     private Product mProductA;
     private ProductService mProductService;
+    private ArrayAdapter<Product> adapterFavoriteProducts;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_compare, container, false);
 
         // Master-detail configuration:
         if (view.findViewById(R.id.compare_frame_layout_1) != null) {
             mTwoPane = true;
         }
+
+        // Initialization of the FRDB components:
+        mProductsDatabaseReference = FirebaseDatabase.getInstance().getReference(getString(R.string.productsUser))
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
         // Initialization of the components:
         mProductAContainer = view.findViewById(R.id.product_A_container);
@@ -91,11 +104,6 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
         mScanButton = view.findViewById(R.id.compare_button);
         RadioGroup radioGroup = view.findViewById(R.id.options_radio_group);
 
-        // Loading the names of the products:
-        prepareProductsNamesLoading();
-
-        // OnCheckedChangeListener configuration on the RadioGroup and selection of the second radio
-        // button by default:
         mOption = 2;
         radioGroup.check(R.id.radio_button_2);
         radioGroup.setOnCheckedChangeListener((rg, i) -> {
@@ -118,10 +126,8 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
             }
         });
 
-        // OnClickListener configuration on the button to scan products:
         mScanButton.setOnClickListener(this);
 
-        // Initialization of the product service:
         mProductService = ProductApi.getProduct().create(ProductService.class);
 
         return view;
@@ -141,7 +147,8 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                     if (mProductASpinner.getCount() > 0) {
                         startComparisonOption1(RC_SCAN_OPTION_2);
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.error_during_comparison_1), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.error_during_comparison_1),
+                                Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -156,39 +163,37 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
             case RC_SCAN_OPTION_1_FIRST_EXECUTION:
             case RC_SCAN_OPTION_1_SECOND_EXECUTION:
             case RC_SCAN_OPTION_2:
-                IntentResult scanResult = parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+                IntentResult scanResult = parseActivityResult(IntentIntegrator.REQUEST_CODE,
+                        resultCode, data);
                 if (scanResult != null) {
                     if (scanResult.getContents() == null) {
                         if (resultCode == RESULT_CANCELED) {
-                            Toast.makeText(getContext(), getString(R.string.user_cancellation), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.user_cancellation),
+                                    Toast.LENGTH_SHORT).show();
                         } else if (resultCode != RESULT_OK) {
-                            Toast.makeText(getContext(), getString(R.string.error_during_scanning), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.error_during_scanning),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         startScan(scanResult.getContents());
                     }
                 } else {
-                    Toast.makeText(getContext(), getString(R.string.error_during_scanning), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.error_during_scanning), Toast.LENGTH_SHORT)
+                            .show();
                     super.onActivityResult(requestCode, resultCode, data);
                 }
                 break;
         }
     }
 
-    // IMPORTANT: this method can be executed before the onCreateView method is executed.
-    @Override
-    public void updateProducts() {
-        if (mFavoriteProducts != null) {
-            prepareProductsNamesLoading();
-        }
-    }
-
     private void callProductApi(String scanResult) {
         mProductService.getProduct(scanResult).enqueue(new Callback<ProductResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ProductResponse> call, @NonNull Response<ProductResponse> response) {
-                ProductNotFormatted productNotFormatted = Objects.requireNonNull(response.body()).getProduct();
-                Product product = formatProduct(productNotFormatted);
+            public void onResponse(@NonNull Call<ProductResponse> call,
+                                   @NonNull Response<ProductResponse> response) {
+                ProductNotFormatted productNotFormatted = Objects.requireNonNull(response.body())
+                        .getProduct();
+                Product product = formatProduct(getContext(), productNotFormatted);
 
                 mScanProgressBar.setVisibility(View.GONE);
                 mScanTextView.setVisibility(View.GONE);
@@ -255,7 +260,8 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
     private void startComparisonOption2() {
         if (mProductASpinner.getCount() > 0 && mProductBSpinner.getCount() > 0) {
             if (mTwoPane) {
-                fragmentPreparation((Product) mProductASpinner.getSelectedItem(), (Product) mProductBSpinner.getSelectedItem());
+                fragmentPreparation((Product) mProductASpinner.getSelectedItem(),
+                        (Product) mProductBSpinner.getSelectedItem());
             } else {
                 Intent intent = new Intent(getContext(), ComparatorActivity.class);
                 intent.putExtra(TWO_PANE, mTwoPane);
@@ -264,17 +270,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
                 startActivity(intent);
             }
         } else {
-            Toast.makeText(getContext(), getString(R.string.error_during_comparison_2), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_during_comparison_2),
+                    Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void prepareProductsNamesLoading() {
-        //mFavoriteProducts = sProducts;
-        mFavoriteProducts = sUser.getProducts();
-        ArrayAdapter<Product> adapterFavoriteProducts = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_dropdown_item, mFavoriteProducts);
-        adapterFavoriteProducts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mProductASpinner.setAdapter(adapterFavoriteProducts);
-        mProductBSpinner.setAdapter(adapterFavoriteProducts);
     }
 
     private void fragmentPreparation(Product productA, Product productB) {
@@ -306,5 +304,93 @@ public class CompareFragment extends Fragment implements View.OnClickListener, M
         intent.putExtra(PRODUCT_A, mProductA);
         intent.putExtra(PRODUCT_B, productB);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        attachDatabaseReadListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        detachDatabaseReadListener();
+    }
+
+    private void attachDatabaseReadListener() {
+        mFavoriteProducts = new ArrayList<>();
+        adapterFavoriteProducts =
+                new ArrayAdapter<>(Objects.requireNonNull(getContext()),
+                        android.R.layout.simple_spinner_dropdown_item, mFavoriteProducts);
+        adapterFavoriteProducts.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        mProductASpinner.setAdapter(adapterFavoriteProducts);
+        mProductBSpinner.setAdapter(adapterFavoriteProducts);
+
+        mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String product_upc = dataSnapshot.getKey();
+
+                DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
+                        .getReference(getString(R.string.products)).child(product_upc);
+                productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mFavoriteProducts.add(dataSnapshot.getValue(Product.class));
+                        adapterFavoriteProducts.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                mFavoriteProducts.remove(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mProductsDatabaseReference.addChildEventListener(mChildEventListener);
+    }
+
+    private void detachDatabaseReadListener() {
+        if (mChildEventListener != null) {
+            mProductsDatabaseReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (mTwoPane) {
+            if (isVisibleToUser) {
+                attachDatabaseReadListener();
+            } else {
+                detachDatabaseReadListener();
+            }
+        }
     }
 }
