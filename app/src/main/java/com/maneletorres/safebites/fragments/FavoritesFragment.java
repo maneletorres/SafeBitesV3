@@ -53,8 +53,8 @@ public class FavoritesFragment extends Fragment {
 
         // Initialization of the FRDB components:
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        mFavoritesDatabaseReference = FirebaseDatabase.getInstance().getReference("favorites")
-                .child(mFirebaseUser.getUid());
+        mFavoritesDatabaseReference = FirebaseDatabase.getInstance()
+                .getReference(getString(R.string.productsUser)).child(mFirebaseUser.getUid());
 
         // Initialization of the components:
         mEmptyTextView = view.findViewById(R.id.empty_textView);
@@ -64,7 +64,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     // Checking the number of products to know whether to display the 'mEmptyTextView':
-    public void checkProductsNumber() {
+    private void checkProductsNumber() {
         if (mProductAdapter.getItemCount() > 0) {
             mEmptyTextView.setVisibility(View.GONE);
         } else {
@@ -76,20 +76,19 @@ public class FavoritesFragment extends Fragment {
         checkProductsNumber();
 
         if (mTwoPane) {
+            CompleteProductFragment completeProductFragment = new CompleteProductFragment();
+
             if (mProductAdapter.getItemCount() > 0) {
                 Bundle arguments = new Bundle();
                 arguments.putParcelable(PRODUCT, mProductAdapter.getItem(0));
 
-                CompleteProductFragment completeProductFragment = new CompleteProductFragment();
                 completeProductFragment.setArguments(arguments);
-
-                Objects.requireNonNull(this.getChildFragmentManager())
-                        .beginTransaction()
-                        .replace(R.id.favorites_frame_layout, completeProductFragment)
-                        .commitAllowingStateLoss();
-            } else {
-                mView.setVisibility(View.GONE);
             }
+
+            Objects.requireNonNull(this.getChildFragmentManager())
+                    .beginTransaction()
+                    .replace(R.id.favorites_frame_layout, completeProductFragment)
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -119,7 +118,7 @@ public class FavoritesFragment extends Fragment {
                     String product_upc = dataSnapshot.getKey();
                     if (product_upc != null) {
                         DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
-                                .getReference("products").child(product_upc);
+                                .getReference(getString(R.string.products)).child(product_upc);
                         productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -146,11 +145,12 @@ public class FavoritesFragment extends Fragment {
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                     String product_upc = dataSnapshot.getKey();
                     if (product_upc != null) {
-                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference("users")
-                                .child(mFirebaseUser.getUid()).child("products").child(product_upc);
+                        DatabaseReference dr = FirebaseDatabase.getInstance()
+                                .getReference(getString(R.string.users))
+                                .child(mFirebaseUser.getUid())
+                                .child(getString(R.string.products)).child(product_upc);
                         dr.removeValue();
 
-                        // Crear una nueva tabla productos / usuarios ya que es muchos a mucho y actuar en consecuencia
                         mProductAdapter.removeProduct(product_upc);
                         mProductAdapter.notifyDataSetChanged();
 
