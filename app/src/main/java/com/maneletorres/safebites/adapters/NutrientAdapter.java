@@ -52,9 +52,9 @@ public class NutrientAdapter extends Adapter<ViewHolder> {
     }
 
     class NutrientViewHolder extends ViewHolder {
-        private TextView mName;
-        private TextView mPer100g;
-        private TextView mPerServing;
+        private final TextView mName;
+        private final TextView mPer100g;
+        private final TextView mPerServing;
 
         NutrientViewHolder(View itemView) {
             super(itemView);
