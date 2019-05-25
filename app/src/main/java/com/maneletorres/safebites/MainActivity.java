@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -32,7 +33,7 @@ import com.maneletorres.safebites.utils.Utils;
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private EditText mSearchEditText;
 
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_information:
                 startActivity(new Intent(this, InformationActivity.class));
-                finish();
+                //finish();
                 break;
         }
 
