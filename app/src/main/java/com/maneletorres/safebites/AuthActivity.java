@@ -45,7 +45,8 @@ public class AuthActivity extends AppCompatActivity {
             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
                 // User is signed in:
-                mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+                mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.users));
                 attachDatabaseReadListener();
             } else {
                 // User is signed out:
@@ -113,12 +114,15 @@ public class AuthActivity extends AppCompatActivity {
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChild(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))) {
-                        Intent intent = new Intent(AuthActivity.this, MainActivity.class);
+                    if (dataSnapshot.hasChild(Objects.requireNonNull(FirebaseAuth.getInstance()
+                            .getUid()))) {
+                        Intent intent = new Intent(AuthActivity.this,
+                                MainActivity.class);
                         intent.putExtra(TOAST_MESSAGE, 1);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(AuthActivity.this, PreferenceActivity.class);
+                        Intent intent = new Intent(AuthActivity.this,
+                                PreferenceActivity.class);
                         intent.putExtra(CLASS_NAME, "AuthActivity");
                         startActivity(intent);
                     }
