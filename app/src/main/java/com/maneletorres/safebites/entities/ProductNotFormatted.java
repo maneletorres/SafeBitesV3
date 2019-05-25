@@ -8,35 +8,35 @@ import com.google.gson.annotations.SerializedName;
 public class ProductNotFormatted {
     @SerializedName("product_name")
     @Expose
-    private String product_name;
+    private final String product_name;
 
     @SerializedName("code")
     @Expose
-    private String code;
+    private final String code;
 
     @SerializedName("nutriments")
     @Expose
-    private JsonObject nutriments;
+    private final JsonObject nutriments;
 
     @SerializedName("image_small_url")
     @Expose
-    private String image_small_url;
+    private final String image_small_url;
 
     @SerializedName("ingredients_text")
     @Expose
-    private String ingredients_text;
+    private final String ingredients_text;
 
     @SerializedName("serving_size")
     @Expose
-    private String serving_size;
+    private final String serving_size;
 
     @SerializedName("allergens_hierarchy")
     @Expose
-    private JsonArray allergens_hierarchy;
+    private final JsonArray allergens_hierarchy;
 
     @SerializedName("traces_hierarchy")
     @Expose
-    private JsonArray traces_hierarchy;
+    private final JsonArray traces_hierarchy;
 
     public ProductNotFormatted(String product_name, String code, JsonObject nutriments,
                                String image_small_url, String ingredients_text, String serving_size,
