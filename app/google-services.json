@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "892482210204-qi6b40mv89l686sna4adkrvnf5b7f8c5.apps.googleusercontent.com",
+          "client_id": "892482210204-defiatl2825p44t2s13maopk0hkio2oq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.maneletorres.safebites",
@@ -33,20 +33,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "892482210204-gbsvljhmft7pkrdfoc37dkda11j7d365.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
