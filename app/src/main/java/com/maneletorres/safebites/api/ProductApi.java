@@ -13,33 +13,25 @@ public class ProductApi {
 
     public static Retrofit getClient() {
         if (sRetrofit == null) {
-            sRetrofit = new Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("https://world.openfoodfacts.org/cgi/")
-                    .build();
+            sRetrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl("https://world.openfoodfacts.org/cgi/").build();
         }
         return sRetrofit;
     }
 
     public static Retrofit getProduct() {
         if (sRetrofit2 == null) {
-            sRetrofit2 = new Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("https://world.openfoodfacts.org/api/v0/product/")
-                    .build();
+            sRetrofit2 = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl("https://world.openfoodfacts.org/api/v0/product/").build();
         }
         return sRetrofit2;
     }
 
     public interface ProductService {
         @GET("search.pl")
-        Call<ProductsResponse> getProducts(
-                @Query("search_terms") String search_terms,
-                @Query("search_simple") int search_simple,
-                @Query("action") String action,
-                @Query("json") int json,
-                @Query("page_size") int page_size,
-                @Query("page") int page
+        Call<ProductsResponse> getProducts(@Query("search_terms") String search_terms,
+                                           @Query("search_simple") int search_simple, @Query("action") String action,
+                                           @Query("json") int json, @Query("page_size") int page_size, @Query("page") int page
         );
 
         @GET("{upc}")
