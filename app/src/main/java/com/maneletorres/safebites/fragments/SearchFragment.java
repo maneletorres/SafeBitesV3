@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
 import com.maneletorres.safebites.api.ProductApi;
-import com.maneletorres.safebites.api.ProductService;
+import com.maneletorres.safebites.api.ProductApi.ProductService;
 import com.maneletorres.safebites.api.ProductsResponse;
 import com.maneletorres.safebites.entities.Product;
 import com.maneletorres.safebites.entities.ProductNotFormatted;
@@ -94,7 +94,8 @@ public class SearchFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         // Master-detail configuration:
@@ -115,24 +116,25 @@ public class SearchFragment extends Fragment {
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
         mProductsRecyclerView = view.findViewById(R.id.product_recycler_view);
         mProductsRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mProductsRecyclerView.addOnScrollListener(new PaginationScrollListener(mLinearLayoutManager) {
-            @Override
-            protected void loadMoreItems() {
-                mIsLoading = true;
-                mCurrentPage += 1;
-                loadNextPage();
-            }
+        mProductsRecyclerView
+                .addOnScrollListener(new PaginationScrollListener(mLinearLayoutManager) {
+                    @Override
+                    protected void loadMoreItems() {
+                        mIsLoading = true;
+                        mCurrentPage += 1;
+                        loadNextPage();
+                    }
 
-            @Override
-            public boolean isLastPage() {
-                return mIsLastPage;
-            }
+                    @Override
+                    public boolean isLastPage() {
+                        return mIsLastPage;
+                    }
 
-            @Override
-            public boolean isLoading() {
-                return mIsLoading;
-            }
-        });
+                    @Override
+                    public boolean isLoading() {
+                        return mIsLoading;
+                    }
+                });
 
         mSearchEditText = toolbar.findViewById(R.id.search_edit_text);
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -144,7 +146,7 @@ public class SearchFragment extends Fragment {
                     loadFirstPage();
                     return true;
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.enter_search), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.enter_search_recommendation), Toast.LENGTH_SHORT).show();
                 }
             }
             return false;
@@ -180,7 +182,8 @@ public class SearchFragment extends Fragment {
             mSearchEditText.setVisibility(View.VISIBLE);
             mSearchEditText.requestFocus();
 
-            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity())
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(mSearchEditText, InputMethodManager.SHOW_IMPLICIT);
         } else if (id == R.id.action_cancel) {
             mCancelMenuItem.setVisible(false);
@@ -194,7 +197,8 @@ public class SearchFragment extends Fragment {
     }
 
     private boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) Objects.requireNonNull(getContext())
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
@@ -226,7 +230,8 @@ public class SearchFragment extends Fragment {
 
             callProductsApi().enqueue(new Callback<ProductsResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
+                public void onResponse(@NonNull Call<ProductsResponse> call,
+                                       @NonNull Response<ProductsResponse> response) {
                     List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
                     if (productsNotFormatted.isEmpty()) {
                         mProgressBar.setVisibility(View.GONE);
@@ -238,10 +243,11 @@ public class SearchFragment extends Fragment {
                         //createJSONNutrients(products);
                         List<Product> products = new ArrayList<>();
                         for (int i = 0; i < productsNotFormatted.size(); i++) {
-                            Product product = formatProduct(productsNotFormatted.get(i));
+                            Product product = formatProduct(getContext(),
+                                    productsNotFormatted.get(i));
                             products.add(product);
                         }
-                        mProductAdapter.addAll(products);
+
                         prepareProductsLoading(products);
 
                         mProgressBar.setVisibility(View.GONE);
@@ -270,14 +276,15 @@ public class SearchFragment extends Fragment {
         if (isConnected()) {
             callProductsApi().enqueue(new Callback<ProductsResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<ProductsResponse> call, @NonNull Response<ProductsResponse> response) {
+                public void onResponse(@NonNull Call<ProductsResponse> call,
+                                       @NonNull Response<ProductsResponse> response) {
                     mProductAdapter.removeLoadingFooter();
                     mIsLoading = false;
 
                     List<ProductNotFormatted> productsNotFormatted = fetchResults(response);
                     List<Product> products = new ArrayList<>();
                     for (int i = 0; i < productsNotFormatted.size(); i++) {
-                        Product product = formatProduct(productsNotFormatted.get(i));
+                        Product product = formatProduct(getContext(), productsNotFormatted.get(i));
                         products.add(product);
                     }
 
@@ -308,14 +315,8 @@ public class SearchFragment extends Fragment {
     }
 
     private Call<ProductsResponse> callProductsApi() {
-        return mProductService.getProducts(
-                mSearchEditText.getText().toString(),
-                1,
-                "process",
-                1,
-                10,
-                mCurrentPage
-        );
+        return mProductService.getProducts(mSearchEditText.getText().toString(), 1,
+                "process", 1, 10, mCurrentPage);
     }
 
     private void prepareProductsLoading(List<Product> products) {
@@ -347,7 +348,6 @@ public class SearchFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         if (mProductAdapter != null && mProductAdapter.getItemCount() > 0) {
             mProgressBar.setVisibility(View.VISIBLE);
-            //mProgressBarTextView.setVisibility(View.VISIBLE);
             reloadData();
             loadFirstPage();
         }
