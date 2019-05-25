@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">SafeBites</string>
-    <string name="app_description">SafeBites is an application developed for mobile devices with the Android operating system, which allows to quickly and easily contrast the nutritional information of a food product in question with the specific nutritional requirements of the user; as well as the realization of a quick comparison between the nutritional characteristics of two products in order to analyze which is healthier and/or more recommendable for one\'s own consumption.</string>
+    <string name="app_description">SafeBites is an application developed for mobile devices with the
+        Android operating system, which allows to quickly and easily contrast the nutritional
+        information of a food product in question with the specific nutritional requirements of the
+        user; as well as the realization of a quick comparison between the nutritional
+        characteristics of two products in order to analyze which is healthier and/or more
+        recommendable for one\'s own consumption.</string>
 
     <!-- FRDB: -->
     <string name="productsUser" translatable="false">productsUser</string>
@@ -8,6 +13,7 @@
     <string name="products" translatable="false">products</string>
     <string name="users" translatable="false">users</string>
     <string name="allergies" translatable="false">allergies</string>
+    <string name="anonymous">ANONYMOUS</string>
 
     <!-- Toast messages: -->
     <string name="user_cancellation">Sign in canceled by the user</string>
@@ -20,18 +26,24 @@
     <string name="error_during_scanning">Error during scanning</string>
     <string name="product_not_found">Product not found</string>
     <string name="enter_search_recommendation">You must enter a search</string>
-    <string name="error_during_comparison_1">There is no product saved as favorite to make the comparison</string>
-    <string name="error_during_comparison_2">There are not enough products saved as a favorite to make the comparison</string>
-    <string name="no_registered_ingredients">There are no registered ingredients for this product</string>
+    <string name="error_during_comparison_1">There is no product saved as favorite to make the
+        comparison</string>
+    <string name="error_during_comparison_2">There are not enough products saved as a favorite to
+        make the comparison</string>
+    <string name="no_registered_ingredients">There are no registered ingredients for this
+        product</string>
 
     <!-- AlertDialog: -->
     <string name="alert_dialog_positive_button" translatable="false">OK</string>
     <string name="alert_dialog_negative_button">Cancel</string>
     <string name="save_data_alert_dialog_title">Information:</string>
-    <string name="save_data_alert_dialog_message_1">Are you sure you want to save the changes made to your allergies?</string>
-    <string name="save_data_alert_dialog_message_2">Are you sure you want to create the user %1$s with email %2$s?</string>
+    <string name="save_data_alert_dialog_message_1">Are you sure you want to save the changes made
+        to your allergies?</string>
+    <string name="save_data_alert_dialog_message_2">Are you sure you want to create the user %1$s
+        with email %2$s?</string>
     <string name="delete_user_alert_dialog_title">Warning:</string>
-    <string name="delete_user_alert_dialog_message">This action cannot be undone. Are you sure you want to delete the user %1$s with email %2$s?"</string>
+    <string name="delete_user_alert_dialog_message">This action cannot be undone. Are you sure you
+        want to delete the user %1$s with email %2$s?"</string>
 
     <!-- -->
     <string name="no_products_found"> No products found</string>
@@ -77,7 +89,8 @@
     <string name="danger_zone_text_view">Danger zone</string>
 
     <!-- -->
-    <string name="zxing_informer">Enter manually or place a bar code inside the rectangle of the viewfinder to scan.</string>
+    <string name="zxing_informer">Enter manually or place a bar code inside the rectangle of the
+        viewfinder to scan.</string>
 
     <!-- Menu: -->
     <string name="item_scan">Scan</string>
@@ -95,8 +108,10 @@
     <string name="nav_information">Information</string>
     <string name="nav_header_subtitle_display_name" translatable="false">Display name</string>
     <string name="nav_header_subtitle_email" translatable="false">eMail</string>
-    <string name="accompanying_message">"Hey buddy! Take a look at this new and incredible app:"</string>
-    <string name="github_url" translatable="false">https://github.com/maneletorres/SafeBitesV3</string>
+    <string name="accompanying_message">"Hey buddy! Take a look at this new and incredible
+        app:"</string>
+    <string name="github_url" translatable="false">https://github.com/maneletorres/SafeBitesV3
+    </string>
     <string name="chooser_message">Choose where you want to share SafeBites App:</string>
 
     <!-- Fragments: -->
@@ -215,6 +230,10 @@
     <string name="ph">PH</string>
 
     <!-- App mentions: -->
-    <string name="app_mentions">This project has been built on the basis of the REST API created and maintained by the non-profit organization Open Food Facts, who is grateful for the enormous work done and the fantastic initiative that represents the tool that they have offered for free; making reference to this in the following link:</string>
-    <string name="mention1" translatable="false"><a href="some site">https://world.openfoodfacts.org/</a></string>
+    <string name="app_mentions">This project has been built on the basis of the REST API created and
+        maintained by the non-profit organization Open Food Facts, who is grateful for the enormous
+        work done and the fantastic initiative that represents the tool that they have offered for
+        free; making reference to this in the following link:</string>
+    <string name="mention1" translatable="false"><a href="some site">
+        https://world.openfoodfacts.org/</a></string>
 </resources>
