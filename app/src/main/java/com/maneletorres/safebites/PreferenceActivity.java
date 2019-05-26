@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -29,10 +31,14 @@ import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 
 public class PreferenceActivity extends AppCompatActivity implements View.OnClickListener {
     // Firebase variables:
-    private FirebaseUser mFirebaseUser;
-    private DatabaseReference mUserDatabaseReference;
-    private DatabaseReference mAllergiesDatabaseReference;
-    private ValueEventListener mValueEventListener;
+    private String mUid;
+    private String mDisplayName;
+    private String mEmail;
+    private DatabaseReference mUserDBRef;
+    private DatabaseReference mAllergiesDBRef;
+    private DatabaseReference mUsersProductDBRef;
+    private ValueEventListener mAllergiesValueEventListener;
+    private ValueEventListener mUsersChildEventListener;
 
     // Other variables:
     private CheckBox fishAllergyCheckBox;
@@ -65,9 +71,19 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             callingActivityName = extras.getString(CLASS_NAME);
 
             // Firebase components initialization:
-            mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            mUserDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(mFirebaseUser.getUid());
-            mAllergiesDatabaseReference = mUserDatabaseReference.child("allergies");
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null) {
+                mUid = firebaseUser.getUid();
+                mDisplayName = firebaseUser.getDisplayName();
+                mEmail = firebaseUser.getEmail();
+            } else {
+                mUid = getString(R.string.anonymous);
+                mDisplayName = getString(R.string.anonymous);
+                mEmail = getString(R.string.anonymous);
+            }
+
+            mUserDBRef = FirebaseDatabase.getInstance().getReference("users").child(mUid);
+            mAllergiesDBRef = mUserDBRef.child("allergies");
 
             // Initialization of the components:
             glutenAllergyCheckBox = findViewById(R.id.gluten_allergy_text_view);
@@ -81,7 +97,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             celeryAllergyCheckBox = findViewById(R.id.celery_allergy_text_view);
             mustardAllergyCheckBox = findViewById(R.id.mustard_allergy_text_view);
             sesameSeedsAllergyCheckBox = findViewById(R.id.sesame_seeds_allergy_text_view);
-            sulphurDioxideAndSulphitesCheckBox = findViewById(R.id.sulphur_dioxide_and_sulphites_allergy_text_view);
+            sulphurDioxideAndSulphitesCheckBox =
+                    findViewById(R.id.sulphur_dioxide_and_sulphites_allergy_text_view);
             lupinAllergyCheckBox = findViewById(R.id.lupin_allergy_text_view);
             molluscsAllergyCheckBox = findViewById(R.id.molluscs_allergy_text_view);
 
@@ -92,7 +109,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             // Depending on the value of the callingActivityName variable, both the separating view
             // and the Danger Zone LinearLayout will be hidden or displayed:
             if (callingActivityName.equals("AuthActivity")) {
-                mAlertDialogMessage = getString(R.string.save_data_alert_dialog_message_2, mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
+                mAlertDialogMessage = getString(R.string.save_data_alert_dialog_message_2,
+                        mDisplayName, mEmail);
 
                 saveDataButton.setText(getString(R.string.create_user_button));
                 findViewById(R.id.separator_view).setVisibility(View.GONE);
@@ -100,7 +118,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             } else if (callingActivityName.equals("MainActivity")) {
                 mAlertDialogMessage = getString(R.string.save_data_alert_dialog_message_1);
 
-                // OnClickListener configuration on the button to save changes on the user's allergens:
+                // OnClickListener configuration on the button to save changes on the user's
+                // allergens:
                 findViewById(R.id.delete_user_button).setOnClickListener(this);
             }
         }
@@ -136,15 +155,15 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
 
                             Intent intent = new Intent(this, MainActivity.class);
                             if (callingActivityName.equals("AuthActivity")) {
-                                map.put("displayName", mFirebaseUser.getDisplayName());
-                                map.put("eMail", mFirebaseUser.getEmail());
+                                map.put("displayName", mDisplayName);
+                                map.put("eMail", mEmail);
 
                                 intent.putExtra(TOAST_MESSAGE, 0);
                             } else if (callingActivityName.equals("MainActivity")) {
                                 intent.putExtra(TOAST_MESSAGE, 2);
                             }
 
-                            mUserDatabaseReference.updateChildren(map);
+                            mUserDBRef.updateChildren(map);
                             startActivity(intent);
                         })
                         .setNegativeButton(getString(R.string.alert_dialog_negative_button), (dialog, which) -> {
@@ -158,27 +177,68 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             case R.id.delete_user_button:
                 new AlertDialog.Builder(this)
                         .setPositiveButton(getString(R.string.alert_dialog_positive_button), (dialog, which) -> {
-                            // Deletion of the current user:
-                            mUserDatabaseReference.removeValue();
+                            // Removal the current user's account:
 
-                            // Closing of the current session:
-                            AuthUI.getInstance()
-                                    .signOut(this)
-                                    .addOnCompleteListener(task -> {
-                                        // User is now signed out:
-                                        Intent intent = new Intent(this,
-                                                AuthActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                                | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(intent);
-                                        finish();
-                                    });
+                            // 'productsUser':
+                            FirebaseDatabase.getInstance().getReference().child("productsUser").child(mUid).removeValue();
+
+                            // 'usersProduct':
+                            mUsersProductDBRef = FirebaseDatabase.getInstance().getReference().child("usersProduct");
+                            mUsersChildEventListener = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Log.v("STATUS", "Current UID: " + mUid);
+                                    Log.v("STATUS", "DataSnapshot: " + dataSnapshot.toString());
+
+                                    int count1 = 1;
+                                    HashMap<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
+                                    for (Map.Entry<String, Object> products_upc : map.entrySet()) {
+                                        Log.v("STATUS", "Bucle externo - Key: " + products_upc.getKey());
+
+                                        String product_upc = products_upc.getKey();
+                                        HashMap<String, Boolean> value = (HashMap<String, Boolean>) products_upc.getValue();
+
+                                        int count = 0;
+                                        ArrayList<String> arrayList = new ArrayList<>();
+                                        for (Map.Entry<String, Boolean> uids : value.entrySet()) {
+                                            Log.v("STATUS", "Bucle interno - Value: " + uids.getKey());
+                                            arrayList.add(uids.getKey());
+                                            count++;
+                                        }
+
+                                        if (count == 1) {
+                                            if (arrayList.get(0).equals(mUid)) {
+                                                Log.v("STATUS", "Deleting the product " + product_upc + " from 'usersProduct'.");
+                                                mUsersProductDBRef.child(product_upc).removeValue();
+
+                                                // 'products':
+                                                Log.v("STATUS", "Deleting the product " + product_upc + " from 'products'.");
+                                                FirebaseDatabase.getInstance().getReference().child("products").child(product_upc).removeValue();
+                                            }
+                                        } else {
+                                            Log.v("STATUS", "Deleting the UID " + mUid + " of the product " + product_upc + " from 'usersProduct'.");
+                                            mUsersProductDBRef.child(product_upc).child(mUid).removeValue();
+                                        }
+                                    }
+
+                                    Log.v("STATUS", "¡Closing session!");
+                                    signOff();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            };
+                            mUsersProductDBRef.addListenerForSingleValueEvent(mUsersChildEventListener);
+
+                            // 'users':
+                            mUserDBRef.removeValue();
                         })
                         .setNegativeButton(getString(R.string.alert_dialog_negative_button), (dialog, which) -> {
                         })
                         .setTitle(getString(R.string.delete_user_alert_dialog_title))
-                        .setMessage(getString(R.string.delete_user_alert_dialog_message, mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail()))
+                        .setMessage(getString(R.string.delete_user_alert_dialog_message,
+                                mDisplayName, mEmail))
                         .create()
                         .show();
                 break;
@@ -209,8 +269,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void attachDatabaseReadListener() {
-        if (mValueEventListener == null) {
-            mValueEventListener = new ValueEventListener() {
+        if (mAllergiesValueEventListener == null) {
+            mAllergiesValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Map<String, Boolean> allergies = (HashMap<String,
@@ -239,14 +299,19 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
 
                 }
             };
-            mAllergiesDatabaseReference.addListenerForSingleValueEvent(mValueEventListener);
+            mAllergiesDBRef.addListenerForSingleValueEvent(mAllergiesValueEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
-        if (mValueEventListener != null) {
-            mAllergiesDatabaseReference.removeEventListener(mValueEventListener);
-            mValueEventListener = null;
+        if (mAllergiesValueEventListener != null) {
+            mAllergiesDBRef.removeEventListener(mAllergiesValueEventListener);
+            mAllergiesValueEventListener = null;
+        }
+
+        if (mUsersChildEventListener != null) {
+            mUsersProductDBRef.removeEventListener(mUsersChildEventListener);
+            mUsersChildEventListener = null;
         }
     }
 
@@ -263,5 +328,20 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+    }
+
+    private void signOff() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(task -> {
+                    // User is now signed out:
+                    Intent intent = new Intent(this,
+                            AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                });
     }
 }
