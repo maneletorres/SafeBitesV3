@@ -40,8 +40,10 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
     // FRDB variables:
     private DatabaseReference mUserDBRef;
     private DatabaseReference mUserFavoritesDBRef;
+    private DatabaseReference mProductDBRef;
     private ValueEventListener mUserAllergiesValueEventListener;
     private ValueEventListener mUserProductsValueEventListener;
+    private ValueEventListener mProductsValueEventListener;
 
     // Other variables:
     private TextView apt_product;
@@ -62,10 +64,9 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
 
             // Initialization of the components:
             mUid = FirebaseAuth.getInstance().getUid();
-            mUserDBRef = FirebaseDatabase.getInstance()
-                    .getReference(getString(R.string.users)).child(mUid);
-            mUserFavoritesDBRef = FirebaseDatabase.getInstance()
-                    .getReference().child(getString(R.string.productsUser)).child(mUid);
+            mUserDBRef = FirebaseDatabase.getInstance().getReference(getString(R.string.users)).child(mUid);
+            mUserFavoritesDBRef = FirebaseDatabase.getInstance().getReference()
+                    .child(getString(R.string.productsUser)).child(mUid);
 
             ImageView image_nutrients = view.findViewById(R.id.image_view_nutrients_header);
             TextView name = view.findViewById(R.id.product_name_text_view);
@@ -86,8 +87,7 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
             if (image_resource.equals("-")) {
                 image_nutrients.setImageResource(R.drawable.no_image_available);
             } else {
-                Glide.with(Objects.requireNonNull(getActivity()))
-                        .load(image_resource)
+                Glide.with(Objects.requireNonNull(getActivity())).load(image_resource)
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model,
@@ -127,34 +127,32 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
             if (mProductExists) {
                 // Removal of the product from the FRDB:
 
-                // 'favorites':
-                DatabaseReference favoritesDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference().child(getString(R.string.productsUser)).child(mUid).child(mProduct.getUpc());
-                favoritesDatabaseReference.removeValue();
-
                 // 'products':
-                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference().child(getString(R.string.usersProduct)).child(mProduct.getUpc());
-                productsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                DatabaseReference usersProductDBRef = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.usersProduct));
+
+                mProductDBRef = usersProductDBRef.child(mProduct.getUpc());
+                mProductsValueEventListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getChildrenCount() == 0) {
+                        if (dataSnapshot.getChildrenCount() <= 1) {
                             FirebaseDatabase.getInstance().getReference().child("products")
                                     .child(mProduct.getUpc()).removeValue();
-                            productsDatabaseReference.removeEventListener(this);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
                     }
-                });
+                };
+                mProductDBRef.addListenerForSingleValueEvent(mProductsValueEventListener);
 
-                // 'tests':
-                DatabaseReference testsDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference().child(getString(R.string.usersProduct)).child(mProduct.getUpc()).child(mUid);
-                testsDatabaseReference.removeValue();
+                // 'productsUser':
+                FirebaseDatabase.getInstance().getReference().child(getString(R.string.productsUser)).child(mUid)
+                        .child(mProduct.getUpc()).removeValue();
+
+                // 'usersProduct':
+                usersProductDBRef.child(mProduct.getUpc()).child(mUid).removeValue();
 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.content_save);
                 mSaveOrDeleteFAB.setContentDescription(getString(R.string.save_data_button_description));
@@ -162,29 +160,26 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
             } else {
                 // Upload of the product to the FRDB:
 
-                // 'favorites':
-                Map<String, Object> favorites = new HashMap<>();
-                favorites.put(mProduct.getUpc(), true);
-
-                DatabaseReference favoritesDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference().child(getString(R.string.productsUser)).child(mUid);
-                favoritesDatabaseReference.updateChildren(favorites);
-
                 // 'products':
                 Map<String, Object> products = new HashMap<>();
                 products.put(mProduct.getUpc(), mProduct);
 
-                DatabaseReference productsDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference().child(getString(R.string.products));
-                productsDatabaseReference.updateChildren(products);
+                FirebaseDatabase.getInstance().getReference().child(getString(R.string.products))
+                        .updateChildren(products);
 
-                // 'tests':
-                Map<String, Object> tests = new HashMap<>();
-                tests.put(mUid, true);
+                // 'productsUser':
+                Map<String, Object> productsUser = new HashMap<>();
+                productsUser.put(mProduct.getUpc(), true);
 
-                DatabaseReference dr = FirebaseDatabase.getInstance().getReference()
-                        .child(getString(R.string.usersProduct));
-                dr.child(mProduct.getUpc()).updateChildren(tests);
+                FirebaseDatabase.getInstance().getReference().child(getString(R.string.productsUser)).child(mUid)
+                        .updateChildren(productsUser);
+
+                // 'usersProduct':
+                Map<String, Object> usersProduct = new HashMap<>();
+                usersProduct.put(mUid, true);
+
+                FirebaseDatabase.getInstance().getReference().child(getString(R.string.usersProduct))
+                        .child(mProduct.getUpc()).updateChildren(usersProduct);
 
                 mSaveOrDeleteFAB.setImageResource(R.drawable.delete);
                 mSaveOrDeleteFAB.setContentDescription(getString(R.string.delete_data_button_description));
@@ -258,10 +253,10 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
                         }
 
                         if (condition) {
-                            apt_product.setText("Unfit");
+                            apt_product.setText(R.string.unfit_product);
                             apt_product.setBackgroundColor(Color.parseColor("#FF0000"));
                         } else {
-                            apt_product.setText("Suitable");
+                            apt_product.setText(R.string.suitable_product);
                             apt_product.setBackgroundColor(Color.parseColor("#ff99cc00"));
                         }
                     }
@@ -272,8 +267,7 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
 
                 }
             };
-            mUserDBRef.child(getString(R.string.allergies))
-                    .addListenerForSingleValueEvent(mUserAllergiesValueEventListener);
+            mUserDBRef.child(getString(R.string.allergies)).addListenerForSingleValueEvent(mUserAllergiesValueEventListener);
         }
 
         if (mUserProductsValueEventListener == null) {
@@ -310,6 +304,11 @@ public class NutrientsFragment extends Fragment implements View.OnClickListener 
         if (mUserProductsValueEventListener != null) {
             mUserFavoritesDBRef.removeEventListener(mUserProductsValueEventListener);
             mUserProductsValueEventListener = null;
+        }
+
+        if (mProductsValueEventListener != null) {
+            mProductDBRef.removeEventListener(mProductsValueEventListener);
+            mProductsValueEventListener = null;
         }
     }
 }
