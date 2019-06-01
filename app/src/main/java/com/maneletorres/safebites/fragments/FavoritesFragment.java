@@ -37,7 +37,6 @@ public class FavoritesFragment extends Fragment {
     private RecyclerView mFavoriteProductsRecyclerView;
     private ProductAdapter mProductAdapter;
     private TextView mEmptyTextView;
-    private View mView;
 
     @Nullable
     @Override
@@ -46,8 +45,7 @@ public class FavoritesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         // Master-detail configuration:
-        mView = view.findViewById(R.id.favorites_frame_layout);
-        if (mView != null) {
+        if (view.findViewById(R.id.favorites_frame_layout) != null) {
             mTwoPane = true;
         }
 
@@ -121,19 +119,19 @@ public class FavoritesFragment extends Fragment {
                                 .getReference(getString(R.string.products)).child(product_upc);
                         productDatabaseReference.addListenerForSingleValueEvent(
                                 new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                mProductAdapter.add(dataSnapshot.getValue(Product.class));
-                                mProductAdapter.notifyDataSetChanged();
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        mProductAdapter.add(dataSnapshot.getValue(Product.class));
+                                        mProductAdapter.notifyDataSetChanged();
 
-                                prepareProductsLoading();
-                            }
+                                        prepareProductsLoading();
+                                    }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
+                                    }
+                                });
                     }
                 }
 
