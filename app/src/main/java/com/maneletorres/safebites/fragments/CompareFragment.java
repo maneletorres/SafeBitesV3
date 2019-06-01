@@ -323,44 +323,48 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
         mProductASpinner.setAdapter(adapterFavoriteProducts);
         mProductBSpinner.setAdapter(adapterFavoriteProducts);
 
-        mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String product_upc = dataSnapshot.getKey();
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String product_upc = dataSnapshot.getKey();
 
-                DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
-                        .getReference("products").child(product_upc);
-                productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mFavoriteProducts.add(dataSnapshot.getValue(Product.class));
-                        adapterFavoriteProducts.notifyDataSetChanged();
+                    if (product_upc != null) {
+                        DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
+                                .getReference("products").child(product_upc);
+                        productDatabaseReference.addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        mFavoriteProducts.add(dataSnapshot.getValue(Product.class));
+                                        adapterFavoriteProducts.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    }
-                });
-            }
+                }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    mFavoriteProducts.remove(dataSnapshot.getValue(Product.class));
+                }
 
-            }
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                mFavoriteProducts.remove(dataSnapshot.getKey());
-            }
+                }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             };
