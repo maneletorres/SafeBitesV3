@@ -146,7 +146,8 @@ public class SearchFragment extends Fragment {
                     loadFirstPage();
                     return true;
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.enter_search_recommendation), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.enter_search_recommendation), Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
             return false;
