@@ -330,21 +330,20 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
                     String product_upc = dataSnapshot.getKey();
 
                     if (product_upc != null) {
-                        DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
+                        DatabaseReference productDBRef = FirebaseDatabase.getInstance()
                                 .getReference("products").child(product_upc);
-                        productDatabaseReference.addListenerForSingleValueEvent(
-                                new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        mFavoriteProducts.add(dataSnapshot.getValue(Product.class));
-                                        adapterFavoriteProducts.notifyDataSetChanged();
-                                    }
+                        productDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mFavoriteProducts.add(dataSnapshot.getValue(Product.class));
+                                adapterFavoriteProducts.notifyDataSetChanged();
+                            }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    }
-                                });
+                            }
+                        });
                     }
                 }
 
