@@ -188,36 +188,37 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Log.v("STATUS", "Current UID: " + mUid);
-                                    Log.v("STATUS", "DataSnapshot: " + dataSnapshot.toString());
 
-                                    int count1 = 1;
-                                    HashMap<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
-                                    for (Map.Entry<String, Object> products_upc : map.entrySet()) {
-                                        Log.v("STATUS", "Bucle externo - Key: " + products_upc.getKey());
+                                    if (dataSnapshot.getValue() != null) {
+                                        HashMap<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
 
-                                        String product_upc = products_upc.getKey();
-                                        HashMap<String, Boolean> value = (HashMap<String, Boolean>) products_upc.getValue();
+                                        for (Map.Entry<String, Object> products_upc : map.entrySet()) {
+                                            Log.v("STATUS", "Bucle externo - Key: " + products_upc.getKey());
 
-                                        int count = 0;
-                                        ArrayList<String> arrayList = new ArrayList<>();
-                                        for (Map.Entry<String, Boolean> uids : value.entrySet()) {
-                                            Log.v("STATUS", "Bucle interno - Value: " + uids.getKey());
-                                            arrayList.add(uids.getKey());
-                                            count++;
-                                        }
+                                            String product_upc = products_upc.getKey();
+                                            HashMap<String, Boolean> value = (HashMap<String, Boolean>) products_upc.getValue();
 
-                                        if (count == 1) {
-                                            if (arrayList.get(0).equals(mUid)) {
-                                                Log.v("STATUS", "Deleting the product " + product_upc + " from 'usersProduct'.");
-                                                mUsersProductDBRef.child(product_upc).removeValue();
-
-                                                // 'products':
-                                                Log.v("STATUS", "Deleting the product " + product_upc + " from 'products'.");
-                                                FirebaseDatabase.getInstance().getReference().child("products").child(product_upc).removeValue();
+                                            int count = 0;
+                                            ArrayList<String> arrayList = new ArrayList<>();
+                                            for (Map.Entry<String, Boolean> uids : value.entrySet()) {
+                                                Log.v("STATUS", "Bucle interno - Value: " + uids.getKey());
+                                                arrayList.add(uids.getKey());
+                                                count++;
                                             }
-                                        } else {
-                                            Log.v("STATUS", "Deleting the UID " + mUid + " of the product " + product_upc + " from 'usersProduct'.");
-                                            mUsersProductDBRef.child(product_upc).child(mUid).removeValue();
+
+                                            if (count == 1) {
+                                                if (arrayList.get(0).equals(mUid)) {
+                                                    Log.v("STATUS", "Deleting the product " + product_upc + " from 'usersProduct'.");
+                                                    mUsersProductDBRef.child(product_upc).removeValue();
+
+                                                    // 'products':
+                                                    Log.v("STATUS", "Deleting the product " + product_upc + " from 'products'.");
+                                                    FirebaseDatabase.getInstance().getReference().child("products").child(product_upc).removeValue();
+                                                }
+                                            } else {
+                                                Log.v("STATUS", "Deleting the UID " + mUid + " of the product " + product_upc + " from 'usersProduct'.");
+                                                mUsersProductDBRef.child(product_upc).child(mUid).removeValue();
+                                            }
                                         }
                                     }
 
