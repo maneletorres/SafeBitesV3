@@ -73,14 +73,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.scan_button) {
-            IntentIntegrator.forSupportFragment(this)
-                    .setRequestCode(RC_SCAN)
-                    .setCameraId(0)
-                    .setOrientationLocked(false)
-                    .setCaptureActivity(CustomScannerActivity.class)
-                    .setOrientationLocked(false)
-                    .setBeepEnabled(true)
-                    .initiateScan();
+            IntentIntegrator.forSupportFragment(this).setRequestCode(RC_SCAN).setCameraId(0)
+                    .setOrientationLocked(false).setCaptureActivity(CustomScannerActivity.class)
+                    .setOrientationLocked(false).setBeepEnabled(true).initiateScan();
         }
     }
 
