@@ -29,7 +29,7 @@ import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 public class FavoritesFragment extends Fragment {
     // FRDB variables:
     private FirebaseUser mFirebaseUser;
-    private DatabaseReference mFavoritesDatabaseReference;
+    private DatabaseReference mFavoritesDBRef;
     private ChildEventListener mChildEventListener;
 
     // Other variables:
@@ -53,7 +53,7 @@ public class FavoritesFragment extends Fragment {
 
         // Initialization of the FRDB components:
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        mFavoritesDatabaseReference = FirebaseDatabase.getInstance()
+        mFavoritesDBRef = FirebaseDatabase.getInstance()
                 .getReference(getString(R.string.productsUser)).child(mFirebaseUser.getUid());
 
         // Initialization of the components:
@@ -119,7 +119,8 @@ public class FavoritesFragment extends Fragment {
                     if (product_upc != null) {
                         DatabaseReference productDatabaseReference = FirebaseDatabase.getInstance()
                                 .getReference(getString(R.string.products)).child(product_upc);
-                        productDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        productDatabaseReference.addListenerForSingleValueEvent(
+                                new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 mProductAdapter.add(dataSnapshot.getValue(Product.class));
@@ -145,15 +146,13 @@ public class FavoritesFragment extends Fragment {
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                     String product_upc = dataSnapshot.getKey();
                     if (product_upc != null) {
-                        DatabaseReference dr = FirebaseDatabase.getInstance()
-                                .getReference(getString(R.string.users))
+                        DatabaseReference dr = FirebaseDatabase.getInstance().getReference(getString(R.string.users))
                                 .child(mFirebaseUser.getUid())
                                 .child(getString(R.string.products)).child(product_upc);
                         dr.removeValue();
 
                         mProductAdapter.removeProduct(product_upc);
                         mProductAdapter.notifyDataSetChanged();
-
                         prepareProductsLoading();
                     }
                 }
@@ -168,13 +167,13 @@ public class FavoritesFragment extends Fragment {
 
                 }
             };
-            mFavoritesDatabaseReference.addChildEventListener(mChildEventListener);
+            mFavoritesDBRef.addChildEventListener(mChildEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mFavoritesDatabaseReference.removeEventListener(mChildEventListener);
+            mFavoritesDBRef.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
