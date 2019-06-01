@@ -29,10 +29,9 @@ import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 public class AuthActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
 
-    // Firebase variables:
     private FirebaseAuth mFirebaseAuth;
     private AuthStateListener mAuthStateListener;
-    private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mUsersDBRef;
     private ValueEventListener mValueEventListener;
 
     @Override
@@ -45,8 +44,7 @@ public class AuthActivity extends AppCompatActivity {
             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
                 // User is signed in:
-                mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                        .child(getString(R.string.users));
+                mUsersDBRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.users));
                 attachDatabaseReadListener();
             } else {
                 // User is signed out:
@@ -76,10 +74,13 @@ public class AuthActivity extends AppCompatActivity {
                 Log.v("AuthActivity", "onActivityResult - RESULT_OK");
             } else if (resultCode == RESULT_CANCELED) {
                 if (response == null) {
-                    Toast.makeText(this, getString(R.string.user_cancellation), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.user_cancellation),
+                            Toast.LENGTH_SHORT).show();
                     finishAffinity();
-                } else if (Objects.requireNonNull(response.getError()).getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+                } else if (Objects.requireNonNull(response.getError()).getErrorCode() ==
+                        ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(this, getString(R.string.no_internet_connection),
+                            Toast.LENGTH_SHORT).show();
                     finishAffinity();
                 }
             } else {
@@ -104,7 +105,7 @@ public class AuthActivity extends AppCompatActivity {
 
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
 
-        if (mUsersDatabaseReference != null) {
+        if (mUsersDBRef != null) {
             attachDatabaseReadListener();
         }
     }
@@ -133,13 +134,13 @@ public class AuthActivity extends AppCompatActivity {
 
                 }
             };
-            mUsersDatabaseReference.addListenerForSingleValueEvent(mValueEventListener);
+            mUsersDBRef.addListenerForSingleValueEvent(mValueEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mValueEventListener != null) {
-            mUsersDatabaseReference.removeEventListener(mValueEventListener);
+            mUsersDBRef.removeEventListener(mValueEventListener);
             mValueEventListener = null;
         }
     }
