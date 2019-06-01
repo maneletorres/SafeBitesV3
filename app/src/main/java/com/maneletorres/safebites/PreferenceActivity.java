@@ -180,10 +180,12 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                             // Removal the current user's account:
 
                             // 'productsUser':
-                            FirebaseDatabase.getInstance().getReference().child("productsUser").child(mUid).removeValue();
+                            FirebaseDatabase.getInstance().getReference().child("productsUser")
+                                    .child(mUid).removeValue();
 
                             // 'usersProduct':
-                            mUsersProductDBRef = FirebaseDatabase.getInstance().getReference().child("usersProduct");
+                            mUsersProductDBRef = FirebaseDatabase.getInstance().getReference()
+                                    .child("usersProduct");
                             mUsersChildEventListener = new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -230,7 +232,8 @@ public class PreferenceActivity extends AppCompatActivity implements View.OnClic
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
                                 }
                             };
-                            mUsersProductDBRef.addListenerForSingleValueEvent(mUsersChildEventListener);
+                            mUsersProductDBRef
+                                    .addListenerForSingleValueEvent(mUsersChildEventListener);
 
                             // 'users':
                             mUserDBRef.removeValue();
