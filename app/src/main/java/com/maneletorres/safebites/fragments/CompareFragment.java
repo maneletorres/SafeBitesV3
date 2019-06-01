@@ -60,7 +60,7 @@ import static com.maneletorres.safebites.utils.Utils.formatProduct;
 
 public class CompareFragment extends Fragment implements View.OnClickListener {
     // FRDB variables:
-    private DatabaseReference mProductsDatabaseReference;
+    private DatabaseReference mProductsDBRef;
     private ChildEventListener mChildEventListener;
 
     // Other variables:
@@ -90,11 +90,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
             mTwoPane = true;
         }
 
-        // Initialization of the FRDB components:
-        mProductsDatabaseReference = FirebaseDatabase.getInstance().getReference(getString(R.string.productsUser))
-                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-
         // Initialization of the components:
+        mProductsDBRef = FirebaseDatabase.getInstance().getReference(getString(R.string.productsUser))
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
         mProductAContainer = view.findViewById(R.id.product_A_container);
         mProductASpinner = view.findViewById(R.id.product_A_spinner);
         mProductBContainer = view.findViewById(R.id.product_B_container);
@@ -168,7 +166,7 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
                 if (scanResult != null) {
                     if (scanResult.getContents() == null) {
                         if (resultCode == RESULT_CANCELED) {
-                            Toast.makeText(getContext(), getString(R.string.user_cancellation),
+                            Toast.makeText(getContext(), getString(R.string.scan_cancellation),
                                     Toast.LENGTH_SHORT).show();
                         } else if (resultCode != RESULT_OK) {
                             Toast.makeText(getContext(), getString(R.string.error_during_scanning),
@@ -247,14 +245,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startComparisonOption1(int requestCode) {
-        IntentIntegrator.forSupportFragment(this)
-                .setRequestCode(requestCode)
-                .setCameraId(0)
-                .setOrientationLocked(false)
-                .setCaptureActivity(CustomScannerActivity.class)
-                .setOrientationLocked(false)
-                .setBeepEnabled(true)
-                .initiateScan();
+        IntentIntegrator.forSupportFragment(this).setRequestCode(requestCode).setCameraId(0)
+                .setOrientationLocked(false).setCaptureActivity(CustomScannerActivity.class)
+                .setOrientationLocked(false).setBeepEnabled(true).initiateScan();
     }
 
     private void startComparisonOption2() {
@@ -369,14 +362,15 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        };
-        mProductsDatabaseReference.addChildEventListener(mChildEventListener);
+                }
+            };
+            mProductsDBRef.addChildEventListener(mChildEventListener);
+        }
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mProductsDatabaseReference.removeEventListener(mChildEventListener);
+            mProductsDBRef.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
