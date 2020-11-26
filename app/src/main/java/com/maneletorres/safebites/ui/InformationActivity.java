@@ -1,8 +1,11 @@
-package com.maneletorres.safebites;
+package com.maneletorres.safebites.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.maneletorres.safebites.R;
 
 public class InformationActivity extends AppCompatActivity {
     @Override

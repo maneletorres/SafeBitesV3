@@ -1,16 +1,17 @@
-package com.maneletorres.safebites.fragments;
+package com.maneletorres.safebites.ui.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -19,9 +20,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.NutrientComparisonAdapter;
-import com.maneletorres.safebites.entities.Nutrient;
-import com.maneletorres.safebites.entities.NutrientComparison;
-import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.data.Nutrient;
+import com.maneletorres.safebites.data.NutrientComparison;
+import com.maneletorres.safebites.data.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,7 @@ public class NutrientsComparisonFragment extends Fragment {
         if (productImageResource.equals("-")) {
             productImageView.setImageResource(R.drawable.no_image_available);
         } else {
-            Glide.with(this)
+            Glide.with(getActivity())
                     .load(productImageResource)
                     .listener(new RequestListener<Drawable>() {
                         @Override

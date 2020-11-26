@@ -1,10 +1,7 @@
-package com.maneletorres.safebites.fragments;
+package com.maneletorres.safebites.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +10,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.maneletorres.safebites.CustomScannerActivity;
-import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.api.ProductApi;
 import com.maneletorres.safebites.api.ProductApi.ProductService;
 import com.maneletorres.safebites.api.ProductResponse;
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.entities.ProductNotFormatted;
+import com.maneletorres.safebites.data.Product;
+import com.maneletorres.safebites.data.ProductNotFormatted;
+import com.maneletorres.safebites.ui.CustomScannerActivity;
+import com.maneletorres.safebites.ui.ProductActivity;
 
 import java.util.Objects;
 
@@ -73,9 +74,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.scan_button) {
-            IntentIntegrator.forSupportFragment(this).setRequestCode(RC_SCAN).setCameraId(0)
+            /*IntentIntegrator.forSupportFragment(this).setRequestCode(RC_SCAN).setCameraId(0)
                     .setOrientationLocked(false).setCaptureActivity(CustomScannerActivity.class)
-                    .setOrientationLocked(false).setBeepEnabled(true).initiateScan();
+                    .setOrientationLocked(false).setBeepEnabled(true).initiateScan();*/
         }
     }
 

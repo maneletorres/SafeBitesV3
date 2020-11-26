@@ -5,13 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,24 +12,31 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.maneletorres.safebites.ProductActivity;
 import com.maneletorres.safebites.R;
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.fragments.CompleteProductFragment;
-import com.maneletorres.safebites.fragments.FavoritesFragment;
-import com.maneletorres.safebites.fragments.SearchFragment;
+import com.maneletorres.safebites.data.Product;
+import com.maneletorres.safebites.ui.ProductActivity;
+import com.maneletorres.safebites.ui.fragments.CompleteProductFragment;
+import com.maneletorres.safebites.ui.fragments.FavoritesFragment;
+import com.maneletorres.safebites.ui.fragments.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.maneletorres.safebites.utils.Utils.PRODUCT;
 
-public class ProductAdapter extends Adapter<ViewHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM = 0;
     private static final int LOADING = 1;
 
@@ -57,8 +57,8 @@ public class ProductAdapter extends Adapter<ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ViewHolder viewHolder = null;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         switch (viewType) {
@@ -74,7 +74,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
     }
 
     @NonNull
-    private ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
+    private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         View view = inflater.inflate(R.layout.item_product, parent, false);
         return new ProductViewHolder(view);
     }
@@ -85,7 +85,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         Product currentProduct = mProducts.get(position);
 
         switch (getItemViewType(position)) {
@@ -185,7 +185,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    private class ProductViewHolder extends ViewHolder implements View.OnClickListener {
+    private class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mUpc;
         private TextView mName;
         private ImageView mImageResource;
@@ -235,7 +235,7 @@ public class ProductAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    private class LoadingViewHolder extends ViewHolder {
+    private class LoadingViewHolder extends RecyclerView.ViewHolder {
         LoadingViewHolder(View itemView) {
             super(itemView);
         }

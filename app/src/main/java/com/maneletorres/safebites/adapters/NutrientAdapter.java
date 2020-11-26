@@ -1,19 +1,19 @@
 package com.maneletorres.safebites.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.maneletorres.safebites.R;
-import com.maneletorres.safebites.entities.Nutrient;
+import com.maneletorres.safebites.data.Nutrient;
 
 import java.util.List;
 
-public class NutrientAdapter extends Adapter<ViewHolder> {
+public class NutrientAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Nutrient> mNutrients;
 
     public NutrientAdapter(List<Nutrient> nutrients) {
@@ -22,13 +22,13 @@ public class NutrientAdapter extends Adapter<ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new NutrientViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_nutrient, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         NutrientViewHolder nutrientViewHolder = (NutrientViewHolder) holder;
         Nutrient currentNutrient = mNutrients.get(position);
 
@@ -51,7 +51,7 @@ public class NutrientAdapter extends Adapter<ViewHolder> {
         return mNutrients == null ? 0 : mNutrients.size();
     }
 
-    class NutrientViewHolder extends ViewHolder {
+    class NutrientViewHolder extends RecyclerView.ViewHolder {
         private final TextView mName;
         private final TextView mPer100g;
         private final TextView mPerServing;

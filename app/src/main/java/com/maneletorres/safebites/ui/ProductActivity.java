@@ -1,16 +1,18 @@
-package com.maneletorres.safebites;
+package com.maneletorres.safebites.ui;
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.fragments.IngredientsFragment;
-import com.maneletorres.safebites.fragments.NutrientsFragment;
-import com.maneletorres.safebites.fragments.SectionsPageAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
+import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.data.Product;
+import com.maneletorres.safebites.ui.fragments.IngredientsFragment;
+import com.maneletorres.safebites.ui.fragments.NutrientsFragment;
+import com.maneletorres.safebites.ui.fragments.SectionsPageAdapter;
 
 import java.util.Objects;
 

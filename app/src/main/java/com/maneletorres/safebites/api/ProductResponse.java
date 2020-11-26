@@ -2,7 +2,7 @@ package com.maneletorres.safebites.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.maneletorres.safebites.entities.ProductNotFormatted;
+import com.maneletorres.safebites.data.ProductNotFormatted;
 
 public class ProductResponse {
     @SerializedName("product")

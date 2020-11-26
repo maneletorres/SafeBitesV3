@@ -1,19 +1,19 @@
 package com.maneletorres.safebites.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.maneletorres.safebites.R;
-import com.maneletorres.safebites.entities.NutrientComparison;
+import com.maneletorres.safebites.data.NutrientComparison;
 
 import java.util.List;
 
-public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
+public class NutrientComparisonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * List of simplified nutrients.
      */
@@ -25,13 +25,13 @@ public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new SimpleNutrientViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_nutrient_comparison, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         SimpleNutrientViewHolder simpleNutrientViewHolder = (SimpleNutrientViewHolder) holder;
         NutrientComparison currentSimplifiedNutrient = mSimplifiedNutrients.get(position);
 
@@ -61,7 +61,7 @@ public class NutrientComparisonAdapter extends Adapter<ViewHolder> {
         return mSimplifiedNutrients == null ? 0 : mSimplifiedNutrients.size();
     }
 
-    class SimpleNutrientViewHolder extends ViewHolder {
+    class SimpleNutrientViewHolder extends RecyclerView.ViewHolder {
         final private TextView mName;
         final private TextView mProductANutrient;
         final private TextView mProductBNutrient;

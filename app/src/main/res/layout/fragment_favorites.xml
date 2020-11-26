@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/RelativeLayoutStyle">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorite_products_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <TextView
         android:id="@+id/empty_textView"

@@ -1,4 +1,4 @@
-package com.maneletorres.safebites.entities;
+package com.maneletorres.safebites.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

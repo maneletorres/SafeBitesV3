@@ -8,9 +8,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.maneletorres.safebites.R;
-import com.maneletorres.safebites.entities.Nutrient;
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.entities.ProductNotFormatted;
+import com.maneletorres.safebites.data.Nutrient;
+import com.maneletorres.safebites.data.Product;
+import com.maneletorres.safebites.data.ProductNotFormatted;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

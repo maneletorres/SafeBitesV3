@@ -1,4 +1,4 @@
-package com.maneletorres.safebites.entities;
+package com.maneletorres.safebites.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

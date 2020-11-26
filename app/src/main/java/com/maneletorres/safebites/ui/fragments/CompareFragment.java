@@ -1,10 +1,7 @@
-package com.maneletorres.safebites.fragments;
+package com.maneletorres.safebites.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +14,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,14 +27,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.maneletorres.safebites.ComparatorActivity;
-import com.maneletorres.safebites.CustomScannerActivity;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.api.ProductApi;
 import com.maneletorres.safebites.api.ProductApi.ProductService;
 import com.maneletorres.safebites.api.ProductResponse;
-import com.maneletorres.safebites.entities.Product;
-import com.maneletorres.safebites.entities.ProductNotFormatted;
+import com.maneletorres.safebites.data.Product;
+import com.maneletorres.safebites.data.ProductNotFormatted;
+import com.maneletorres.safebites.ui.ComparatorActivity;
+import com.maneletorres.safebites.ui.CustomScannerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,9 +246,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startComparisonOption1(int requestCode) {
-        IntentIntegrator.forSupportFragment(this).setRequestCode(requestCode).setCameraId(0)
+        /*IntentIntegrator.forSupportFragment(this).setRequestCode(requestCode).setCameraId(0)
                 .setOrientationLocked(false).setCaptureActivity(CustomScannerActivity.class)
-                .setOrientationLocked(false).setBeepEnabled(true).initiateScan();
+                .setOrientationLocked(false).setBeepEnabled(true).initiateScan();*/
     }
 
     private void startComparisonOption2() {

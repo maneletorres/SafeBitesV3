@@ -1,18 +1,7 @@
-package com.maneletorres.safebites;
+package com.maneletorres.safebites.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,20 +9,32 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
+
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.maneletorres.safebites.fragments.CompareFragment;
-import com.maneletorres.safebites.fragments.FavoritesFragment;
-import com.maneletorres.safebites.fragments.ScanFragment;
-import com.maneletorres.safebites.fragments.SearchFragment;
-import com.maneletorres.safebites.fragments.SectionsPageAdapter;
+import com.maneletorres.safebites.R;
+import com.maneletorres.safebites.ui.fragments.CompareFragment;
+import com.maneletorres.safebites.ui.fragments.FavoritesFragment;
+import com.maneletorres.safebites.ui.fragments.ScanFragment;
+import com.maneletorres.safebites.ui.fragments.SearchFragment;
+import com.maneletorres.safebites.ui.fragments.SectionsPageAdapter;
 import com.maneletorres.safebites.utils.Utils;
 
 import static com.maneletorres.safebites.utils.Utils.CLASS_NAME;
 import static com.maneletorres.safebites.utils.Utils.TOAST_MESSAGE;
 
-public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private EditText mSearchEditText;
 

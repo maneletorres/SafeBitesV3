@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -34,7 +34,8 @@
                 android:text="@string/nutrients"
                 android:textAlignment="center"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:gravity="center_horizontal" />
 
             <FrameLayout
                 android:id="@+id/product_frame_layout_1"
@@ -59,7 +60,8 @@
                 android:text="@string/ingredients"
                 android:textAlignment="center"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:gravity="center_horizontal" />
 
             <FrameLayout
                 android:id="@+id/product_frame_layout_2"

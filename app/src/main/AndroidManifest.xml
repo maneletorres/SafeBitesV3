@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.maneletorres.safebites">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,7 +13,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".AuthActivity"
+            android:name=".ui.AuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -22,34 +23,34 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:parentActivityName=".AuthActivity"
+            android:name=".ui.MainActivity"
+            android:parentActivityName=".ui.AuthActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
 
         <activity
-            android:name=".ProductActivity"
+            android:name=".ui.ProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".InformationActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".ui.InformationActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ComparatorActivity"
+            android:name=".ui.ComparatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".PreferenceActivity"
+            android:name=".ui.PreferenceActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".CustomScannerActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".ui.CustomScannerActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
     </application>
 

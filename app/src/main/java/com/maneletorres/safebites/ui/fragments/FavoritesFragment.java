@@ -1,14 +1,15 @@
-package com.maneletorres.safebites.fragments;
+package com.maneletorres.safebites.ui.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.maneletorres.safebites.R;
 import com.maneletorres.safebites.adapters.ProductAdapter;
-import com.maneletorres.safebites.entities.Product;
+import com.maneletorres.safebites.data.Product;
 
 import java.util.Objects;
 
